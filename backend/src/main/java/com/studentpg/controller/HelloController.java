@@ -16,7 +16,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "StudentPG Backend Running 🚀";
+        return "Student pg Backend Running 🚀";
     }
     @GetMapping("/test-db")
     public String testDB() {
