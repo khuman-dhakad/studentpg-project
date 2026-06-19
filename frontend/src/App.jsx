@@ -1,3 +1,5 @@
+
+import Footer from "./components/Footer";
 import HowItWorks from "./components/HowItWorks";
 import StatsSection from "./components/StatsSection";
 import Navbar from "./components/Navbar";
@@ -53,6 +55,7 @@ function App() {
       </div>
       <StatsSection />
       <HowItWorks />
+      <Footer />
     </div>
   );
 }
