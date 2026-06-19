@@ -1,15 +1,16 @@
-
 import { useState } from "react";
+import heroImage from "./assets/hero.webp";
 
-import Footer from "./components/Footer";
-import HowItWorks from "./components/HowItWorks";
-import StatsSection from "./components/StatsSection";
 import Navbar from "./components/Navbar";
 import PGCard from "./components/PGCard";
+import StatsSection from "./components/StatsSection";
+import HowItWorks from "./components/HowItWorks";
+import Footer from "./components/Footer";
 
 function App() {
   const [selectedArea, setSelectedArea] = useState("All");
   const [selectedType, setSelectedType] = useState("Both");
+
   const allPGs = [
     {
       id: 1,
@@ -33,6 +34,7 @@ function App() {
       type: "Girls",
     },
   ];
+
   const filteredPGs = allPGs.filter((pg) => {
     const areaMatch =
       selectedArea === "All" || pg.location === selectedArea;
@@ -42,54 +44,66 @@ function App() {
 
     return areaMatch && typeMatch;
   });
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
 
       {/* Hero Section */}
-      <div className="flex flex-col items-center justify-center px-4 py-20">
-        <h1 className="text-5xl font-bold text-blue-600 mb-4 text-center">
-          Find Verified PGs & Rooms in Bhopal
-        </h1>
+      <div
+        className="relative h-[85vh] bg-cover bg-center flex items-center justify-center"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60"></div>
 
-        <p className="text-xl text-gray-700 text-center max-w-2xl">
-          Browse trusted PGs, rooms and hostels near colleges and prime
-          locations in Bhopal.
-        </p>
+        <div className="relative z-10 text-center px-4 max-w-5xl">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+            Find Your Perfect PG in Bhopal
+          </h1>
 
-        {/* Search Section */}
-        <div className="mt-8 bg-white p-4 rounded-xl shadow-lg flex gap-4">
-          <select
-            className="border p-2 rounded-lg"
-            value={selectedArea}
-            onChange={(e) => setSelectedArea(e.target.value)}
-          >
-            <option>All</option>
-            <option>Kolar Road</option>
-            <option>MP Nagar</option>
-            <option>Indrapuri</option>
-            <option>Ayodhya Bypass</option>
-          </select>
+          <p className="text-xl md:text-2xl text-gray-200 mb-8">
+            Near LNCT • RGPV • MANIT • MP Nagar
+          </p>
 
-          <select
-            className="border p-2 rounded-lg"
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-          >
-            <option>Both</option>
-            <option>Boys</option>
-            <option>Girls</option>
-          </select>
+          <div className="bg-white p-5 rounded-2xl shadow-2xl flex flex-wrap justify-center gap-4">
+            <select
+              className="border p-3 rounded-xl"
+              value={selectedArea}
+              onChange={(e) => setSelectedArea(e.target.value)}
+            >
+              <option>All</option>
+              <option>Kolar Road</option>
+              <option>MP Nagar</option>
+              <option>Indrapuri</option>
+              <option>Ayodhya Bypass</option>
+            </select>
 
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg">
-            Search PGs
-          </button>
+            <select
+              className="border p-3 rounded-xl"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              <option>Both</option>
+              <option>Boys</option>
+              <option>Girls</option>
+            </select>
+
+            <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700">
+              Search PGs
+            </button>
+          </div>
+
+          <p className="text-white mt-6 text-lg">
+            ⭐ Trusted by 500+ Students Across Bhopal
+          </p>
         </div>
       </div>
 
       {/* Featured PGs */}
-      <div className="max-w-7xl mx-auto px-4 pb-20">
-        <h2 className="text-3xl font-bold text-center mb-10">
+      <div className="max-w-7xl mx-auto px-4 py-20">
+        <h2 className="text-4xl font-bold text-center mb-12">
           Featured PGs
         </h2>
 
