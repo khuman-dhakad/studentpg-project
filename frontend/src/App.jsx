@@ -1,3 +1,6 @@
+
+import { useState } from "react";
+
 import Footer from "./components/Footer";
 import HowItWorks from "./components/HowItWorks";
 import StatsSection from "./components/StatsSection";
@@ -5,7 +8,9 @@ import Navbar from "./components/Navbar";
 import PGCard from "./components/PGCard";
 
 function App() {
-  const filteredPGs = [
+  const [selectedArea, setSelectedArea] = useState("All");
+  const [selectedType, setSelectedType] = useState("Both");
+  const allPGs = [
     {
       id: 1,
       name: "Krishna PG",
@@ -28,7 +33,15 @@ function App() {
       type: "Girls",
     },
   ];
+  const filteredPGs = allPGs.filter((pg) => {
+    const areaMatch =
+      selectedArea === "All" || pg.location === selectedArea;
 
+    const typeMatch =
+      selectedType === "Both" || pg.type === selectedType;
+
+    return areaMatch && typeMatch;
+  });
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -46,14 +59,23 @@ function App() {
 
         {/* Search Section */}
         <div className="mt-8 bg-white p-4 rounded-xl shadow-lg flex gap-4">
-          <select className="border p-2 rounded-lg">
+          <select
+            className="border p-2 rounded-lg"
+            value={selectedArea}
+            onChange={(e) => setSelectedArea(e.target.value)}
+          >
+            <option>All</option>
             <option>Kolar Road</option>
             <option>MP Nagar</option>
             <option>Indrapuri</option>
             <option>Ayodhya Bypass</option>
           </select>
 
-          <select className="border p-2 rounded-lg">
+          <select
+            className="border p-2 rounded-lg"
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+          >
             <option>Both</option>
             <option>Boys</option>
             <option>Girls</option>
