@@ -7,7 +7,7 @@ function App() {
       StudentPG Bhopal
     </h1>
     <p className="text-xl text-gray-700">
-      Find your perfect PG in Bhopal
+      Find Verified PGs & Rooms in Bhopal
     </p>
   </div>
 );
