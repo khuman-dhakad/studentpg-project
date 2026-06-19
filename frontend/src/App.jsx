@@ -48,9 +48,26 @@ function App() {
           Featured PGs
         </h2>
         <div className="flex flex-wrap justify-center gap-8">
-          <PGCard />
-          <PGCard />
-          <PGCard />
+          <PGCard
+            name="Krishna PG"
+            location="Kolar Road"
+            rent="4500"
+            type="Boys"
+          />
+
+          <PGCard
+            name="LNCT Boys PG"
+            location="Kalua Kheda"
+            rent="5500"
+            type="Boys"
+          />
+
+          <PGCard
+            name="MP Nagar Girls PG"
+            location="MP Nagar"
+            rent="6500"
+            type="Girls"
+          />
         </div>
       </div>
       <StatsSection />
