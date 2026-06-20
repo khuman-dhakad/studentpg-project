@@ -1,100 +1,161 @@
 # 🏠 StudentPG Bhopal
 
-StudentPG Bhopal is a full-stack web platform that helps students find verified PGs and rental rooms in Bhopal.
+StudentPG Bhopal is a full-stack web platform that helps students discover verified PGs (Paying Guest accommodations) and rental rooms across Bhopal.
 
-The platform allows students to search PGs by location, budget, and room type while enabling PG owners to manage listings efficiently.
+The goal is to simplify the process of finding student accommodation while giving PG owners a platform to manage and promote their listings.
 
 ---
 
-## 🚀 Features
+# ✨ Current Status
 
-### Student Features
+🚧 Active Development (MVP Version 1)
 
-* Search PGs
+The project is currently focused on providing:
+
+* PG discovery
+* Area-based filtering
+* Responsive user experience
+* Direct owner contact via WhatsApp
+
+---
+
+# 🚀 Features
+
+## Student Features
+
+* Browse PG listings
+* Search PGs by location
 * Filter by area
-* Filter by budget
+* Filter by PG type
 * View PG details
-* Contact owners via WhatsApp
+* Contact owners through WhatsApp
 
-### Owner Features (Planned)
+## Owner Features (In Progress)
 
 * Owner registration
+* Owner login
 * Add PG listings
-* Edit listings
-* Manage availability
+* Edit PG listings
+* Delete PG listings
 
-### Admin Features (Planned)
+## Admin Features (Planned)
 
 * Verify PG listings
-* Approve/reject owners
-* Manage platform content
+* Approve or reject owners
+* Manage listings
+* Monitor platform activity
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
-### Frontend
+## Frontend
 
 * React
 * Vite
 * Tailwind CSS
 
-### Backend
+## Backend
 
 * Spring Boot
 * Spring Data MongoDB
+* REST APIs
 
-### Database
+## Database
 
 * MongoDB Atlas
 
+## Tools
+
+* Git
+* GitHub
+* VS Code
+* Postman
+
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
-frontend/
-backend/
+```text
+studentpg-project
+│
+├── frontend
+│   ├── src
+│   ├── public
+│   └── components
+│
+├── backend
+│   ├── controller
+│   ├── service
+│   ├── repository
+│   └── model
+│
+├── README.md
+├── ROADMAP.md
+└── CONTRIBUTING.md
+```
 
 ---
 
-## 🗺️ Roadmap
+# 🗺️ Roadmap
 
-### Version 1 (Current)
+## Version 1 (Current MVP)
 
-* PG search
+* Search PG listings
 * Area filtering
 * WhatsApp contact
-* Responsive UI
+* Responsive design
+* Owner management foundation
 
-### Version 2
+## Version 2
 
-* Student Login
-* Favorites
-* Saved Listings
+* Student accounts
+* Saved favorites
+* Advanced search filters
+* User profiles
 
-### Version 3
+## Version 3
 
-* Reviews
-* Bookings
-* Payments
+* Reviews and ratings
+* Booking requests
+* Online payments
 
-### Version 4
+## Version 4
 
-* Android App
-* AI Recommendations
+* Android application
+* AI-powered recommendations
+* Analytics dashboard
 
 ---
 
-## 🤝 Contributing
+# 🤝 Contributing
 
 Contributions are welcome.
 
-Please open an issue before starting major changes.
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+Please read the CONTRIBUTING.md file before making major changes.
 
 ---
 
-## 👨‍💻 Author
+# 🎯 Long-Term Vision
+
+StudentPG aims to become a trusted student accommodation platform for Bhopal and eventually expand to other cities.
+
+The project is being developed as both:
+
+* An open-source learning project
+* A real-world startup initiative
+
+---
+
+# 👨‍💻 Author
 
 Khuman Dhakad
 
 MCA Student | Java Developer | Open Source Learner
+
+GitHub: https://github.com/khuman-dhakad

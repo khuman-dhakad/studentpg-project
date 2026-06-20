@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Navbar() {
   return (
     <nav className="w-full bg-white shadow-md p-4">
@@ -6,9 +8,12 @@ function Navbar() {
           StudentPG Bhopal
         </h1>
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+        <Link
+          to="/owner-auth"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
           List Your PG
-        </button>
+        </Link>
       </div>
     </nav>
   );
