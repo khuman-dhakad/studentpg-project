@@ -1,161 +1,164 @@
-# 🏠 StudentPG Bhopal
+# StudentPG Bhopal
 
-StudentPG Bhopal is a full-stack web platform that helps students discover verified PGs (Paying Guest accommodations) and rental rooms across Bhopal.
+StudentPG Bhopal is a full-stack web platform that helps students find verified PGs (paying guest accommodations) and rental rooms in Bhopal. The idea is to make it easier for students to find a place to stay, while also giving PG owners a way to list and manage their properties.
 
-The goal is to simplify the process of finding student accommodation while giving PG owners a platform to manage and promote their listings.
+## Current status
 
----
+This is an active MVP (version 1). Right now the focus is on:
 
-# ✨ Current Status
+- PG discovery
+- Area-based filtering
+- A responsive UI
+- Letting students contact owners directly on WhatsApp
 
-🚧 Active Development (MVP Version 1)
+## Features
 
-The project is currently focused on providing:
+**For students**
+- Browse PG listings
+- Search by location
+- Filter by area and PG type
+- View listing details
+- Contact owners through WhatsApp
 
-* PG discovery
-* Area-based filtering
-* Responsive user experience
-* Direct owner contact via WhatsApp
+**For owners (in progress)**
+- Registration and login
+- Add, edit, and delete listings
 
----
+**For admins (planned)**
+- Verify listings
+- Approve or reject owners
+- Manage listings and monitor activity
 
-# 🚀 Features
+## Tech stack
 
-## Student Features
+- Frontend: React, Vite, Tailwind CSS
+- Backend: Spring Boot, Spring Data MongoDB, REST APIs
+- Database: MongoDB Atlas
+- Tools: Git, GitHub, VS Code, Postman
 
-* Browse PG listings
-* Search PGs by location
-* Filter by area
-* Filter by PG type
-* View PG details
-* Contact owners through WhatsApp
+## Architecture
 
-## Owner Features (In Progress)
+The project is split into a frontend, a backend, and a database, and they talk to each other like this:
 
-* Owner registration
-* Owner login
-* Add PG listings
-* Edit PG listings
-* Delete PG listings
+```
+Frontend (React/Vite) --- REST API (JSON over HTTP) ---> Backend (Spring Boot) ---> MongoDB Atlas
+```
 
-## Admin Features (Planned)
+The backend itself is organized in layers:
 
-* Verify PG listings
-* Approve or reject owners
-* Manage listings
-* Monitor platform activity
+- `controller` - exposes the REST endpoints the frontend calls
+- `service` - handles the business logic (filtering, validation, etc.)
+- `repository` - talks to MongoDB using Spring Data
+- `model` - defines the data structures (PG listings, owners, and so on)
 
----
+Keeping these separate makes it easier to change one part (say, swap the database, or add a mobile app later) without having to touch everything else.
 
-# 🛠️ Tech Stack
+## Project structure
 
-## Frontend
-
-* React
-* Vite
-* Tailwind CSS
-
-## Backend
-
-* Spring Boot
-* Spring Data MongoDB
-* REST APIs
-
-## Database
-
-* MongoDB Atlas
-
-## Tools
-
-* Git
-* GitHub
-* VS Code
-* Postman
-
----
-
-# 📂 Project Structure
-
-```text
+```
 studentpg-project
-│
 ├── frontend
 │   ├── src
 │   ├── public
 │   └── components
-│
 ├── backend
 │   ├── controller
 │   ├── service
 │   ├── repository
 │   └── model
-│
 ├── README.md
 ├── ROADMAP.md
 └── CONTRIBUTING.md
 ```
 
----
+## Getting started
 
-# 🗺️ Roadmap
+You'll need:
 
-## Version 1 (Current MVP)
+- Node.js 18+ and npm
+- Java JDK 17+
+- Maven (or the `mvnw` wrapper if the backend includes one)
+- A MongoDB Atlas account (the free tier works fine), or a local MongoDB instance
 
-* Search PG listings
-* Area filtering
-* WhatsApp contact
-* Responsive design
-* Owner management foundation
+**1. Clone the repo**
 
-## Version 2
+```bash
+git clone https://github.com/khuman-dhakad/studentpg-project.git
+cd studentpg-project
+```
 
-* Student accounts
-* Saved favorites
-* Advanced search filters
-* User profiles
+**2. Set up the backend**
 
-## Version 3
+```bash
+cd backend
+```
 
-* Reviews and ratings
-* Booking requests
-* Online payments
+Add your MongoDB connection string to `src/main/resources/application.properties`:
 
-## Version 4
+```
+spring.data.mongodb.uri=your_mongodb_connection_string
+server.port=8080
+```
 
-* Android application
-* AI-powered recommendations
-* Analytics dashboard
+Then run it:
 
----
+```bash
+./mvnw spring-boot:run
+```
 
-# 🤝 Contributing
+This starts the backend on `http://localhost:8080`.
+
+**3. Set up the frontend**
+
+In a separate terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+If the frontend needs to know where the API is, set it in a `.env` file:
+
+```
+VITE_API_BASE_URL=http://localhost:8080
+```
+
+Then run it:
+
+```bash
+npm run dev
+```
+
+This starts the frontend on `http://localhost:5173`.
+
+Once both are running, open `http://localhost:5173` in your browser. Make sure the backend is up first so the frontend has something to fetch data from.
+
+## Roadmap
+
+**Version 1 (current)** - search, area filtering, WhatsApp contact, responsive design, basic owner management
+
+**Version 2** - student accounts, saved favorites, advanced filters, user profiles
+
+**Version 3** - reviews and ratings, booking requests, online payments
+
+**Version 4** - Android app, AI-based recommendations, analytics dashboard
+
+## Contributing
 
 Contributions are welcome.
 
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
-4. Open a Pull Request
+4. Open a pull request
 
-Please read the CONTRIBUTING.md file before making major changes.
+Check `CONTRIBUTING.md` before working on anything major.
 
----
+## Long-term vision
 
-# 🎯 Long-Term Vision
+The goal is for StudentPG to become a trusted accommodation platform for students in Bhopal, and eventually expand to other cities. It's being built both as an open-source learning project and as a real startup idea.
 
-StudentPG aims to become a trusted student accommodation platform for Bhopal and eventually expand to other cities.
+## Author
 
-The project is being developed as both:
-
-* An open-source learning project
-* A real-world startup initiative
-
----
-
-# 👨‍💻 Author
-
-Khuman Dhakad
-
-MCA Student | Java Developer | Open Source Learner
-
+Khuman Dhakad - MCA student, Java developer
 GitHub: https://github.com/khuman-dhakad
