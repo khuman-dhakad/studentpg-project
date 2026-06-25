@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment Variables
+.env
+
+# Local Spring Configuration
+src/main/resources/application-local.properties
