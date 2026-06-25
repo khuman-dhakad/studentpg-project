@@ -21,4 +21,11 @@ public class PGController {
     public List<PG> getOwnerPGs(@PathVariable String ownerId) {
     return pgService.getOwnerPGs(ownerId);
   }
+  @PutMapping("/{id}/{ownerId}")
+    public String updatePG(@PathVariable String id,
+                       @PathVariable String ownerId,
+                       @RequestBody PG pg) {
+
+    return pgService.updatePG(id, ownerId, pg);
+  }
 }

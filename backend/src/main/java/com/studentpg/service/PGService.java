@@ -23,4 +23,18 @@ public class PGService {
     public List<PG> getOwnerPGs(String ownerId) {
     return pgRepository.findByOwnerId(ownerId);
  }
+ public String updatePG(String id, String ownerId, PG updatedPG) {
+
+    if (!pgRepository.existsByIdAndOwnerId(id, ownerId)) {
+        return "PG not found or access denied";
+    }
+
+    updatedPG.setId(id);
+    updatedPG.setOwnerId(ownerId);
+    updatedPG.setApprovalStatus("PENDING");
+
+    pgRepository.save(updatedPG);
+
+    return "PG updated successfully";
+      }
 }
