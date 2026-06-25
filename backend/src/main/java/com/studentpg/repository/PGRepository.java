@@ -9,4 +9,5 @@ import java.util.List;
 public interface PGRepository extends MongoRepository<PG, String> {
     List<PG> findByOwnerId(String ownerId);
     boolean existsByIdAndOwnerId(String id, String ownerId);
+    void deleteByIdAndOwnerId(String id, String ownerId);
 }

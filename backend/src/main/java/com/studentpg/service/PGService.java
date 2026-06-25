@@ -36,5 +36,15 @@ public class PGService {
     pgRepository.save(updatedPG);
 
     return "PG updated successfully";
-      }
+    }
+    public String deletePG(String id, String ownerId) {
+
+    if (!pgRepository.existsByIdAndOwnerId(id, ownerId)) {
+        return "PG not found or access denied";
+    }
+
+    pgRepository.deleteByIdAndOwnerId(id, ownerId);
+
+    return "PG deleted successfully";
+   }
 }

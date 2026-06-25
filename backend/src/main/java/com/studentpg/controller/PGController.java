@@ -28,4 +28,10 @@ public class PGController {
 
     return pgService.updatePG(id, ownerId, pg);
   }
+  @DeleteMapping("/{id}/{ownerId}")
+  public String deletePG(@PathVariable String id,
+                       @PathVariable String ownerId) {
+
+    return pgService.deletePG(id, ownerId);
+    }
 }
