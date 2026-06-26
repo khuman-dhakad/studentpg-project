@@ -18,4 +18,8 @@ public class AdminController {
     public List<PG> getPendingPGs() {
         return adminService.getPendingPGs();
     }
+    @PutMapping("/pgs/{id}/approve")
+    public String approvePG(@PathVariable String id) {
+    return adminService.approvePG(id);
+   }
 }

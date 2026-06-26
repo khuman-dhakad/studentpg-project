@@ -16,4 +16,18 @@ public class AdminService {
     public List<PG> getPendingPGs() {
         return adminRepository.findByApprovalStatus("PENDING");
     }
+    public String approvePG(String id) {
+
+    PG pg = adminRepository.findById(id).orElse(null);
+
+    if (pg == null) {
+        return "PG not found";
+    }
+
+    pg.setApprovalStatus("APPROVED");
+
+    adminRepository.save(pg);
+
+    return "PG approved successfully";
+    }
 }
