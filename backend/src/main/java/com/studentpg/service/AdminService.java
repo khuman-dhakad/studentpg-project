@@ -30,4 +30,16 @@ public class AdminService {
 
     return "PG approved successfully";
     }
+    public String rejectPG(String id) {
+
+    PG pg = adminRepository.findById(id).orElse(null);
+
+    if (pg == null) {
+        return "PG not found";
+    }
+
+    adminRepository.deleteById(id);
+
+    return "PG rejected successfully";
+    }
 }

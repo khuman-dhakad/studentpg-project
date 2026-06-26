@@ -10,5 +10,6 @@ import java.util.List;
 public interface AdminRepository extends MongoRepository<PG, String> {
 
     List<PG> findByApprovalStatus(String approvalStatus);
+    void deleteById(String id);
 
 }

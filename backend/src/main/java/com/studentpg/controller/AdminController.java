@@ -22,4 +22,8 @@ public class AdminController {
     public String approvePG(@PathVariable String id) {
     return adminService.approvePG(id);
    }
+   @DeleteMapping("/pgs/{id}")
+   public String rejectPG(@PathVariable String id) {
+   return adminService.rejectPG(id);
+   }
 }
