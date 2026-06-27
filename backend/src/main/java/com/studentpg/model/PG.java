@@ -3,6 +3,9 @@ package com.studentpg.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "pgs")
 public class PG {
 
@@ -27,6 +30,9 @@ public class PG {
     private boolean laundryAvailable;
 
     private String approvalStatus;
+
+    // PG Images
+    private List<PGImage> images = new ArrayList<>();
 
     public PG() {
     }
@@ -157,5 +163,13 @@ public class PG {
 
     public void setApprovalStatus(String approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    public List<PGImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<PGImage> images) {
+        this.images = images;
     }
 }
