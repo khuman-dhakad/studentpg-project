@@ -18,4 +18,8 @@ public class StudentController {
     public List<PG> getApprovedPGs() {
         return studentService.getApprovedPGs();
     }
+    @GetMapping("/pgs/{id}")
+    public PG getPGDetails(@PathVariable String id) {
+    return studentService.getPGDetails(id);
+    }
 }

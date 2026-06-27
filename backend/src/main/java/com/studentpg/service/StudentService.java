@@ -16,4 +16,10 @@ public class StudentService {
     public List<PG> getApprovedPGs() {
         return pgRepository.findByApprovalStatus("APPROVED");
     }
+    public PG getPGDetails(String id) {
+
+    return pgRepository
+            .findByIdAndApprovalStatus(id, "APPROVED")
+            .orElse(null);
+    }
 }
