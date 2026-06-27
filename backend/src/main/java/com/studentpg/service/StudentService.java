@@ -1,0 +1,19 @@
+package com.studentpg.service;
+
+import com.studentpg.model.PG;
+import com.studentpg.repository.PGRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class StudentService {
+
+    @Autowired
+    private PGRepository pgRepository;
+
+    public List<PG> getApprovedPGs() {
+        return pgRepository.findByApprovalStatus("APPROVED");
+    }
+}
