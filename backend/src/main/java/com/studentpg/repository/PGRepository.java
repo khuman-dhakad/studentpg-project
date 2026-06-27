@@ -12,5 +12,6 @@ public interface PGRepository extends MongoRepository<PG, String> {
     List<PG> findByApprovalStatus(String approvalStatus);
     java.util.Optional<PG> findByIdAndApprovalStatus(String id, String approvalStatus);
     List<PG> findByApprovalStatusAndCity(String approvalStatus, String city);
+    List<PG> findByApprovalStatusAndGender(String approvalStatus, String gender);
     void deleteByIdAndOwnerId(String id, String ownerId);
 }

@@ -26,4 +26,8 @@ public class StudentController {
     public List<PG> searchByCity(@RequestParam String city) {
     return studentService.searchByCity(city);
     }
+    @GetMapping("/pgs/search/gender")
+    public List<PG> filterByGender(@RequestParam String gender) {
+    return studentService.filterByGender(gender);
+    }
 }

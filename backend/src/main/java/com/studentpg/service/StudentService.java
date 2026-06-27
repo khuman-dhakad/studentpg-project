@@ -25,4 +25,7 @@ public class StudentService {
     public List<PG> searchByCity(String city) {
     return pgRepository.findByApprovalStatusAndCity("APPROVED", city);
    }
+   public List<PG> filterByGender(String gender) {
+    return pgRepository.findByApprovalStatusAndGender("APPROVED", gender);
+   }  
 }
