@@ -22,4 +22,7 @@ public class StudentService {
             .findByIdAndApprovalStatus(id, "APPROVED")
             .orElse(null);
     }
+    public List<PG> searchByCity(String city) {
+    return pgRepository.findByApprovalStatusAndCity("APPROVED", city);
+   }
 }

@@ -22,4 +22,8 @@ public class StudentController {
     public PG getPGDetails(@PathVariable String id) {
     return studentService.getPGDetails(id);
     }
+    @GetMapping("/pgs/search")
+    public List<PG> searchByCity(@RequestParam String city) {
+    return studentService.searchByCity(city);
+    }
 }
