@@ -27,5 +27,8 @@ public class StudentService {
    }
    public List<PG> filterByGender(String gender) {
     return pgRepository.findByApprovalStatusAndGender("APPROVED", gender);
-   }  
+   }
+   public List<PG> filterByRent(double rent) {
+    return pgRepository.findByApprovalStatusAndRentLessThanEqual("APPROVED", rent);
+   }
 }

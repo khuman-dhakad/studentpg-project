@@ -30,4 +30,8 @@ public class StudentController {
     public List<PG> filterByGender(@RequestParam String gender) {
     return studentService.filterByGender(gender);
     }
+    @GetMapping("/pgs/search/rent")
+    public List<PG> filterByRent(@RequestParam double rent) {
+    return studentService.filterByRent(rent);
+    }
 }
