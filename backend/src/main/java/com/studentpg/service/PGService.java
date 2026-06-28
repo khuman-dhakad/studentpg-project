@@ -9,6 +9,14 @@ import com.studentpg.model.PGImage;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Iterator;
+import com.studentpg.model.Owner;
+import com.studentpg.repository.OwnerRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.studentpg.model.Owner;
+import com.studentpg.repository.OwnerRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 @Service
@@ -18,43 +26,76 @@ public class PGService {
     private PGRepository pgRepository;
 
     @Autowired
+    private OwnerRepository ownerRepository;
+
+    @Autowired
     private CloudinaryService cloudinaryService;
 
     public String addPG(PG pg) {
 
-        pg.setApprovalStatus("PENDING");
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
 
-        pgRepository.save(pg);
+    String email = authentication.getName();
 
-        return "PG added successfully. Waiting for admin approval.";
-    }
-    public List<PG> getOwnerPGs(String ownerId) {
-    return pgRepository.findByOwnerId(ownerId);
- }
- public String updatePG(String id, String ownerId, PG updatedPG) {
+    Owner owner = ownerRepository.findByEmail(email);
 
-    if (!pgRepository.existsByIdAndOwnerId(id, ownerId)) {
+    pg.setOwnerId(owner.getId());
+    pg.setApprovalStatus("PENDING");
+
+    pgRepository.save(pg);
+
+    return "PG added successfully. Waiting for admin approval.";
+}
+    public List<PG> getOwnerPGs() {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    String email = authentication.getName();
+
+    Owner owner = ownerRepository.findByEmail(email);
+
+    return pgRepository.findByOwnerId(owner.getId());
+}
+public String updatePG(String id, PG updatedPG) {
+
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    String email = authentication.getName();
+
+    Owner owner = ownerRepository.findByEmail(email);
+
+    if (!pgRepository.existsByIdAndOwnerId(id, owner.getId())) {
         return "PG not found or access denied";
     }
 
     updatedPG.setId(id);
-    updatedPG.setOwnerId(ownerId);
+    updatedPG.setOwnerId(owner.getId());
     updatedPG.setApprovalStatus("PENDING");
 
     pgRepository.save(updatedPG);
 
     return "PG updated successfully";
-    }
-    public String deletePG(String id, String ownerId) {
+}
+   public String deletePG(String id) {
 
-    if (!pgRepository.existsByIdAndOwnerId(id, ownerId)) {
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+
+    String email = authentication.getName();
+
+    Owner owner = ownerRepository.findByEmail(email);
+
+    if (!pgRepository.existsByIdAndOwnerId(id, owner.getId())) {
         return "PG not found or access denied";
     }
 
-    pgRepository.deleteByIdAndOwnerId(id, ownerId);
+    pgRepository.deleteByIdAndOwnerId(id, owner.getId());
 
     return "PG deleted successfully";
-   }
+}
    public String uploadImages(String pgId, MultipartFile[] images) throws IOException {
 
     
