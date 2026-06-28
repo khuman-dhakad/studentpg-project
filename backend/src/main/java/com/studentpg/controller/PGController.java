@@ -21,43 +21,46 @@ public class PGController {
         return pgService.addPG(pg);
     }
 
-    @GetMapping("/owner/{ownerId}")
-    public List<PG> getOwnerPGs(@PathVariable String ownerId) {
-        return pgService.getOwnerPGs(ownerId);
+    @GetMapping("/owner")
+    public List<PG> getOwnerPGs() {
+        return pgService.getOwnerPGs();
     }
 
-    @PutMapping("/{id}/{ownerId}")
+    @PutMapping("/{id}")
     public String updatePG(@PathVariable String id,
-                           @PathVariable String ownerId,
                            @RequestBody PG pg) {
 
-        return pgService.updatePG(id, ownerId, pg);
+        return pgService.updatePG(id, pg);
     }
 
-    @DeleteMapping("/{id}/{ownerId}")
-    public String deletePG(@PathVariable String id,
-                           @PathVariable String ownerId) {
+    @DeleteMapping("/{id}")
+    public String deletePG(@PathVariable String id) {
 
-        return pgService.deletePG(id, ownerId);
+        return pgService.deletePG(id);
     }
 
     @PostMapping("/{pgId}/images")
     public String uploadImages(@PathVariable String pgId,
-                               @RequestParam("images") MultipartFile[] images) throws IOException {
+                               @RequestParam("images") MultipartFile[] images)
+            throws IOException {
 
         return pgService.uploadImages(pgId, images);
     }
+
     @DeleteMapping("/{pgId}/images")
     public String deleteImage(@PathVariable String pgId,
-                          @RequestParam String publicId) throws IOException {
+                              @RequestParam String publicId)
+            throws IOException {
 
-    return pgService.deleteImage(pgId, publicId);
+        return pgService.deleteImage(pgId, publicId);
     }
+
     @PutMapping("/{pgId}/images")
     public String replaceImage(@PathVariable String pgId,
-                           @RequestParam String publicId,
-                           @RequestParam("image") MultipartFile image) throws IOException {
+                               @RequestParam String publicId,
+                               @RequestParam("image") MultipartFile image)
+            throws IOException {
 
-    return pgService.replaceImage(pgId, publicId, image);
+        return pgService.replaceImage(pgId, publicId, image);
     }
 }
