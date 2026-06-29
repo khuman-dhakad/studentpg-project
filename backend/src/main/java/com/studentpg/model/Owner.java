@@ -15,16 +15,33 @@ public class Owner {
     private String phone;
     private String role;
 
+    // Profile Image
+    private String profileImageUrl;
+    private String profileImagePublicId;
+
+    // Future OTP Verification
+    private boolean emailVerified = false;
+
     public Owner() {
     }
 
-    public Owner(String name, String email, String password,
-                 String phone, String role) {
+    public Owner(String name,
+                 String email,
+                 String password,
+                 String phone,
+                 String role,
+                 String profileImageUrl,
+                 String profileImagePublicId,
+                 boolean emailVerified) {
+
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.role = role;
+        this.profileImageUrl = profileImageUrl;
+        this.profileImagePublicId = profileImagePublicId;
+        this.emailVerified = emailVerified;
     }
 
     public String getId() {
@@ -73,5 +90,29 @@ public class Owner {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getProfileImagePublicId() {
+        return profileImagePublicId;
+    }
+
+    public void setProfileImagePublicId(String profileImagePublicId) {
+        this.profileImagePublicId = profileImagePublicId;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }
