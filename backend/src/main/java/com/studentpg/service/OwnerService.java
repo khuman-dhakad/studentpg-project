@@ -14,6 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.studentpg.dto.ChangePasswordRequest;
+import com.studentpg.dto.ForgotPasswordRequest;
+import com.studentpg.dto.ResetPasswordRequest;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.util.Map;
 
 
 @Service
@@ -24,6 +29,9 @@ public class OwnerService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     private final BCryptPasswordEncoder passwordEncoder =
             new BCryptPasswordEncoder();
@@ -183,4 +191,93 @@ public String changePassword(ChangePasswordRequest request) {
 
     return "Password changed successfully";
 }
+
+// ===========================
+// Forgot Password
+// ===========================
+
+public String forgotPassword(ForgotPasswordRequest request) {
+
+    Owner owner = ownerRepository.findByEmail(request.getEmail());
+
+    if (owner != null) {
+        // TODO: Send OTP email later
+    }
+
+    return "If an account exists with this email, password reset instructions will be sent.";
+}
+
+// ===========================
+// Reset Password
+// ===========================
+
+public String resetPassword(ResetPasswordRequest request) {
+
+    Owner owner = ownerRepository.findByEmail(request.getEmail());
+
+    if (owner == null) {
+        return "Invalid password reset request.";
+    }
+
+    owner.setPassword(
+            passwordEncoder.encode(request.getNewPassword())
+    );
+
+    ownerRepository.save(owner);
+
+    return "Password reset successfully.";
+}
+// ===========================
+// Upload Profile Image
+// ===========================
+
+public String uploadProfileImage(MultipartFile image) throws IOException {
+
+    Owner owner = getLoggedInOwner();
+
+    // Delete old image if it exists
+    if (owner.getProfileImagePublicId() != null &&
+            !owner.getProfileImagePublicId().isEmpty()) {
+
+        cloudinaryService.deleteImage(
+                owner.getProfileImagePublicId()
+        );
+    }
+
+    Map<String, String> uploadedImage =
+            cloudinaryService.uploadProfileImage(image);
+
+    owner.setProfileImageUrl(uploadedImage.get("url"));
+    owner.setProfileImagePublicId(uploadedImage.get("publicId"));
+
+    ownerRepository.save(owner);
+
+    return "Profile image uploaded successfully.";
+}
+
+// ===========================
+// Delete Profile Image
+// ===========================
+
+public String deleteProfileImage() throws IOException {
+
+    Owner owner = getLoggedInOwner();
+
+    if (owner.getProfileImagePublicId() == null ||
+            owner.getProfileImagePublicId().isEmpty()) {
+
+        return "Profile image not found.";
+    }
+
+    cloudinaryService.deleteImage(
+            owner.getProfileImagePublicId()
+    );
+
+    owner.setProfileImageUrl(null);
+    owner.setProfileImagePublicId(null);
+
+    ownerRepository.save(owner);
+
+    return "Profile image deleted successfully.";
+   }
 }

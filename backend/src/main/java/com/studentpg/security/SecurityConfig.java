@@ -50,9 +50,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(
-                                "/api/owners/register",
-                                "/api/owners/login"
-                        ).permitAll()
+                "/api/owners/register",
+                "/api/owners/login",
+                "/api/owners/forgot-password",
+                "/api/owners/reset-password"
+                ).permitAll()
 
                         .anyRequest().authenticated())
 
