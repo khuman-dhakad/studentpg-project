@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.studentpg.dto.ChangePasswordRequest;
+
 
 @Service
 public class OwnerService {
@@ -149,4 +151,36 @@ public class OwnerService {
 
         return "Profile updated successfully";
     }
+    // ===========================
+// Change Password
+// ===========================
+
+public String changePassword(ChangePasswordRequest request) {
+
+    Owner owner = getLoggedInOwner();
+
+    // Verify old password
+    if (!passwordEncoder.matches(
+            request.getOldPassword(),
+            owner.getPassword())) {
+
+        return "Old password is incorrect";
+    }
+
+    // Prevent same password
+    if (passwordEncoder.matches(
+            request.getNewPassword(),
+            owner.getPassword())) {
+
+        return "New password must be different from the old password";
+    }
+
+    owner.setPassword(
+            passwordEncoder.encode(request.getNewPassword())
+    );
+
+    ownerRepository.save(owner);
+
+    return "Password changed successfully";
+}
 }

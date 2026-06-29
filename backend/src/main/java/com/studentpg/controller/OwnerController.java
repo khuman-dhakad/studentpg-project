@@ -1,5 +1,6 @@
 package com.studentpg.controller;
 
+import com.studentpg.dto.ChangePasswordRequest;
 import com.studentpg.dto.LoginResponse;
 import com.studentpg.dto.OwnerLoginRequest;
 import com.studentpg.dto.OwnerProfileResponse;
@@ -59,5 +60,16 @@ public class OwnerController {
             @Valid @RequestBody UpdateOwnerProfileRequest request) {
 
         return ownerService.updateMyProfile(request);
+    }
+
+    // ===========================
+    // Change Password
+    // ===========================
+
+    @PutMapping("/change-password")
+    public String changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
+
+        return ownerService.changePassword(request);
     }
 }
