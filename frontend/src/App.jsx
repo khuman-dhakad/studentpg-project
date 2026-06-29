@@ -1,143 +1,111 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-import heroImage from "./assets/hero.webp";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
+// Components & UI Elements
 import Navbar from "./components/Navbar";
-import PGCard from "./components/PGCard";
-import StatsSection from "./components/StatsSection";
-import HowItWorks from "./components/HowItWorks";
 import Footer from "./components/Footer";
 
-import OwnerAuth from "./pages/OwnerAuth";
+// Application Pages Layout
+import Home from "./pages/Home";
+import SearchResults from "./pages/SearchResults";
+import PGDetails from "./pages/PGDetails";
+import OwnerRegister from "./pages/OwnerRegister";
+import OwnerLogin from "./pages/OwnerLogin";
+import AddPG from "./pages/AddPG";
+import AdminDashboard from "./pages/AdminDashboard";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  const [selectedArea, setSelectedArea] = useState("All");
-  const [selectedType, setSelectedType] = useState("Both");
+/**
+ * ============================
+ * PROTECTED ROUTE ENGINE
+ * ============================
+ * Handles precise authorization and block states.
+ */
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { user, loading, isAuthenticated } = useAuth();
 
-  const allPGs = [
-    {
-      id: 1,
-      name: "Krishna PG",
-      location: "Kolar Road",
-      rent: "4500",
-      type: "Boys",
-    },
-    {
-      id: 2,
-      name: "LNCT Boys PG",
-      location: "Kalua Kheda",
-      rent: "5500",
-      type: "Boys",
-    },
-    {
-      id: 3,
-      name: "MP Nagar Girls PG",
-      location: "MP Nagar",
-      rent: "6500",
-      type: "Girls",
-    },
-  ];
+  // Wait until auth check completes from interceptor layer
+  if (loading) {
+    return (
+      <div className="flex-grow flex items-center justify-center bg-slate-50 text-xs font-semibold text-slate-400">
+        Authenticating platform session...
+      </div>
+    );
+  }
 
-  const filteredPGs = allPGs.filter((pg) => {
-    const areaMatch =
-      selectedArea === "All" || pg.location === selectedArea;
+  // Not logged in -> Redirect to /owner/login to match your axios interceptors
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/owner/login" replace />;
+  }
 
-    const typeMatch =
-      selectedType === "Both" || pg.type === selectedType;
+  // Role authorization filter logic
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
 
-    return areaMatch && typeMatch;
-  });
+  return children;
+};
 
+/**
+ * ============================
+ * APP CONTAINER ENTRYPOINT
+ * ============================
+ */
+export default function App() {
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <div className="min-h-screen bg-gray-100">
-            <Navbar />
+    <AuthProvider>
+      <Router>
+        <div className="flex flex-col min-h-screen bg-slate-50 font-sans antialiased text-slate-900">
+          
+          <Navbar />
 
-            {/* Hero Section */}
-            <div
-              className="relative h-[85vh] bg-cover bg-center flex items-center justify-center"
-              style={{
-                backgroundImage: `url(${heroImage})`,
-              }}
-            >
-              <div className="absolute inset-0 bg-black/60"></div>
+          <Routes>
+            {/* PUBLIC STUDENT ACCESS ROUTES */}
+            <Route path="/" element={<Home />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route path="/pg/:id" element={<PGDetails />} />
+            
+            {/* AUTH STREAM ROUTES (Synchronized paths) */}
+            <Route path="/owner/register" element={<OwnerRegister />} />
+            <Route path="/owner/login" element={<OwnerLogin />} />
 
-              <div className="relative z-10 text-center px-4 max-w-5xl">
-                <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-                  Find Your Perfect PG in Bhopal
-                </h1>
+            {/* OWNER CONSOLE PROTECTED ENGINE */}
+            <Route
+              path="/add-pg"
+              element={
+                <ProtectedRoute allowedRoles={["OWNER", "ADMIN"]}>
+                  <AddPG />
+                </ProtectedRoute>
+              }
+            />
 
-                <p className="text-xl md:text-2xl text-gray-200 mb-8">
-                  Near LNCT • RGPV • MANIT • MP Nagar
-                </p>
+            {/* SYSTEM ADMIN MANAGEMENT CONTROL PLATFORM */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-                <div className="bg-white p-5 rounded-2xl shadow-2xl flex flex-wrap justify-center gap-4">
-                  <select
-                    className="border p-3 rounded-xl"
-                    value={selectedArea}
-                    onChange={(e) => setSelectedArea(e.target.value)}
-                  >
-                    <option>All</option>
-                    <option>Kolar Road</option>
-                    <option>MP Nagar</option>
-                    <option>Indrapuri</option>
-                    <option>Ayodhya Bypass</option>
-                  </select>
+            {/* EDGE CASE FALLBACK (404 ERRORS) */}
+          
+            <Route path="/login" element={<Navigate to="/owner/login" replace />} />
+            <Route path="/register" element={<Navigate to="/owner/register" replace />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
 
-                  <select
-                    className="border p-3 rounded-xl"
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                  >
-                    <option>Both</option>
-                    <option>Boys</option>
-                    <option>Girls</option>
-                  </select>
-
-                  <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700">
-                    Search PGs
-                  </button>
-                </div>
-
-                <p className="text-white mt-6 text-lg">
-                  ⭐ Trusted by 500+ Students Across Bhopal
-                </p>
-              </div>
-            </div>
-
-            {/* Featured PGs */}
-            <div className="max-w-7xl mx-auto px-4 py-20">
-              <h2 className="text-4xl font-bold text-center mb-12">
-                Featured PGs
-              </h2>
-
-              <div className="flex flex-wrap justify-center gap-8">
-                {filteredPGs.map((pg) => (
-                  <PGCard
-                    key={pg.id}
-                    name={pg.name}
-                    location={pg.location}
-                    rent={pg.rent}
-                    type={pg.type}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <StatsSection />
-            <HowItWorks />
-            <Footer />
-          </div>
-        }
-      />
-
-      <Route path="/owner-auth" element={<OwnerAuth />} />
-    </Routes>
+          <Footer />
+        </div>  
+      </Router>
+    </AuthProvider>
   );
 }
-
-export default App;
