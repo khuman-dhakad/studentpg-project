@@ -7,18 +7,20 @@ public class OwnerProfileResponse {
     private String email;
     private String phone;
     private String role;
+    private String whatsappNumber;
 
     public OwnerProfileResponse() {
     }
 
     public OwnerProfileResponse(String id, String name,
                                 String email, String phone,
-                                String role) {
+                                String role, String whatsappNumber) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.role = role;
+        this.whatsappNumber = whatsappNumber;
     }
 
     public String getId() {
@@ -60,4 +62,13 @@ public class OwnerProfileResponse {
     public void setRole(String role) {
         this.role = role;
     }
+
+
+    public String getWhatsappNumber() {
+     return whatsappNumber;
+ }
+
+ public void setWhatsappNumber(String whatsappNumber) {
+     this.whatsappNumber = whatsappNumber;
+ }
 }

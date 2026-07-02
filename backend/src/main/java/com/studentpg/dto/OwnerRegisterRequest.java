@@ -27,6 +27,13 @@ public class OwnerRegisterRequest {
     )
     private String phone;
 
+    @NotBlank(message = "WhatsApp number is required")
+ @Pattern(
+         regexp = "^[6-9]\\d{9}$",
+         message = "Invalid Indian WhatsApp number"
+ )
+ private String whatsappNumber;
+
     public OwnerRegisterRequest() {
     }
 
@@ -61,4 +68,12 @@ public class OwnerRegisterRequest {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public String getWhatsappNumber() {
+     return whatsappNumber;
+ }
+
+ public void setWhatsappNumber(String whatsappNumber) {
+     this.whatsappNumber = whatsappNumber;
+ }
 }

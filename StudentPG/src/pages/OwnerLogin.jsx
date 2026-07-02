@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { MdLockOutline, MdMailOutline } from "react-icons/md";
@@ -7,7 +7,6 @@ export default function OwnerLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Swapped to email to perfectly match industrial backend verification keys
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,23 +21,26 @@ export default function OwnerLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    loading === false && setLoading(true);
 
     try {
-      const profile = await login({
+      const responseData = await login({
         email: formData.email,
         password: formData.password,
       });
 
-      const role = profile?.role;
+      // ✅ FIX: Extracts role directly from flat LoginResponse.java properties
+      const role = responseData?.role ? String(responseData.role).toUpperCase() : "";
 
       // Dynamic role redirection engine mapping
       if (role === "ADMIN") {
-        navigate("/admin", { replace: true });
+        // 💡 FIXED: Changed "/admin" to exact match "/admin/dashboard" matching your App.jsx route blueprint
+        navigate("/admin/dashboard", { replace: true });
       } else if (role === "OWNER") {
         navigate("/add-pg", { replace: true });
       } else {
-        navigate("/", { replace: true });
+        // Fallback standard routing
+        navigate("/add-pg", { replace: true });
       }
     } catch (err) {
       setError(

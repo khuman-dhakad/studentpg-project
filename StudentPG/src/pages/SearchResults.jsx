@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { searchPGs } from "../services/api/pg.api";
 import PGCard from "../components/PGCard";
-import { MdFilterList, MdRefresh, MdSearchOff } from "react-icons/md";
+import { MdFilterList, MdRefresh, MdSearchOff, MdSearch, MdLocationOn } from "react-icons/md";
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [pgList, setPgList] = useState([]);
+  // === Core States ===
+  const [masterPgList, setMasterPgList] = useState([]); // Original data backend se
+  const [pgList, setPgList] = useState([]); // Screen par filter hokar dikhne wala data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // === Advanced Local Search & Auto-complete States ===
+  const [globalSearchQuery, setGlobalSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef(null);
 
   // Controlled UI Form local filter state storage map
   const [filters, setFilters] = useState({
@@ -37,23 +45,75 @@ export default function SearchResults() {
 
     try {
       const params = {};
-      if (searchParams.get("area")) params.area = searchParams.get("area");
-      if (searchParams.get("maxPrice")) params.maxPrice = searchParams.get("maxPrice");
-      if (searchParams.get("gender")) params.gender = searchParams.get("gender");
+      
+      if (searchParams.get("area")) {
+        params.city = searchParams.get("area");
+      }
+      
+      if (searchParams.get("maxPrice")) {
+        params.maxRent = parseFloat(searchParams.get("maxPrice"));
+      }
+      
+      if (searchParams.get("gender")) {
+        params.category = searchParams.get("gender");
+      }
 
-      // Hits your Spring Boot routing endpoint layer implicitly
       const data = await searchPGs(params);
-
-      // Filtering client layer node arrays safely for secure items
-      const approved = (data || []).filter((pg) => pg.status === "APPROVED");
-      setPgList(approved);
+      const approved = (data || []).filter((pg) => pg.approvalStatus === "APPROVED");
+      
+      setMasterPgList(approved);
+      setPgList(approved); // Initial setup
+      setGlobalSearchQuery(""); // Clear text search on filter changes
     } catch (err) {
       setError(err?.message || "Unable to index active system PG database listings.");
+      setMasterPgList([]);
       setPgList([]);
     } finally {
       setLoading(false);
     }
   };
+
+  /**
+   * 🌟 GLOBAL SEARCH TEXT ENGINE (Matches Kolar, LNCT, Sunrise instantly from local stream)
+   */
+  useEffect(() => {
+    const query = globalSearchQuery.trim().toLowerCase();
+
+    if (!query) {
+      setPgList(masterPgList);
+      setSuggestions([]);
+      return;
+    }
+
+    // Direct database keys alignment map
+    const filtered = masterPgList.filter((pg) => {
+      const name = (pg.pgName || "").toLowerCase();
+      const desc = (pg.description || "").toLowerCase();
+      const addr = (pg.address || "").toLowerCase();
+      const city = (pg.city || "").toLowerCase();
+
+      return (
+        name.includes(query) ||
+        desc.includes(query) ||
+        addr.includes(query) ||
+        city.includes(query)
+      );
+    });
+
+    setPgList(filtered);
+    setSuggestions(filtered.slice(0, 5)); // Dynamic top 5 autocomplete menu hints
+  }, [globalSearchQuery, masterPgList]);
+
+  // Click outside listener for suggestions dropbar
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   /**
    * DISPATCH CURRENT LOCAL CONFIGURATION INTO URL STRINGS
@@ -66,7 +126,7 @@ export default function SearchResults() {
     if (filters.maxPrice) params.maxPrice = filters.maxPrice;
     if (filters.gender) params.gender = filters.gender;
 
-    setSearchParams(params); // Pushes parameters to URL bar triggers re-fetch hook
+    setSearchParams(params);
   };
 
   /**
@@ -74,16 +134,74 @@ export default function SearchResults() {
    */
   const handleClearFilters = () => {
     setFilters({ area: "", maxPrice: "", gender: "" });
-    setSearchParams({}); // Wipes query chain parameters completely clean
+    setGlobalSearchQuery("");
+    setSearchParams({});
   };
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+    <main className="max-w-7xl mx-auto px-4 py-8 flex-grow w-full font-sans">
       
-      <h1 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900">
-        <MdFilterList className="text-emerald-500 text-2xl" />
-        <span>Explore Available PGs</span>
-      </h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <h1 className="text-xl font-black flex items-center gap-2 text-slate-900 tracking-tight">
+          <MdFilterList className="text-emerald-500 text-2xl" />
+          <span>Explore Available PGs</span>
+        </h1>
+
+        {/* 🌟 NEW INSTANT TEXT SEARCH BAR HUB */}
+        <div className="relative w-full max-w-md" ref={suggestionRef}>
+          <div className="flex items-center bg-white border-2 border-slate-200 focus-within:border-emerald-500 rounded-xl shadow-xs overflow-hidden transition-all px-3 py-1.5">
+            <MdSearch className="text-slate-400 text-xl flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search by name, near college or street (e.g. LNCT, Kolar)..."
+              value={globalSearchQuery}
+              onChange={(e) => {
+                setGlobalSearchQuery(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              className="w-full px-2 py-1 bg-transparent outline-none text-slate-800 text-xs font-semibold"
+            />
+            {globalSearchQuery && (
+              <button 
+                onClick={() => { setGlobalSearchQuery(""); setSuggestions([]); }}
+                className="text-xs text-slate-400 hover:text-slate-600 px-1 font-bold"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
+          {/* Autocomplete Suggestion Dropdown Panel */}
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="absolute left-0 w-full bg-white border border-slate-200 rounded-xl mt-2 overflow-hidden shadow-lg z-50 divide-y divide-slate-100 max-h-60 overflow-y-auto">
+              {suggestions.map((pg) => {
+                const pgId = pg.id || pg._id;
+                return (
+                  <li
+                    key={pgId}
+                    onClick={() => {
+                      setGlobalSearchQuery(pg.pgName || "");
+                      setShowSuggestions(false);
+                    }}
+                    className="px-4 py-2.5 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors"
+                  >
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">{pg.pgName || "Premium PG"}</p>
+                      <p className="text-[10px] text-slate-400 flex items-center gap-0.5 mt-0.5">
+                        <MdLocationOn className="text-emerald-500" /> {pg.address || "Bhopal"}
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-black bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded">
+                      ₹{pg.rent}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
 
@@ -91,13 +209,13 @@ export default function SearchResults() {
         <aside className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs h-fit">
           <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
             <h2 className="text-xs font-black uppercase tracking-wider text-slate-400">Search Filters</h2>
-            {(filters.area || filters.maxPrice || filters.gender) && (
+            {(filters.area || filters.maxPrice || filters.gender || globalSearchQuery) && (
               <button 
                 type="button" 
                 onClick={handleClearFilters}
                 className="text-[11px] font-bold text-red-500 flex items-center gap-0.5 hover:underline"
               >
-                <MdRefresh /> Clear
+                <MdRefresh /> Clear All
               </button>
             )}
           </div>
@@ -160,7 +278,7 @@ export default function SearchResults() {
 
           {/* DYNAMIC LIFECYCLE CONDITIONAL STATUS BLOCKS */}
           {loading && (
-            <div className="text-center py-24 border border-dashed rounded-xl bg-slate-50/50">
+            <div className="text-center py-24 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900 mx-auto mb-3"></div>
               <p className="text-xs font-semibold text-slate-400">Filtering database architecture logs...</p>
             </div>
@@ -181,7 +299,7 @@ export default function SearchResults() {
           )}
 
           {!loading && !error && pgList.length > 0 && (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 animate-fadeIn">
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {pgList.map((pg) => (
                 <PGCard
                   key={pg.id || pg._id}

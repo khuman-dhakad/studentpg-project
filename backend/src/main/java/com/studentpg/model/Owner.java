@@ -14,6 +14,7 @@ public class Owner {
     private String password;
     private String phone;
     private String role;
+    private String whatsappNumber;
 
     // Profile Image
     private String profileImageUrl;
@@ -32,13 +33,15 @@ public class Owner {
                  String role,
                  String profileImageUrl,
                  String profileImagePublicId,
-                 boolean emailVerified) {
+                 boolean emailVerified,
+                 String whatsappNumber) {
 
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.role = role;
+        this.whatsappNumber = whatsappNumber;
         this.profileImageUrl = profileImageUrl;
         this.profileImagePublicId = profileImagePublicId;
         this.emailVerified = emailVerified;
@@ -115,4 +118,11 @@ public class Owner {
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
     }
+    public String getWhatsappNumber() {
+     return whatsappNumber;
+ }
+
+ public void setWhatsappNumber(String whatsappNumber) {
+     this.whatsappNumber = whatsappNumber;
+ }
 }

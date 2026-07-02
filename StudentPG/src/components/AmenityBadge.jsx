@@ -16,6 +16,7 @@ const iconMap = {
   power: <MdFlashOn />,
   laundry: <MdLocalAtm />
 };
+// parking
 
 export default function AmenityBadge({ name }) {
   const key = name?.toLowerCase()?.trim();

@@ -3,9 +3,6 @@
  * Is file se aap photos post (upload) kar sakte ho aur secure url backend ko bhej sakte ho.
  */
 
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
 /**
  * POST / UPLOAD - Single Image to Cloudinary
  * @param {File} file - Browser input file selector target
@@ -15,6 +12,10 @@ export const uploadToCloudinary = async (file) => {
   if (!file) {
     throw new Error("No file asset provided for secure cloud transmission.");
   }
+
+  // ✅ FIXED: Read runtime environment directly inside to prevent undefined load state
+  const CLOUD_NAME = "tgsit4me";
+  const UPLOAD_PRESET = "bhopal_pg_preset";
 
   // Configuration check safeguard
   if (!CLOUD_NAME || !UPLOAD_PRESET) {
@@ -37,6 +38,7 @@ export const uploadToCloudinary = async (file) => {
 
     if (!res.ok) {
       const errorData = await res.json();
+      console.error("Cloudinary Detailed Rejection Log:", errorData); // Help in debugging 400 Bad Request
       throw new Error(errorData?.error?.message || "Cloudinary network API rejection.");
     }
 

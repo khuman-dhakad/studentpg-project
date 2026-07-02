@@ -22,6 +22,7 @@ export default function OwnerDashboard() {
   const [profileForm, setProfileForm] = useState({
     name: user?.name || "",
     phone: user?.phone || "",
+    whatsappNumber: user?.whatsappNumber || "",
     profilePic: user?.profilePic || ""
   });
 
@@ -31,6 +32,7 @@ export default function OwnerDashboard() {
       setProfileForm({
         name: user.name || "",
         phone: user.phone || "",
+        whatsappNumber: user.whatsappNumber || "",
         profilePic: user.profilePic || ""
       });
     }
@@ -153,6 +155,10 @@ export default function OwnerDashboard() {
           <div className="flex items-center gap-2 text-slate-300">
             <MdPhone className="text-emerald-400 text-sm flex-shrink-0" />
             <span>{user?.phone || profileForm.phone || "+91 Unset"}</span>
+          </div>
+          <div className="flex items-center gap-2 text-slate-300">
+            <MdMessage className="text-emerald-400 text-sm flex-shrink-0" />
+            <span>{user?.whatsappNumber || profileForm.whatsappNumber || "+91 Unset"}</span>
           </div>
         </div>
 
@@ -280,6 +286,15 @@ export default function OwnerDashboard() {
               <input 
                 type="tel" required value={profileForm.phone}
                 onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs font-semibold outline-none focus:ring-1 focus:ring-slate-900 text-slate-900"
+              />
+            </div>
+            {/* WHATSAPP COMMUNICATION INPUT */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">WhatsApp Communication (+91)</label>
+              <input 
+                type="tel" required value={profileForm.whatsappNumber}
+                onChange={e => setProfileForm({ ...profileForm, whatsappNumber: e.target.value })}
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs font-semibold outline-none focus:ring-1 focus:ring-slate-900 text-slate-900"
               />
             </div>

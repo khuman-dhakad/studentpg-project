@@ -61,6 +61,7 @@ public class OwnerService {
         owner.setName(request.getName());
         owner.setEmail(request.getEmail());
         owner.setPhone(request.getPhone());
+        owner.setWhatsappNumber(request.getWhatsappNumber());
 
         owner.setPassword(
                 passwordEncoder.encode(request.getPassword())
@@ -130,7 +131,8 @@ public class OwnerService {
                 owner.getName(),
                 owner.getEmail(),
                 owner.getPhone(),
-                owner.getRole()
+                owner.getRole(),
+                owner.getWhatsappNumber()
         );
     }
 
@@ -154,6 +156,7 @@ public class OwnerService {
         owner.setName(request.getName());
         owner.setEmail(request.getEmail());
         owner.setPhone(request.getPhone());
+       owner.setWhatsappNumber(request.getWhatsappNumber());
 
         ownerRepository.save(owner);
 

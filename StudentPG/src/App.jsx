@@ -21,17 +21,16 @@ import OwnerLogin from "./pages/OwnerLogin";
 import AddPG from "./pages/AddPG";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import OwnerProfile from "./pages/OwnerProfile";
 
 /**
  * ============================
- * PROTECTED ROUTE ENGINE
+ * BULLETPROOF PROTECTED ROUTE ENGINE
  * ============================
- * Handles precise authorization and block states.
  */
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading } = useAuth();
 
-  // Wait until auth check completes from interceptor layer
   if (loading) {
     return (
       <div className="flex-grow flex items-center justify-center bg-slate-50 text-xs font-semibold text-slate-400">
@@ -40,14 +39,19 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
-  // Not logged in -> Redirect to /owner/login to match your axios interceptors
-  if (!isAuthenticated || !user) {
+  const activeUser = user;
+
+  if (!activeUser) {
     return <Navigate to="/owner/login" replace />;
   }
 
-  // Role authorization filter logic
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+  if (allowedRoles) {
+    const userRole = String(activeUser.role || "").toUpperCase();
+    const hasAccess = allowedRoles.map(r => r.toUpperCase()).includes(userRole);
+    
+    if (!hasAccess) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return children;
@@ -71,8 +75,9 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/pg/:id" element={<PGDetails />} />
+            <Route path="/owner/profile" element={<OwnerProfile />} />
             
-            {/* AUTH STREAM ROUTES (Synchronized paths) */}
+            {/* AUTH STREAM ROUTES */}
             <Route path="/owner/register" element={<OwnerRegister />} />
             <Route path="/owner/login" element={<OwnerLogin />} />
 
@@ -87,6 +92,7 @@ export default function App() {
             />
 
             {/* SYSTEM ADMIN MANAGEMENT CONTROL PLATFORM */}
+            {/* ✅ FIXED: Dono admin routes ko cleanly handle kiya hai with dynamic role guard */}
             <Route
               path="/admin"
               element={
@@ -95,9 +101,17 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* EDGE CASE FALLBACK (404 ERRORS) */}
-          
+            {/* FIXED CLEAN REDIRECT LINERS */}
             <Route path="/login" element={<Navigate to="/owner/login" replace />} />
             <Route path="/register" element={<Navigate to="/owner/register" replace />} />
             <Route path="*" element={<NotFound />} />

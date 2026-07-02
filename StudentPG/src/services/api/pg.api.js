@@ -8,19 +8,19 @@ import api from "./axios";
 
 /**
  * Get All PGs
- * GET /pgs
+ * GET /student/pgs
  */
 export const getAllPGs = async () => {
-  const response = await api.get("/pgs");
+  const response = await api.get("/student/pgs"); // ✅ Fixed mapping
   return response.data;
 };
 
 /**
  * Get PG By Id
- * GET /pgs/:id
+ * GET /student/pgs/:id
  */
 export const getPGById = async (id) => {
-  const response = await api.get(`/pgs/${id}`);
+  const response = await api.get(`/student/pgs/${id}`); // ✅ Fixed mapping
   return response.data;
 };
 
@@ -63,22 +63,21 @@ export const getOwnerPGs = async (ownerId) => {
 
 /**
  * Search PGs
- * GET /pgs/filter
+ * GET /student/pgs/filter
  */
 export const searchPGs = async (params) => {
-  const response = await api.get("/pgs/filter", {
+  const response = await api.get("/student/pgs/filter", { // ✅ Fixed mapping
     params,
   });
-
   return response.data;
 };
 
 /**
  * Featured PGs
- * GET /pgs/featured
+ * GET /student/pgs/featured
  */
 export const getFeaturedPGs = async () => {
-  const response = await api.get("/pgs/featured");
+  const response = await api.get("/student/pgs/featured"); // ✅ Fixed mapping
   return response.data;
 };
 
@@ -90,7 +89,6 @@ export const getNearbyPGs = async (params) => {
   const response = await api.get("/pgs/nearby", {
     params,
   });
-
   return response.data;
 };
 
@@ -126,6 +124,5 @@ export const deletePGImage = async (pgId, imageId) => {
   const response = await api.delete(
     `/pgs/${pgId}/images/${imageId}`
   );
-
   return response.data;
 };

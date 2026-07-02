@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { registerOwner } from "../services/api/auth.api"; // Centralized service integration
-import { MdPersonAddAlt, MdMailOutline, MdLockOutline, MdBadge } from "react-icons/md";
+import { useAuth } from "../context/AuthContext"; // Integrated dynamic global context hook
+import { MdPersonAddAlt, MdMailOutline, MdLockOutline, MdBadge, MdPhoneAndroid } from "react-icons/md";
 
 export default function OwnerRegister() {
   const navigate = useNavigate();
+  const { register } = useAuth(); // Destructured context register trigger node
 
+  // Form layout completely synchronized with Spring Boot OwnerRegisterRequest DTO
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
+    phone: "",
+    whatsappNumber: ""
   });
 
   const [honeypot, setHoneypot] = useState("");
@@ -28,12 +32,39 @@ export default function OwnerRegister() {
     // Bot attack blocker mitigation trigger
     if (honeypot) return;
 
+    // Advanced Local Client Check to match custom Spring Boot @Pattern annotation
+    const indianPhoneRegex = /^[6-9]\d{9}$/;
+    if (!indianPhoneRegex.test(formData.phone)) {
+      setStatus({
+        success: "",
+        error: "Validation failed: Phone number must be a valid 10-digit Indian mobile number starting with 6-9.",
+      });
+      return;
+    }
+
+    const whatsappRegex = /^[6-9]\d{9}$/;
+    if (!whatsappRegex.test(formData.whatsappNumber)) {
+      setStatus({
+        success: "",
+        error: "Validation failed: WhatsApp number must be a valid 10-digit Indian mobile number starting with 6-9.",
+      });
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setStatus({
+        success: "",
+        error: "Validation failed: Password must be at least 8 characters long.",
+      });
+      return;
+    }
+
     setLoading(true);
     setStatus({ success: "", error: "" });
 
     try {
-      // Using cleaner backend abstraction pattern
-      await registerOwner(formData);
+      // Transmitting fully mapped payload fields matching OwnerRegisterRequest.java rules
+      await register(formData);
 
       setStatus({
         success: "Account created successfully! Forwarding to verification console...",
@@ -92,18 +123,20 @@ export default function OwnerRegister() {
             onChange={(e) => setHoneypot(e.target.value)}
           />
 
-          {/* USERNAME */}
+          {/* FULL NAME - FIXED FIELD */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">Desired Username</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">Full Legal Name</label>
             <div className="relative">
               <MdBadge className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base" />
               <input
                 type="text"
                 required
-                placeholder="e.g., janesmith_bhopal"
-                value={formData.username}
+                minLength={3}
+                maxLength={50}
+                placeholder="e.g., Jane Smith"
+                value={formData.name}
                 onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
                 className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 font-medium text-slate-900"
               />
@@ -128,6 +161,37 @@ export default function OwnerRegister() {
             </div>
           </div>
 
+          {/* PHONE NUMBER - FIXED FIELD */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">Mobile Number (Indian)</label>
+            <div className="relative">
+              <MdPhoneAndroid className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base" />
+              <input
+                type="tel"
+                required
+                placeholder="10-digit number (e.g., 9876543210)"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-emerald-500 font-medium text-slate-900"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-bold text-slate-700">WhatsApp Number</label>
+            <input 
+              type="tel"
+              name="whatsappNumber"
+              value={formData.whatsappNumber}
+              onChange={(e) => setFormData({...formData, whatsappNumber: e.target.value})}
+              placeholder="Enter 10-digit WhatsApp number"
+              maxLength="10"
+              className="border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-slate-400 w-full"
+              required
+            />
+          </div>
+
           {/* PASSWORD */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">Secure Password</label>
@@ -136,7 +200,9 @@ export default function OwnerRegister() {
               <input
                 type="password"
                 required
-                placeholder="••••••••"
+                minLength={8}
+                maxLength={64}
+                placeholder="•••••••• (Min 8 characters)"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })

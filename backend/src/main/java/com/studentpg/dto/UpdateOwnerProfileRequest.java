@@ -19,6 +19,10 @@ public class UpdateOwnerProfileRequest {
     @Pattern(regexp = "^[6-9]\\d{9}$",
             message = "Invalid mobile number")
     private String phone;
+    @NotBlank
+ @Pattern(regexp = "^[6-9]\\d{9}$",
+         message = "Invalid WhatsApp number")
+ private String whatsappNumber;
 
     public UpdateOwnerProfileRequest() {
     }
@@ -46,4 +50,11 @@ public class UpdateOwnerProfileRequest {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+    public String getWhatsappNumber() {
+     return whatsappNumber;
+ }
+
+ public void setWhatsappNumber(String whatsappNumber) {
+     this.whatsappNumber = whatsappNumber;
+ }
 }
