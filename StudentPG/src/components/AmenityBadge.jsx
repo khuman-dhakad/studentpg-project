@@ -5,7 +5,8 @@ import {
   MdAcUnit,
   MdRestaurant,
   MdShield,
-  MdFlashOn
+  MdFlashOn,
+  MdLocalParking
 } from 'react-icons/md';
 
 const iconMap = {
@@ -14,7 +15,8 @@ const iconMap = {
   food: <MdRestaurant />,
   security: <MdShield />,
   power: <MdFlashOn />,
-  laundry: <MdLocalAtm />
+  laundry: <MdLocalAtm />,
+  parking: <MdLocalParking />
 };
 // parking
 
@@ -26,6 +28,7 @@ export default function AmenityBadge({ name }) {
     <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 text-xs px-2.5 py-1 rounded-full font-medium border border-slate-200">
       {icon}
       <span className="capitalize">{name || 'Amenity'}</span>
+   
     </span>
   );
 }

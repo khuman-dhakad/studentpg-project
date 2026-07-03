@@ -10,10 +10,10 @@ import {
 } from 'react-icons/md';
 
 export default function OwnerDashboard() {
-  const { user, login } = useAuth(); // Local runtime mutations handler layer
+  const { user } = useAuth();
   
   // 1. Core State Managers
-  const [activeTab, setActiveTab] = useState('dashboard'); // Tabs: 'dashboard' or 'settings'
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [myPgs, setMyPgs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingProfile, setUpdatingProfile] = useState(false);
@@ -45,12 +45,10 @@ export default function OwnerDashboard() {
     let isMounted = true;
     if (!user) return;
 
-    const ownerId = user.id || user._id;
-    
-   api.get(ENDPOINTS.pgs.owner)
-  .then((res) => {
-    if (isMounted && res.data) setMyPgs(res.data);
-  })
+    api.get(ENDPOINTS.pgs.owner)
+      .then((res) => {
+        if (isMounted && res.data) setMyPgs(res.data);
+      })
       .catch((err) => console.error(err?.message))
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -92,10 +90,8 @@ export default function OwnerDashboard() {
     setUpdatingProfile(true);
 
     try {
-      // Points dynamically to your user update profile endpoint wrapper
       await api.put(`/auth/update-profile`, profileForm);
       alert("Profile data cluster successfully re-indexed!");
-      window.location.reload(); // Refresh to sync deep state context tree
     } catch (err) {
       alert(err?.message || "Profile data modification rejected by database.");
     } finally {
@@ -157,7 +153,7 @@ export default function OwnerDashboard() {
             <span>{user?.phone || profileForm.phone || "+91 Unset"}</span>
           </div>
           <div className="flex items-center gap-2 text-slate-300">
-            <MdMessage className="text-emerald-400 text-sm flex-shrink-0" />
+            <MdPhone className="text-emerald-400 text-sm flex-shrink-0" />
             <span>{user?.whatsappNumber || profileForm.whatsappNumber || "+91 Unset"}</span>
           </div>
         </div>
@@ -289,6 +285,7 @@ export default function OwnerDashboard() {
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs font-semibold outline-none focus:ring-1 focus:ring-slate-900 text-slate-900"
               />
             </div>
+            
             {/* WHATSAPP COMMUNICATION INPUT */}
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">WhatsApp Communication (+91)</label>

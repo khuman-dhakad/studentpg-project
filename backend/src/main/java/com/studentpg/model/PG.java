@@ -1,6 +1,7 @@
 package com.studentpg.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -13,6 +14,11 @@ public class PG {
     private String id;
 
     private String ownerId;
+    
+    // NAYA FIELD: Owner ka poora data isme load hoga
+    @DBRef
+    private Owner owner; 
+    
     private String pgName;
     private String description;
     private String address;
@@ -51,6 +57,16 @@ public class PG {
 
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+    }
+
+    // FIXED / ADDED METHOD 1: getter method for Owner
+    public Owner getOwner() {
+        return owner;
+    }
+
+    // FIXED / ADDED METHOD 2: setter method for Owner (Isse error door ho jayega)
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     public String getPgName() {

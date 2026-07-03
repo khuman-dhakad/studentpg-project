@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Integrated dynamic global context hook
+import { useAuth } from "../context/AuthContext"; // Dynamic global user authentication context
 import { MdPersonAddAlt, MdMailOutline, MdLockOutline, MdBadge, MdPhoneAndroid } from "react-icons/md";
 
 export default function OwnerRegister() {
   const navigate = useNavigate();
-  const { register } = useAuth(); // Destructured context register trigger node
+  const { register } = useAuth(); // Destructured function to register the user
 
-  // Form layout completely synchronized with Spring Boot OwnerRegisterRequest DTO
+  // Form states perfectly matched with the backend registration fields
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,10 +29,10 @@ export default function OwnerRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Bot attack blocker mitigation trigger
+    // Hidden form protection field to block automated spam bots
     if (honeypot) return;
 
-    // Advanced Local Client Check to match custom Spring Boot @Pattern annotation
+    // Checks if the phone number matches a valid 10-digit Indian mobile format
     const indianPhoneRegex = /^[6-9]\d{9}$/;
     if (!indianPhoneRegex.test(formData.phone)) {
       setStatus({
@@ -63,15 +63,15 @@ export default function OwnerRegister() {
     setStatus({ success: "", error: "" });
 
     try {
-      // Transmitting fully mapped payload fields matching OwnerRegisterRequest.java rules
+      // Sends form details to the system registration rules
       await register(formData);
 
       setStatus({
-        success: "Account created successfully! Forwarding to verification console...",
+        success: "Account created successfully! Redirecting to login page...",
         error: "",
       });
 
-      // Synced to the exact security route update done inside your App.jsx router
+      // Matches the precise redirect path configured in your main App routing setup
       setTimeout(() => navigate("/owner/login"), 2000);
     } catch (err) {
       setStatus({
@@ -79,7 +79,7 @@ export default function OwnerRegister() {
         error:
           err?.response?.data?.message ||
           err?.message ||
-          "Registration engine failed. Please audit connection parameters.",
+          "Registration failed. Please check your internet connection and try again.",
       });
     } finally {
       setLoading(false);
@@ -96,7 +96,7 @@ export default function OwnerRegister() {
             <span>Register as PG Owner</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Create an official portal account to host properties
+            Create an official account to list and manage your properties
           </p>
         </div>
 
@@ -123,7 +123,7 @@ export default function OwnerRegister() {
             onChange={(e) => setHoneypot(e.target.value)}
           />
 
-          {/* FULL NAME - FIXED FIELD */}
+          {/* FULL NAME */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">Full Legal Name</label>
             <div className="relative">
@@ -161,7 +161,7 @@ export default function OwnerRegister() {
             </div>
           </div>
 
-          {/* PHONE NUMBER - FIXED FIELD */}
+          {/* PHONE NUMBER */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">Mobile Number (Indian)</label>
             <div className="relative">
@@ -178,6 +178,8 @@ export default function OwnerRegister() {
               />
             </div>
           </div>
+
+          {/* WHATSAPP NUMBER */}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-bold text-slate-700">WhatsApp Number</label>
             <input 
@@ -218,7 +220,7 @@ export default function OwnerRegister() {
             disabled={loading}
             className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs tracking-wide transition-all shadow-sm disabled:opacity-50 mt-2"
           >
-            {loading ? "Registering account node..." : "Create Owner Account"}
+            {loading ? "Creating your account..." : "Create Owner Account"}
           </button>
         </form>
 

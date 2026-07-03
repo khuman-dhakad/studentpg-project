@@ -2,12 +2,12 @@ import api from "./axios";
 
 /**
  * ============================
- * AMENITY API
+ * AMENITY API ENDPOINTS
  * ============================
  */
 
 /**
- * Get All Amenities
+ * Get All Available Amenities
  * GET /amenities
  */
 export const getAllAmenities = async () => {
@@ -16,7 +16,7 @@ export const getAllAmenities = async () => {
 };
 
 /**
- * Get Amenity By ID
+ * Get Amenity Details By ID
  * GET /amenities/:id
  */
 export const getAmenityById = async (id) => {
@@ -25,7 +25,7 @@ export const getAmenityById = async (id) => {
 };
 
 /**
- * Create Amenity (Admin/Owner)
+ * Create New Amenity (Admin/Owner authorization required)
  * POST /amenities
  */
 export const createAmenity = async (data) => {
@@ -34,7 +34,7 @@ export const createAmenity = async (data) => {
 };
 
 /**
- * Update Amenity
+ * Update Existing Amenity Information
  * PUT /amenities/:id
  */
 export const updateAmenity = async (id, data) => {
@@ -46,7 +46,7 @@ export const updateAmenity = async (id, data) => {
 };
 
 /**
- * Delete Amenity
+ * Delete Amenity from the System
  * DELETE /amenities/:id
  */
 export const deleteAmenity = async (id) => {
@@ -55,7 +55,7 @@ export const deleteAmenity = async (id) => {
 };
 
 /**
- * Assign Amenities to PG
+ * Assign Amenities to a specific PG Profile
  * POST /pgs/:pgId/amenities
  */
 export const assignAmenitiesToPG = async (pgId, data) => {
@@ -68,13 +68,10 @@ export const assignAmenitiesToPG = async (pgId, data) => {
 };
 
 /**
- * Remove Amenity from PG
+ * Remove an Amenity option from a specific PG Profile
  * DELETE /pgs/:pgId/amenities/:amenityId
  */
-export const removeAmenityFromPG = async (
-  pgId,
-  amenityId
-) => {
+export const removeAmenityFromPG = async (pgId, amenityId) => {
   const response = await api.delete(
     `/pgs/${pgId}/amenities/${amenityId}`
   );

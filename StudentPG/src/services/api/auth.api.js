@@ -2,12 +2,12 @@ import api from "./axios";
 
 /**
  * ============================
- * AUTH API
+ * AUTHENTICATION (LOGIN & SIGNUP)
  * ============================
  */
 
 /**
- * Owner Register
+ * Register a New Owner
  * POST /auth/register
  */
 export const registerOwner = async (data) => {
@@ -19,7 +19,7 @@ export const registerOwner = async (data) => {
  * Owner Login
  * POST /auth/login
  *
- * Backend JWT ko HttpOnly Cookie me set karega.
+ * The backend will save the secure login token inside a protected cookie automatically.
  */
 export const loginOwner = async (data) => {
   const response = await api.post("/auth/login", data);
@@ -27,7 +27,7 @@ export const loginOwner = async (data) => {
 };
 
 /**
- * Logout
+ * Logout Owner
  * POST /auth/logout
  */
 export const logoutOwner = async () => {
@@ -36,7 +36,7 @@ export const logoutOwner = async () => {
 };
 
 /**
- * Current Logged In Owner
+ * Get Current Logged In Owner Profile
  * GET /auth/me
  */
 export const getCurrentOwner = async () => {
@@ -45,7 +45,7 @@ export const getCurrentOwner = async () => {
 };
 
 /**
- * Refresh Session (Optional)
+ * Refresh Login Session (Optional)
  * POST /auth/refresh
  */
 export const refreshSession = async () => {
@@ -54,7 +54,7 @@ export const refreshSession = async () => {
 };
 
 /**
- * Forgot Password
+ * Request Password Reset Link
  * POST /auth/forgot-password
  */
 export const forgotPassword = async (email) => {
@@ -66,7 +66,7 @@ export const forgotPassword = async (email) => {
 };
 
 /**
- * Reset Password
+ * Reset Password Using Token
  * POST /auth/reset-password
  */
 export const resetPassword = async (data) => {
@@ -75,7 +75,7 @@ export const resetPassword = async (data) => {
 };
 
 /**
- * Change Password
+ * Change Password While Logged In
  * POST /auth/change-password
  */
 export const changePassword = async (data) => {

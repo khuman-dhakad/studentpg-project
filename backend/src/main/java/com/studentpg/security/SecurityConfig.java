@@ -65,6 +65,7 @@ public class SecurityConfig {
                                 "/api/owners/reset-password"
                         ).permitAll()
                         // 🟢 ADDED BYPASS FOR STUDENT SEARCH GENERATORS & INQUIRY ENGINES
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/pgs/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/student/pgs/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/student/pgs/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/inquiries/**").permitAll()

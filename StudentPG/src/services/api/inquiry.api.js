@@ -2,12 +2,12 @@ import api from "./axios";
 
 /**
  * ============================
- * INQUIRY API
+ * STUDENT INQUIRY API
  * ============================
  */
 
 /**
- * Send Inquiry (Student -> PG Owner)
+ * Send Inquiry Form (From Student to PG Owner)
  * POST /inquiries
  */
 export const sendInquiry = async (data) => {
@@ -16,7 +16,7 @@ export const sendInquiry = async (data) => {
 };
 
 /**
- * Get All Inquiries (Admin/Owner)
+ * Get All Inquiries (Admin View)
  * GET /inquiries
  */
 export const getAllInquiries = async () => {
@@ -25,7 +25,7 @@ export const getAllInquiries = async () => {
 };
 
 /**
- * Get Inquiries by Owner
+ * Get All Inquiries Received by a Specific Owner
  * GET /inquiries/owner/:ownerId
  */
 export const getOwnerInquiries = async (ownerId) => {
@@ -36,7 +36,7 @@ export const getOwnerInquiries = async (ownerId) => {
 };
 
 /**
- * Get Inquiry by ID
+ * Get Single Inquiry Details by ID
  * GET /inquiries/:id
  */
 export const getInquiryById = async (id) => {
@@ -45,7 +45,7 @@ export const getInquiryById = async (id) => {
 };
 
 /**
- * Mark Inquiry as Read
+ * Mark a Received Inquiry as Read
  * PATCH /inquiries/:id/read
  */
 export const markInquiryAsRead = async (id) => {
@@ -56,7 +56,7 @@ export const markInquiryAsRead = async (id) => {
 };
 
 /**
- * Reply to Inquiry
+ * Send a Reply Message to an Inquiry
  * POST /inquiries/:id/reply
  */
 export const replyToInquiry = async (id, data) => {
@@ -69,7 +69,7 @@ export const replyToInquiry = async (id, data) => {
 };
 
 /**
- * Delete Inquiry
+ * Delete an Inquiry from the Dashboard
  * DELETE /inquiries/:id
  */
 export const deleteInquiry = async (id) => {

@@ -11,10 +11,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pgs")
+@CrossOrigin(origins = "*") // CORS Error block filter fix karne ke liye add kiya
 public class PGController {
 
     @Autowired
     private PGService pgService;
+
+    // ==========================================
+    // FIXED/ADDED ENDPOINT: Yeh dynamic ID lekar PGService ko connect karega
+    // ==========================================
+    @GetMapping("/{id}")
+    public PG getPGById(@PathVariable String id) {
+        return pgService.getPGById(id);
+    }
 
     @PostMapping
     public String addPG(@RequestBody PG pg) {

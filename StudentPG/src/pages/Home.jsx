@@ -6,7 +6,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     area: '',
-    budget: '15000', // Yeh UI state control ke liye rahega
+    budget: '15000',
     gender: '',
     roomType: ''
   });
@@ -14,11 +14,10 @@ export default function Home() {
   const handleSearch = (e) => {
     e.preventDefault();
     
-    // 🔥 FIX: Backend validation parameters mapping pipeline
     const queryParams = new URLSearchParams();
     
     if (filters.area) queryParams.append("area", filters.area);
-    if (filters.budget) queryParams.append("maxPrice", filters.budget); // Budget goes as 'maxPrice'
+    if (filters.budget) queryParams.append("maxPrice", filters.budget);
     if (filters.gender) queryParams.append("gender", filters.gender);
     if (filters.roomType) queryParams.append("roomType", filters.roomType);
 
@@ -27,7 +26,7 @@ export default function Home() {
 
   return (
     <main className="flex-grow">
-      {/* Hero Section with Bhopal Skyline Background Concept */}
+      {/* Hero Banner Section */}
       <section className="relative bg-slate-950 text-white py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-30 mix-blend-multiply pointer-events-none">
           <img 
@@ -45,7 +44,7 @@ export default function Home() {
             Simple pricing, clean hostels, and rooms near your college. Approved by real administrators.
           </p>
 
-          {/* Unified High-Performance Filter Hub Bar */}
+          {/* Property Search Filters */}
           <form onSubmit={handleSearch} className="bg-white p-4 rounded-xl shadow-xl text-slate-900 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end border border-slate-100">
             <div className="text-left">
               <label className="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-wider">Select Area</label>
@@ -93,8 +92,8 @@ export default function Home() {
                 onChange={(e) => setFilters({...filters, roomType: e.target.value})}
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold text-slate-800 focus:ring-1 focus:ring-emerald-500 outline-none h-10"
               >
-                <option value="">Any Mode</option>
-                <option value="Single">Single Bed</option>
+                <option value="">Any Sharing Type</option>
+                <option value="Single">Single Room</option>
                 <option value="Double">2 Sharing</option>
                 <option value="Triple">3 Sharing</option>
               </select>
@@ -113,18 +112,18 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           <div className="p-6 bg-white border border-slate-200 rounded-xl space-y-2 shadow-xs">
             <div className="w-9 h-9 bg-slate-900 text-white rounded-lg flex items-center justify-center text-xs font-black">01</div>
-            <h3 className="font-bold text-slate-900 text-sm">Admin Verified Listings</h3>
+            <h3 className="font-bold text-slate-900 text-sm">Verified Listings</h3>
             <p className="text-xs text-slate-500 leading-relaxed font-medium">Every single property is cross-checked manually by our team before listing publicly.</p>
           </div>
           <div className="p-6 bg-white border border-slate-200 rounded-xl space-y-2 shadow-xs">
             <div className="w-9 h-9 bg-slate-900 text-white rounded-lg flex items-center justify-center text-xs font-black">02</div>
             <h3 className="font-bold text-slate-900 text-sm">No Hidden Charges</h3>
-            <p className="text-xs text-slate-500 leading-relaxed font-medium">See exact pricing details, structural deposits, and amenities directly with zero brokers.</p>
+            <p className="text-xs text-slate-500 leading-relaxed font-medium">See exact pricing details, security deposits, and amenities directly with zero broker fees.</p>
           </div>
           <div className="p-6 bg-white border border-slate-200 rounded-xl space-y-2 shadow-xs">
             <div className="w-9 h-9 bg-slate-900 text-white rounded-lg flex items-center justify-center text-xs font-black">03</div>
-            <h3 className="font-bold text-slate-900 text-sm">Top Locations Embedded</h3>
-            <p className="text-xs text-slate-500 leading-relaxed font-medium">Find rooms within walking distances of institutes like LNCT, SIRT, MANIT or coaching hubs.</p>
+            <h3 className="font-bold text-slate-900 text-sm">Top Locations Included</h3>
+            <p className="text-xs text-slate-500 leading-relaxed font-medium">Find rooms within walking distance of institutes like LNCT, SIRT, MANIT, or coaching hubs.</p>
           </div>
         </div>
       </section>

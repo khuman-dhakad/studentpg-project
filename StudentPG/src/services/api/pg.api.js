@@ -2,30 +2,30 @@ import api from "./axios";
 
 /**
  * ============================
- * PG API
+ * PROPERTY LISTINGS (PG) API
  * ============================
  */
 
 /**
- * Get All PGs
+ * Get All Registered PGs
  * GET /student/pgs
  */
 export const getAllPGs = async () => {
-  const response = await api.get("/student/pgs"); // ✅ Fixed mapping
+  const response = await api.get("/student/pgs"); // ✅ Connected to student route
   return response.data;
 };
 
 /**
- * Get PG By Id
+ * Get Single PG Property Details By Id
  * GET /student/pgs/:id
  */
 export const getPGById = async (id) => {
-  const response = await api.get(`/student/pgs/${id}`); // ✅ Fixed mapping
+  const response = await api.get(`/student/pgs/${id}`); // ✅ Connected to student route
   return response.data;
 };
 
 /**
- * Create PG
+ * Create a New PG Property Listing
  * POST /pgs
  */
 export const createPG = async (data) => {
@@ -34,7 +34,7 @@ export const createPG = async (data) => {
 };
 
 /**
- * Update PG
+ * Update Existing PG Details
  * PUT /pgs/:id
  */
 export const updatePG = async (id, data) => {
@@ -43,7 +43,7 @@ export const updatePG = async (id, data) => {
 };
 
 /**
- * Delete PG
+ * Delete a PG Listing from the App
  * DELETE /pgs/:id
  */
 export const deletePG = async (id) => {
@@ -51,9 +51,8 @@ export const deletePG = async (id) => {
   return response.data;
 };
 
-
 /**
- * Owner PGs
+ * Get All PG Properties Owned by a Specific Person
  * GET /pgs/owner/:ownerId
  */
 export const getOwnerPGs = async (ownerId) => {
@@ -62,27 +61,27 @@ export const getOwnerPGs = async (ownerId) => {
 };
 
 /**
- * Search PGs
+ * Search and Filter through PG Listings
  * GET /student/pgs/filter
  */
 export const searchPGs = async (params) => {
-  const response = await api.get("/student/pgs/filter", { // ✅ Fixed mapping
+  const response = await api.get("/student/pgs/filter", { // ✅ Connected to filter route
     params,
   });
   return response.data;
 };
 
 /**
- * Featured PGs
+ * Get Featured Premium PGs for the Home Screen
  * GET /student/pgs/featured
  */
 export const getFeaturedPGs = async () => {
-  const response = await api.get("/student/pgs/featured"); // ✅ Fixed mapping
+  const response = await api.get("/student/pgs/featured"); // ✅ Connected to featured route
   return response.data;
 };
 
 /**
- * Nearby PGs
+ * Find Nearby Properties using Location Parameters
  * GET /pgs/nearby
  */
 export const getNearbyPGs = async (params) => {
@@ -93,7 +92,7 @@ export const getNearbyPGs = async (params) => {
 };
 
 /**
- * Upload Images
+ * Upload Multiple Property Images to Server Storage
  * POST /pgs/:id/images
  */
 export const uploadPGImages = async (id, files) => {
@@ -117,7 +116,7 @@ export const uploadPGImages = async (id, files) => {
 };
 
 /**
- * Delete Image
+ * Delete a Specific Image from a PG Listing
  * DELETE /pgs/:id/images/:imageId
  */
 export const deletePGImage = async (pgId, imageId) => {

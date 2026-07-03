@@ -84,9 +84,9 @@ export default function AddPG() {
     } catch (err) {
       console.error("Cloudinary upload asset rejection:", err);
       alert("Failed to host image assets onto storage cloud. Try again.");
-    } planetary_cleanup: {
-      setUploadingField("");
-    }
+    } finally {
+  setUploadingField("");
+}
   };
 
   const handleAmenityChange = (amenityKey) => {
@@ -113,7 +113,8 @@ export default function AddPG() {
     e.preventDefault();
     
     if (formData.uploadedImageUrls.length === 0) {
-      setStatus({ type: "error", message: "Validation context rejected. Upload at least one property image node." });
+     setStatus({ type: "error", message: "Please upload at least one PG photo!" });
+
       return;
     }
 
@@ -143,9 +144,10 @@ export default function AddPG() {
       await createPG(backendPayload);
 
       setStatus({
-        type: "success",
-        message: "Success! Secure onboarding complete. Property queued for review.",
-      });
+  type: "success",
+  message: "Congratulations! Your PG has been registered. It will be visible to everyone after admin approval.",
+});
+
 
       // Clear layout buffers seamlessly
       setFormData({
@@ -169,8 +171,9 @@ export default function AddPG() {
     <main className="max-w-3xl mx-auto my-12 px-4 flex-grow w-full">
       <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm">
         
-        <h1 className="text-xl font-bold text-slate-900 mb-1">Verify Host & Upload PG</h1>
-        <p className="text-xs text-slate-400 mb-6">Complete identity registration and property asset mapping protocols.</p>
+<h1 className="text-xl font-bold text-slate-900 mb-1">List Your PG</h1>
+<p className="text-xs text-slate-400 mb-6">Please enter correct details so students can find your PG.</p>
+
 
         {status.message && (
           <div className={`p-3 rounded-lg text-xs font-bold mb-6 ${status.type === "success" ? "bg-emerald-50 border border-emerald-200 text-emerald-800" : "bg-red-50 border border-red-200 text-red-800"}`}>
@@ -184,7 +187,7 @@ export default function AddPG() {
           <div className="space-y-4 border-b border-slate-100 pb-6">
             <h2 className="text-xs uppercase font-black tracking-wider text-slate-400 flex items-center gap-1.5">
               <MdPerson className="text-base text-emerald-500" />
-              <span>1. Property Core Specifications</span>
+              <span>1. Basic Details of PG</span>
             </h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -218,7 +221,7 @@ export default function AddPG() {
           <div className="space-y-4 border-b border-slate-100 pb-6">
             <h2 className="text-xs uppercase font-black tracking-wider text-slate-400 flex items-center gap-1.5">
               <MdFingerprint className="text-base text-emerald-500" />
-              <span>2. Verification Credentials</span>
+              <span>2. Owner Identity Verification </span>
             </h2>
 
             <div>
@@ -269,7 +272,7 @@ export default function AddPG() {
           <div className="space-y-4 border-b border-slate-100 pb-6">
             <h2 className="text-xs uppercase font-black tracking-wider text-slate-400 flex items-center gap-1.5">
               <MdBusiness className="text-base text-emerald-500" />
-              <span>3. Rent Logistics Matrix</span>
+              <span>3. Rent or Room Setting</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -347,7 +350,8 @@ export default function AddPG() {
 
           {/* SUBMIT */}
           <button type="submit" disabled={loading || uploadingField !== ""} className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg text-xs tracking-wider transition-all shadow-md disabled:opacity-40">
-            {loading ? "Transmitting payload matrices to core database..." : "Submit Host Profile & Listing Data"}
+          {loading ? "Saving..." : "Go Live Now"}
+
           </button>
         </form>
       </div>

@@ -65,7 +65,7 @@ export default function AdminDashboard() {
       setMasterList(dataPayload);
       setFilteredList(dataPayload);
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to load database nodes.");
+setError(err?.response?.data?.message || err?.message || "Could not retrieve property listings. Please try again.");
       setMasterList([]);
       setFilteredList([]);
     } finally {
@@ -135,11 +135,11 @@ export default function AdminDashboard() {
 
       if (actionType === "APPROVED") {
         await api.put(`/admin/pgs/${pgId}/approve`);
-        alert("Property Listing approved and set to live index successfully!");
+        alert("Property approved successfully! It is now visible to all students.");
       } else if (actionType === "REJECTED") {
         if (!window.confirm("Are you sure you want to reject/remove this PG listing?")) return;
         await api.delete(`/admin/pgs/${pgId}`);
-        alert("Listing successfully deleted from database registry.");
+       alert("The property listing has been permanently removed.");
       }
 
       // Live lists ko update karo bina refresh kiye
@@ -163,13 +163,13 @@ export default function AdminDashboard() {
             <MdSecurity className="text-amber-500 text-2xl" />
             <span>StudentPG Admin Workspace</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Audit property details, analyze host credentials, and inspect Cloudinary secure images pipelines.
-          </p>
+         <p className="text-xs text-slate-400 mt-0.5">
+  Review property descriptions, check verified images, and manage pending applications.
+</p>
         </div>
         <div className="bg-slate-800 border border-slate-700 px-4 py-1.5 rounded-xl text-center">
           <p className="text-[9px] uppercase tracking-wider font-extrabold text-slate-500">Workspace Context</p>
-          <p className="text-xs font-bold text-amber-400">{activeTab} LISTINGS</p>
+          <p className="text-xs font-bold text-amber-400">{activeTab} List Your PG</p>
         </div>
       </div>
 
@@ -275,11 +275,11 @@ export default function AdminDashboard() {
 
       {/* CORE CARDS MANAGEMENT GRID */}
       {loading ? (
-        <div className="text-center py-20 text-xs font-bold text-slate-400">Syncing active production collections...</div>
+        <div className="text-center py-20 text-xs font-bold text-slate-400">Loading current property listings from the server...</div>
       ) : filteredList.length === 0 ? (
         <div className="text-center py-20 text-xs font-bold text-slate-400 bg-white rounded-xl border border-dashed border-slate-200">
-          No real matching data entries found in database indices.
-        </div>
+  No listings found matching your current search filter or selected tab.
+</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredList.map((item) => {

@@ -11,15 +11,15 @@ import {
 export default function OwnerProfile() {
   const navigate = useNavigate();
 
-  // 1. Core Profile, Bio & Assets States
+  // 1. Core Profile, Bio & Properties States
   const [profile, setProfile] = useState(null);
   const [myPgs, setMyPgs] = useState([]);
   const [activeTab, setActiveTab] = useState('pgs'); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   
-  // Custom Localized Bio and Avatar Layer State Extensions (✅ Made dynamically decoupled per unique email reference)
-  const [bio, setBio] = useState("Managing premium properties across Bhopal hub networks. Dedicated to providing safe, comfortable, and standardized accommodation nodes for modern scholars.");
+  // Custom Profile Details (Decoupled per user email)
+  const [bio, setBio] = useState("Managing premium properties across Bhopal. Dedicated to providing safe, comfortable, and quality accommodation for modern students and professionals.");
   const [avatarPreview, setAvatarPreview] = useState(null);
 
   // 2. Interactive Modals Overlays States
@@ -36,7 +36,7 @@ export default function OwnerProfile() {
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
-  // Fetch initial profile dossier registries
+  // Fetch initial dashboard data
   const fetchOwnerDashboardData = async () => {
     setLoading(true);
     setError("");
@@ -44,7 +44,7 @@ export default function OwnerProfile() {
       const profileRes = await api.get(ENDPOINTS.auth.me || '/owners/profile');
       setProfile(profileRes.data);
       
-      // ✅ FIX: Extract user dynamic persistent profile photo context mapping
+      // Extract profile photo if available
       if (profileRes.data && profileRes.data.email) {
         const savedPhoto = localStorage.getItem(`owner_avatar_persistent_${profileRes.data.email}`);
         if (savedPhoto) {
@@ -65,8 +65,8 @@ export default function OwnerProfile() {
       const pgsRes = await api.get(ENDPOINTS.pgs.owner || '/pgs/owner');
       setMyPgs(pgsRes.data || []);
     } catch (err) {
-      console.error("Dashboard engine data load failure:", err);
-      setError(err.message || "Failed to load professional host profile dashboards.");
+      console.error("Dashboard data load failure:", err);
+      setError(err.message || "Failed to load owner profile dashboard.");
     } finally {
       setLoading(false);
     }
@@ -76,24 +76,24 @@ export default function OwnerProfile() {
     fetchOwnerDashboardData();
   }, []);
 
-  // Handle Local File Upload Selection (✅ Enabled strict unique email bucket key routing mapping resilience)
+  // Handle Profile Picture Upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64Data = reader.result;
-        setAvatarPreview(base64Data); // Base64 encoding for local preview display
+        setAvatarPreview(base64Data);
         
         if (profile && profile.email) {
-          localStorage.setItem(`owner_avatar_persistent_${profile.email}`, base64Data); // Secure partitioned layout map dump
+          localStorage.setItem(`owner_avatar_persistent_${profile.email}`, base64Data);
         }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Update Personal Profile Controller
+  // Update Personal Profile Details
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -105,7 +105,6 @@ export default function OwnerProfile() {
         whatsappNumber: editForm.whatsappNumber,
       });
       
-      // ✅ Adjust active photo registry state mapping if user modifies structural key fields
       if (avatarPreview && profile && profile.email && profile.email !== editForm.email) {
         localStorage.setItem(`owner_avatar_persistent_${editForm.email}`, avatarPreview);
       }
@@ -114,9 +113,9 @@ export default function OwnerProfile() {
       setBio(editForm.bio);
       
       setIsEditModalOpen(false);
-      alert("Profile data updated successfully!");
+      alert("Profile updated successfully!");
     } catch (err) {
-      alert(err.message || "Failed to transmit profile updates. Ensure fields match patterns.");
+      alert(err.message || "Failed to update profile. Please ensure all fields are correct.");
     } finally {
       setSubmitting(false);
     }
@@ -137,23 +136,23 @@ export default function OwnerProfile() {
       });
       setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
       setIsSettingsModalOpen(false);
-      alert("Security credentials modified successfully!");
+      alert("Password changed successfully!");
     } catch (err) {
-      alert(err.message || "Failed to alter password parameters. Ensure it meets size rules.");
+      alert(err.message || "Failed to change password. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Delete PG Action Pipeline
+  // Delete Property Action
   const handleDeletePg = async (pgId) => {
-    if (!window.confirm("Are you absolutely sure you want to completely remove this PG listing from production?")) return;
+    if (!window.confirm("Are you sure you want to permanently delete this PG listing?")) return;
     try {
       await api.delete(`${ENDPOINTS.pgs.base}/${pgId}`);
-      alert("Property record completely unmapped successfully.");
+      alert("Property listing removed successfully.");
       setMyPgs(prev => prev.filter(item => (item.id || item._id) !== pgId));
     } catch (err) {
-      alert(err.message || "Failed to delete target property node.");
+      alert(err.message || "Failed to delete the property listing.");
     }
   };
 
@@ -161,7 +160,7 @@ export default function OwnerProfile() {
     return (
       <div className="max-w-6xl mx-auto px-4 py-32 text-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-slate-900 mx-auto mb-4"></div>
-        <p className="text-xs font-semibold text-slate-400 tracking-wide">Assembling authorized host dashboards...</p>
+        <p className="text-xs font-semibold text-slate-400 tracking-wide">Loading owner dashboard...</p>
       </div>
     );
   }
@@ -183,7 +182,6 @@ export default function OwnerProfile() {
               <MdAccountCircle className="text-7xl text-emerald-400" />
             )}
             
-            {/* Hidden Input Component Node */}
             <label className="absolute inset-0 bg-black/50 opacity-0 group-hover/avatar:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white text-[10px] font-black uppercase tracking-wider gap-1 select-none">
               <MdPhotoCamera className="text-xl text-emerald-400" />
               <span>Change</span>
@@ -193,12 +191,11 @@ export default function OwnerProfile() {
           
           <div className="text-center sm:text-left flex-grow space-y-2">
             <div className="flex flex-wrap justify-center sm:justify-start items-center gap-2">
-              {/* ✅ FIX: Robust fallback evaluation metrics mapping */}
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-                {profile.name || (profile.role === 'ADMIN' ? 'Admin Dashboard' : 'Owner Dashboard')}
+                {profile?.name || (profile?.role === 'ADMIN' ? 'Admin Dashboard' : 'Owner Dashboard')}
               </h1>
               <span className="bg-emerald-500/20 text-emerald-300 text-[10px] uppercase font-black tracking-wider px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
-                <MdVerified /> {profile.role === 'ADMIN' ? 'System Admin Node' : 'Verified Partner'}
+                <MdVerified /> {profile?.role === 'ADMIN' ? 'System Admin' : 'Verified Partner'}
               </span>
             </div>
             
@@ -207,9 +204,9 @@ export default function OwnerProfile() {
             </p>
             
             <div className="flex flex-wrap justify-center sm:justify-start gap-4 pt-2 text-xs text-slate-300 font-semibold">
-              <span className="flex items-center gap-1"><MdMail className="text-emerald-400 text-sm" /> {profile.email}</span>
-              {profile.phone && <span className="flex items-center gap-1"><MdPhone className="text-emerald-400 text-sm" /> {profile.phone}</span>}
-              {profile.whatsappNumber && <span className="flex items-center gap-1"><MdPhone className="text-emerald-400 text-sm" /> {profile.whatsappNumber} (WhatsApp)</span>}
+              <span className="flex items-center gap-1"><MdMail className="text-emerald-400 text-sm" /> {profile?.email}</span>
+              {profile?.phone && <span className="flex items-center gap-1"><MdPhone className="text-emerald-400 text-sm" /> {profile.phone}</span>}
+              {profile?.whatsappNumber && <span className="flex items-center gap-1"><MdPhone className="text-emerald-400 text-sm" /> {profile.whatsappNumber} (WhatsApp)</span>}
             </div>
           </div>
 
@@ -231,26 +228,26 @@ export default function OwnerProfile() {
       </div>
 
       {/* 📊 BUSINESS HIGHLIGHTS */}
-     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 flex items-center justify-between group hover:border-emerald-500/20 transition-all">
           <div className="space-y-1">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Inventory Listings</p>
-            <p className="text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors">{myPgs.length} Active Node</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Properties</p>
+            <p className="text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors">{myPgs.length} Active</p>
           </div>
           <div className="bg-emerald-50 p-4 rounded-2xl text-emerald-600 text-2xl transition-transform group-hover:scale-110"><MdHome /></div>
         </div>
         
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 flex items-center justify-between group hover:border-blue-500/20 transition-all">
           <div className="space-y-1">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Primary Regional Zone</p>
-            <p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{profile.city || "Bhopal MP"}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Primary City Location</p>
+            <p className="text-3xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">{profile?.city || "Bhopal, MP"}</p>
           </div>
           <div className="bg-blue-50 p-4 rounded-2xl text-blue-600 text-2xl transition-transform group-hover:scale-110"><MdVerified /></div>
         </div>
 
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 flex items-center justify-between group hover:border-purple-500/20 transition-all">
           <div className="space-y-1">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Host Classification Tier</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Account Status</p>
             <p className="text-3xl font-black text-purple-600 tracking-tight">Premium Verified</p>
           </div>
           <div className="bg-purple-50 p-4 rounded-2xl text-purple-600 text-2xl transition-transform group-hover:scale-110"><MdCalendarToday /></div>
@@ -260,10 +257,10 @@ export default function OwnerProfile() {
       {/* 🧭 NAVIGATION TABS */}
       <div className="border-b border-slate-200 mb-6 flex gap-6">
         <button onClick={() => setActiveTab('pgs')} className={`pb-3 text-xs uppercase font-black tracking-wider border-b-2 transition-all ${activeTab === 'pgs' ? 'border-slate-950 text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>
-          My Listed Properties ({myPgs.length})
+          My Listings ({myPgs.length})
         </button>
         <button onClick={() => setActiveTab('overview')} className={`pb-3 text-xs uppercase font-black tracking-wider border-b-2 transition-all ${activeTab === 'overview' ? 'border-slate-950 text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>
-          Full Profile Dossier
+          Profile Details
         </button>
       </div>
 
@@ -272,13 +269,13 @@ export default function OwnerProfile() {
         <div className="space-y-6">
           <div className="flex justify-end">
             <Link to="/add-pg" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-1.5 transition-all">
-              <MdAddCircle className="text-base" /> Add New PG Node
+              <MdAddCircle className="text-base" /> Add New PG Listing
             </Link>
           </div>
 
           {myPgs.length === 0 ? (
             <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-              <p className="text-sm font-bold text-slate-700">No properties mapped to this node yet.</p>
+              <p className="text-sm font-bold text-slate-700">No properties listed yet.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -307,27 +304,25 @@ export default function OwnerProfile() {
       ) : (
         <div className="bg-white rounded-2xl border border-slate-100 p-6 max-w-2xl space-y-6">
           <div>
-            <h3 className="text-sm font-black mb-3 uppercase tracking-wider text-slate-400">Security Credentials Registry</h3>
+            <h3 className="text-sm font-black mb-3 uppercase tracking-wider text-slate-400">Account Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold text-slate-700">
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="block text-[10px] text-slate-400 uppercase font-black">Legal Owner Handle</span>
-                <span className="text-slate-900 text-sm font-bold">{profile.name}</span>
+                <span className="block text-[10px] text-slate-400 uppercase font-black">Owner Name</span>
+                <span className="text-slate-900 text-sm font-bold">{profile?.name}</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="block text-[10px] text-slate-400 uppercase font-black">Registered Access Email</span>
-                <span className="text-slate-900 font-mono">{profile.email}</span>
+                <span className="block text-[10px] text-slate-400 uppercase font-black">Email Address</span>
+                <span className="text-slate-900 font-mono">{profile?.email}</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="block text-[10px] text-slate-400 uppercase font-black">Direct Contact Route</span>
-                <span className="text-slate-900 font-bold">{profile.phone || "Not Configured"}</span>
+                <span className="block text-[10px] text-slate-400 uppercase font-black">Phone Number</span>
+                <span className="text-slate-900 font-bold">{profile?.phone || "Not Set"}</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="block text-[10px] text-slate-400 uppercase font-black">WhatsApp Communication</span>
-                <span className="text-slate-900 font-bold">{profile.whatsappNumber || "Not Configured"}</span>
-             </div>
-             
-                           
-             </div>
+                <span className="block text-[10px] text-slate-400 uppercase font-black">WhatsApp Number</span>
+                <span className="text-slate-900 font-bold">{profile?.whatsappNumber || "Not Set"}</span>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -337,12 +332,12 @@ export default function OwnerProfile() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100">
             <div className="bg-slate-900 p-4 text-white flex justify-between items-center">
-              <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><MdEdit className="text-emerald-400" /> Overhaul Profile Parameters</h3>
+              <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><MdEdit className="text-emerald-400" /> Edit Profile Details</h3>
               <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-white transition-colors text-xl"><MdClose /></button>
             </div>
             <form onSubmit={handleUpdateProfile} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Full Legal Name</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Full Name</label>
                 <input 
                   type="text" 
                   value={editForm.name} 
@@ -352,7 +347,7 @@ export default function OwnerProfile() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Communication Mailbox (Email)</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Email Address</label>
                 <input 
                   type="email" 
                   value={editForm.email} 
@@ -362,7 +357,7 @@ export default function OwnerProfile() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Active Contact Route (Phone)</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Phone Number</label>
                 <input 
                   type="text" 
                   value={editForm.phone} 
@@ -383,7 +378,7 @@ export default function OwnerProfile() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Host Biography / About Content</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">About Me / Bio</label>
                 <textarea 
                   value={editForm.bio} 
                   rows={3}
@@ -396,7 +391,7 @@ export default function OwnerProfile() {
                 disabled={submitting}
                 className="w-full mt-2 bg-slate-900 text-white font-black text-xs uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-800 transition-all"
               >
-                <MdSave className="text-base text-emerald-400" /> {submitting ? "Processing..." : "Commit Update Pipeline"}
+                <MdSave className="text-base text-emerald-400" /> {submitting ? "Saving..." : "Save Changes"}
               </button>
             </form>
           </div>
@@ -408,14 +403,13 @@ export default function OwnerProfile() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100">
             <div className="bg-slate-900 p-4 text-white flex justify-between items-center">
-              <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><MdLock className="text-blue-400" /> Security Credentials Config</h3>
+              <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><MdLock className="text-blue-400" /> Change Password</h3>
               <button onClick={() => setIsSettingsModalOpen(false)} className="text-slate-400 hover:text-white transition-colors text-xl"><MdClose /></button>
             </div>
             <form onSubmit={handleChangePassword} className="p-6 space-y-4">
               
-              {/* Field 1: Old Password */}
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Current Master Password</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Current Password</label>
                 <div className="relative">
                   <input 
                     type={showOldPass ? "text" : "password"} 
@@ -430,9 +424,8 @@ export default function OwnerProfile() {
                 </div>
               </div>
 
-              {/* Field 2: New Password */}
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">New Password Node</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">New Password</label>
                 <div className="relative">
                   <input 
                     type={showNewPass ? "text" : "password"} 
@@ -447,9 +440,8 @@ export default function OwnerProfile() {
                 </div>
               </div>
 
-              {/* Field 3: Confirm New Password */}
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Confirm New Password Node</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Confirm New Password</label>
                 <div className="relative">
                   <input 
                     type={showConfirmPass ? "text" : "password"} 
@@ -469,7 +461,7 @@ export default function OwnerProfile() {
                 disabled={submitting}
                 className="w-full mt-2 bg-slate-900 text-white font-black text-xs uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-800 transition-all"
               >
-                <MdSave className="text-base text-blue-400" /> {submitting ? "Re-authorizing..." : "Overhaul Security Matrix"}
+                <MdSave className="text-base text-blue-400" /> {submitting ? "Updating..." : "Update Password"}
               </button>
             </form>
           </div>

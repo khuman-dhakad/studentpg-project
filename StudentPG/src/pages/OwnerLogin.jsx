@@ -29,18 +29,16 @@ export default function OwnerLogin() {
         password: formData.password,
       });
 
-      // ✅ FIX: Extracts role directly from flat LoginResponse.java properties
+      // Extracts role directly from flat LoginResponse.java properties
       const role = responseData?.role ? String(responseData.role).toUpperCase() : "";
 
       // Dynamic role redirection engine mapping
       if (role === "ADMIN") {
-        // 💡 FIXED: Changed "/admin" to exact match "/admin/dashboard" matching your App.jsx route blueprint
         navigate("/admin/dashboard", { replace: true });
       } else if (role === "OWNER") {
-        navigate("/add-pg", { replace: true });
+        navigate("/owner/dashboard", { replace: true });
       } else {
-        // Fallback standard routing
-        navigate("/add-pg", { replace: true });
+        navigate("/owner/dashboard", { replace: true });
       }
     } catch (err) {
       setError(

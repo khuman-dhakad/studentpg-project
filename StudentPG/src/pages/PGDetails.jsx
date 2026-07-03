@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api, { ENDPOINTS } from "../services/api/axios"; // Centralized custom axios layer
+import api, { ENDPOINTS } from "../services/api/axios"; // Centralized custom axios helper instance
 import AmenityBadge from '../components/AmenityBadge';
 import { formatINR } from "../utils/helpers";
 import { getOptimizedUrl } from "../utils/cloudinaryUpload"; 
 import { MdVerified, MdInfo, MdPhone, MdMail, MdLocationOn, MdChat } from 'react-icons/md';
-import { FaWhatsapp, FaPhoneAlt, FaEnvelope } from "react-icons/fa"; // Added icons for explicit contact blocks
+import { FaWhatsapp, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 
 export default function PGDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // 1. Core Server States
+  // 1. Core Property States
   const [pg, setPg] = useState(null);
   const [activeImage, setActiveImage] = useState(""); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   /**
-   * FETCH REAL PG DATA WITH SYNCED KEYS
+   * FETCH LIVE PG DATA FROM BACKEND BY ID
    */
   useEffect(() => {
     let isMounted = true;
@@ -28,6 +28,7 @@ export default function PGDetails() {
     api.get(`${ENDPOINTS.pgs.base}/${id}`)
       .then((res) => {
         if (isMounted && res.data) {
+          console.log("=== API RESPONSE RECEIVED IN PG-DETAILS ===", res.data); // Debug tracking logger
           setPg(res.data);
           if (res.data.images && res.data.images.length > 0) {
             setActiveImage(res.data.images[0].url || res.data.images[0]);
@@ -36,7 +37,8 @@ export default function PGDetails() {
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err?.response?.data?.message || err?.message || "Listing data could not be indexed.");
+          console.error("API Fetch Error on Details Node:", err);
+          setError(err?.response?.data?.message || err?.message || "Property information could not be found.");
         }
       })
       .finally(() => {
@@ -50,7 +52,7 @@ export default function PGDetails() {
     return (
       <div className="max-w-5xl mx-auto px-4 py-32 text-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-        <p className="text-xs font-semibold text-slate-400 tracking-wide">Syncing real-time property cluster registries...</p>
+        <p className="text-xs font-semibold text-slate-400 tracking-wide">Loading property details...</p>
       </div>
     );
   }
@@ -59,8 +61,8 @@ export default function PGDetails() {
     return (
       <div className="max-w-md mx-auto my-16 p-6 bg-red-50 border border-red-200 rounded-xl text-center">
         <MdInfo className="text-red-500 text-3xl mx-auto mb-2" />
-        <h3 className="text-sm font-bold text-red-900">Database Search Rejected</h3>
-        <p className="text-xs text-red-700 mt-1">{error || "The requested listing asset ID does not exist."}</p>
+        <h3 className="text-sm font-bold text-red-900">Property Search Failed</h3>
+        <p className="text-xs text-red-700 mt-1">{error || "The requested property listing does not exist."}</p>
       </div>
     );
   }
@@ -68,11 +70,18 @@ export default function PGDetails() {
   const pgImagesList = pg?.images && pg.images.length > 0 ? pg.images.map(img => img.url || img) : [];
   const heroDisplayImage = activeImage || pgImagesList[0] || pg?.image || "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1000";
 
-  // Pre-configured dynamic string mappings for user interactions (handling multiple fallbacks cleanly)
-  const targetWhatsappNumber = pg.ownerWhatsapp || pg.whatsappNumber || pg.owner?.whatsappNumber || pg.ownerPhone || pg.phone || pg.owner?.phone || "";
-  const targetPhoneCall = pg.ownerPhone || pg.phone || pg.owner?.phone || "";
-  const targetEmailAddress = pg.ownerEmail || pg.email || pg.owner?.email || "support@studentpg.com";
-  const whatsappTemplateMsg = encodeURIComponent(`Hello, I am interested in booking a slot at your property "${pg.pgName || 'Premium Co-living Space'}" listed on StudentPG.`);
+  // =========================================================================
+  // 🟢 CRITICAL RESOLUTION LAYER: Deep scanning nested objects or fallback keys
+  // =========================================================================
+  const targetOwnerName = pg?.owner?.name || pg?.ownerName || pg?.owner?.ownerName || pg?.owner?.username || "Authorized Verified Owner";
+  
+  const targetPhoneCall = pg?.owner?.phone || pg?.ownerPhone || pg?.phone || pg?.owner?.mobile || pg?.mobile || "9";
+  
+  const targetWhatsappNumber = pg?.owner?.whatsappNumber || pg?.owner?.whatsappnumber || pg?.whatsappNumber || pg?.ownerWhatsapp || pg?.owner?.whatsapp || targetPhoneCall;
+  
+  const targetEmailAddress = pg?.owner?.email || pg?.ownerEmail || pg?.email || pg?.owner?.ownerEmail || "care@studentpg.com";
+
+  const whatsappTemplateMsg = encodeURIComponent(`Hello, I am interested in booking a slot at your property "${pg.pgName || pg.title || 'Premium Co-living Space'}" listed on StudentPG.`);
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8 flex-grow">
@@ -86,7 +95,7 @@ export default function PGDetails() {
             <div className="bg-slate-100 rounded-xl overflow-hidden h-72 sm:h-96 border border-slate-200 shadow-xs">
               <img 
                 src={getOptimizedUrl(heroDisplayImage, 1000, 600)} 
-                alt={pg.pgName || "Premium Student PG"}
+                alt={pg.pgName || pg.title || "Premium Student PG"}
                 className="w-full h-full object-cover transition-all duration-300"
               />
             </div>
@@ -117,21 +126,21 @@ export default function PGDetails() {
                 {pg.gender || "Unisex"} Only
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-1">{pg.pgName || "Premium Co-living Space"}</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-1">{pg.pgName || pg.title || "Premium Co-living Space"}</h1>
             <p className="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
               <MdLocationOn className="text-base flex-shrink-0" />
-              <span>{pg.address || "Local Hub"}, {pg.city || "Bhopal"} {pg.pincode ? `(${pg.pincode})` : ""}</span>
+              <span>{pg.address || pg.area || "Local Hub"}, {pg.city || "Bhopal"} {pg.pincode ? `(${pg.pincode})` : ""}</span>
             </p>
             
             <hr className="border-slate-200 my-5" />
             
-            <h2 className="text-xs uppercase font-black tracking-wider text-slate-400 mb-2">About Property Specs</h2>
+            <h2 className="text-xs uppercase font-black tracking-wider text-slate-400 mb-2">About the Property</h2>
             <p className="text-slate-600 text-xs leading-relaxed font-medium bg-slate-50/50 p-3 rounded-lg border border-slate-100">
-              {pg.description || "Premium options tailored for strategic student onboarding."}
+              {pg.description || "Premium accommodation options tailored for student needs."}
             </p>
           </div>
 
-          {/* UTILITIES PERKS MATRIX */}
+          {/* UTILITIES PERKS */}
           <div>
             <h2 className="text-xs uppercase font-black tracking-wider text-slate-400 mb-3">Included Utilities & Perks</h2>
             <div className="flex flex-wrap gap-1.5">
@@ -140,52 +149,52 @@ export default function PGDetails() {
               {pg.parkingAvailable && <span className="bg-slate-50 text-slate-600 text-[10px] font-bold px-2.5 py-1.5 rounded-md border border-slate-100">🚗 Secured Parking</span>}
               {pg.laundryAvailable && <span className="bg-slate-50 text-slate-600 text-[10px] font-bold px-2.5 py-1.5 rounded-md border border-slate-100">🧺 Laundry Access</span>}
               {!pg.wifiAvailable && !pg.foodAvailable && !pg.parkingAvailable && !pg.laundryAvailable && (
-                <span className="text-xs font-semibold text-slate-400">Standard essential baseline metrics.</span>
+                <span className="text-xs font-semibold text-slate-400">Standard essential baseline utilities.</span>
               )}
             </div>
           </div>
 
-          {/* HOST NODE DATA */}
+          {/* HOST DATA SECTION */}
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <h3 className="text-xs uppercase font-black tracking-wider text-slate-400">Onboarded Host Details</h3>
+            <h3 className="text-xs uppercase font-black tracking-wider text-slate-400">Host Details</h3>
             <div className="text-xs font-bold text-slate-800 space-y-1">
-              <p className="flex items-center gap-1.5"><MdInfo className="text-emerald-500 text-sm" /> Host Profile: <span className="font-semibold text-slate-600">{pg.ownerName || "Authorized Verified Owner"}</span></p>
-              <p className="flex items-center gap-1.5"><MdMail className="text-emerald-500 text-sm" /> Business Node: <span className="font-mono font-medium text-slate-500">{targetEmailAddress}</span></p>
-              {targetPhoneCall && <p className="flex items-center gap-1.5"><MdPhone className="text-emerald-500 text-sm" /> Direct Line: <span className="font-semibold text-slate-600">{targetPhoneCall}</span></p>}
-              {targetWhatsappNumber && <p className="flex items-center gap-1.5"><MdChat className="text-emerald-500 text-sm" /> WhatsApp: <span className="font-semibold text-slate-600">{targetWhatsappNumber}</span></p>}
+              <p className="flex items-center gap-1.5"><MdInfo className="text-emerald-500 text-sm" /> Host Profile: <span className="font-semibold text-slate-600">{targetOwnerName}</span></p>
+              <p className="flex items-center gap-1.5"><MdMail className="text-emerald-500 text-sm" /> Business Email: <span className="font-mono font-medium text-slate-500">{targetEmailAddress}</span></p>
+              <p className="flex items-center gap-1.5"><MdPhone className="text-emerald-500 text-sm" /> Direct Phone Line: <span className="font-semibold text-slate-600">{targetPhoneCall}</span></p>
+              <p className="flex items-center gap-1.5"><MdChat className="text-emerald-500 text-sm" /> WhatsApp: <span className="font-semibold text-slate-600">{targetWhatsappNumber}</span></p>
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: ACTION LEAD HUD WITH DIRECT CONTACT PORTALS */}
+        {/* RIGHT COLUMN: ACTION PANEL */}
         <aside className="space-y-6">
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4 sticky top-6">
             <div>
-              <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Operational Cost</p>
-              <p className="text-3xl font-black text-slate-900">{formatINR(pg.rent || 0)}<span className="text-xs font-bold text-slate-400 tracking-normal"> / month</span></p>
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Monthly Rent</p>
+              <p className="text-3xl font-black text-slate-900">{formatINR(pg.rent || pg.price || 0)}<span className="text-xs font-bold text-slate-400 tracking-normal"> / month</span></p>
             </div>
             
             <div className="bg-slate-50 p-2.5 border border-slate-200 rounded-lg flex justify-between text-xs font-bold text-slate-600">
-              <span>Security Deposit Protocol:</span>
+              <span>Security Deposit Amount:</span>
               <span className="text-slate-950 font-black">{formatINR(pg.deposit || 0)}</span>
             </div>
 
             <hr className="border-slate-100" />
 
-            {/* DIRECT ACTION PORTALS PANEL HEADER */}
+            {/* DIRECT CONTACT OPTIONS */}
             <div className="space-y-1.5">
-              <h3 className="font-black text-slate-900 text-xs uppercase tracking-wider text-slate-400">Connect with Owner Node</h3>
+              <h3 className="font-black text-slate-900 text-xs uppercase tracking-wider text-slate-400">Connect with the Owner</h3>
               <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                No intermediate gate form required. Click below to establish direct communication instantly:
+                No middleman required. Click below to reach out to the property owner directly:
               </p>
             </div>
 
-            {/* ACTION INTEGRATION HUD GRID */}
+            {/* CONTACT BUTTONS */}
             <div className="flex flex-col gap-2.5 pt-1">
               
-              {/* 🟢 1. INSTANT WHATSAPP ENGAGEMENT TERMINAL */}
+              {/* WHATSAPP */}
               <a 
-                href={`https://wa.me/91${targetWhatsappNumber || targetPhoneCall}?text=${whatsappTemplateMsg}`}
+                href={`https://wa.me/91${targetWhatsappNumber.replace(/[^0-9]/g, "")}?text=${whatsappTemplateMsg}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-2.5 rounded-lg text-xs tracking-wide uppercase flex items-center justify-center gap-2 transition-all shadow-sm h-11"
@@ -194,39 +203,39 @@ export default function PGDetails() {
                 <span>Chat On WhatsApp</span>
               </a>
 
-              {/* 📞 2. MOBILE DIALER LINK CONNECTOR */}
+              {/* DIRECT CALL */}
               <a 
                 href={`tel:${targetPhoneCall}`}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 rounded-lg text-xs tracking-wide uppercase flex items-center justify-center gap-2 transition-all shadow-sm h-11"
               >
                 <FaPhoneAlt className="text-xs" />
-                <span>Call Direct Line</span>
+                <span>Call Owner Directly</span>
               </a>
 
-              {/* ✉️ 3. BUSINESS SECURE EMAIL CLIENT PORTAL */}
+              {/* EMAIL */}
               <a 
-                href={`mailto:${targetEmailAddress}?subject=Inquiry%20Regarding%20${encodeURIComponent(pg.pgName || 'PG%20Space')}`}
+                href={`mailto:${targetEmailAddress}?subject=Inquiry%20Regarding%20${encodeURIComponent(pg.pgName || pg.title || 'PG Space')}`}
                 className="w-full bg-slate-50 hover:bg-slate-100 text-slate-800 font-black py-2.5 rounded-lg text-xs tracking-wide uppercase flex items-center justify-center gap-2 border border-slate-200 transition-all shadow-xs h-11"
               >
                 <FaEnvelope className="text-sm text-slate-500" />
-                <span>Send Gmail Inquiry</span>
+                <span>Send Email Inquiry</span>
               </a>
 
             </div>
 
-            {/* 📋 RAW DETAILS IN BLOCK FOR TEXT COPY & CONTACT RE-CHECK */}
+            {/* QUICK CONTACT HIGHLIGHT LIST */}
             <div className="mt-4 pt-3 border-t border-slate-100 bg-slate-50/80 p-3 rounded-lg text-[11px] font-semibold text-slate-700 space-y-1.5">
-              <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Owner Direct Contact Info</p>
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Owner Contact Details</p>
               <div className="flex justify-between items-center">
-                <span>Call Number:</span>
-                <span className="font-mono text-slate-900 font-bold select-all">{targetPhoneCall || "N/A"}</span>
+                <span>Phone Number:</span>
+                <span className="font-mono text-slate-900 font-bold select-all">{targetPhoneCall}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>WhatsApp Number:</span>
-                <span className="font-mono text-slate-900 font-bold select-all">{targetWhatsappNumber || "N/A"}</span>
+                <span className="font-mono text-slate-900 font-bold select-all">{targetWhatsappNumber}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>Gmail Node:</span>
+                <span>Email Address:</span>
                 <span className="font-mono text-slate-600 select-all truncate max-w-[140px] text-right">{targetEmailAddress}</span>
               </div>
             </div>

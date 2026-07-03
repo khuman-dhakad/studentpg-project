@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   MdHomeWork, MdLogout, MdDashboard, MdLogin, 
-  MdAccountCircle, MdMenu, MdClose, MdAddCircle 
+  MdAccountCircle, MdMenu, MdClose, MdAddCircle, MdOutlineReportProblem 
 } from 'react-icons/md';
 
 export default function Navbar() {
@@ -45,6 +45,12 @@ export default function Navbar() {
           >
             Find PGs
           </Link>
+          <Link 
+            to="/support" 
+            className={`transition-colors ${isActive('/support') ? 'text-red-400' : 'text-red-500 hover:text-red-400 font-extrabold'}`}
+          >
+            Support / Complain
+          </Link>
           
           {user ? (
             <div className="flex items-center gap-4 normal-case tracking-normal text-sm font-medium">
@@ -70,7 +76,7 @@ export default function Navbar() {
               >
                 <MdAccountCircle className="text-lg text-emerald-400" /> 
                 <span className="hidden lg:inline">
-                  Hi, {user.name || user.username || (user.role === 'ADMIN' ? 'Admin Dashboard' : user.role === 'OWNER' ? 'Owner Dashboard' : 'User')}
+                  Hi, {user.name || user.username || (user.role === 'ADMIN' ? 'Admin' : user.role === 'OWNER' ? 'Property Owner' : 'Student')}
                 </span>
               </Link>
 
@@ -123,6 +129,14 @@ export default function Navbar() {
             className={`p-3 rounded-xl transition-colors ${isActive('/search') ? 'bg-slate-900 text-emerald-400' : 'text-slate-300 hover:bg-slate-900'}`}
           >
             Find PGs
+          </Link>
+
+          <Link 
+            to="/support" 
+            onClick={() => setIsOpen(false)}
+            className={`p-3 rounded-xl transition-colors ${isActive('/support') ? 'bg-slate-900 text-red-400' : 'text-red-400 hover:bg-slate-900'}`}
+          >
+            Support / Complain
           </Link>
 
           <hr className="border-slate-800 my-1" />

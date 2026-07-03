@@ -16,7 +16,7 @@ const api = axios.create({
 });
 
 /**
- * ⚙️ Centralized .env Endpoint Configuration Maps 
+ * ⚙️ List of All API URLs (Loads settings from your .env file or uses default links)
  */
 export const ENDPOINTS = {
   auth: {
@@ -43,7 +43,7 @@ export const ENDPOINTS = {
 };
 
 /**
- * Request Interceptor
+ * Request Interceptor (Runs code automatically right before sending data to server)
  */
 api.interceptors.request.use(
   (config) => {
@@ -52,12 +52,13 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // Safety check to prevent dangerous script tags from being sent to the database
     if (config.data && typeof config.data === "object") {
       const payload = JSON.stringify(config.data);
       if (/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi.test(payload)) {
         return Promise.reject({
           status: 400,
-          message: "Invalid request payload.",
+          message: "Data contains unsafe content.",
         });
       }
     }
@@ -68,7 +69,7 @@ api.interceptors.request.use(
 );
 
 /**
- * Response Interceptor
+ * Response Interceptor (Checks data coming back from the server for errors)
  */
 api.interceptors.response.use(
   (response) => response,
@@ -90,23 +91,23 @@ api.interceptors.response.use(
         break;
 
       case 401:
-        // ✅ Standard error response assignment overrides
-        responseError.message = error.response?.data?.message || "Session expired or unauthorized node access.";
+        responseError.message = error.response?.data?.message || "Session expired. Please log in again.";
 
-        // ✅ FIXED BYPASS FOR STUDENT CONTROLLER ROUTE AND INQUIRY ENGINE
+        // ✅ ALLOW STUDENTS TO BROWSE AND SUBMIT FORMS WITHOUT BEING LOGGED IN AS AN OWNER
         const isPublicBrowse = 
           currentPath === "/" || 
           currentPath.includes("/search") || 
           currentPath.includes("/pg/") ||
           configUrl.includes('/student/pgs/filter') ||
           configUrl.includes('/student/pgs') ||
-          configUrl.includes('/inquiries') || // 🟢 Added this so inquiry submissions don't trigger hard owner logouts
-          configUrl.includes(ENDPOINTS.inquiries.base) || // 🟢 Added centralized map safety rule
+          configUrl.includes('/inquiries') || // 🟢 Prevents student inquiry forms from forcing an owner logout
+          configUrl.includes(ENDPOINTS.inquiries.base) || // 🟢 Standard link protection rule
           configUrl.includes(ENDPOINTS.pgs.filter);
           
         const isAuthPage = currentPath.includes("/owner/login") || currentPath.includes("/owner/register");
         const isProfileCheck = configUrl.includes(ENDPOINTS.auth.me) || configUrl.includes('/owners/profile');
 
+        // If the user isn't on a public page and login is expired, remove old tokens and send to login screen
         if (!isPublicBrowse && !isAuthPage && !isProfileCheck) {
           localStorage.removeItem("token");
           delete api.defaults.headers.common['Authorization'];
@@ -119,15 +120,15 @@ api.interceptors.response.use(
         break;
 
       case 404:
-        responseError.message = "Requested resource not found.";
+        responseError.message = "Requested item not found.";
         break;
 
       case 409:
-        responseError.message = error.response?.data?.message || "Conflict occurred.";
+        responseError.message = error.response?.data?.message || "This information already exists.";
         break;
 
       case 422:
-        responseError.message = error.response?.data?.message || "Validation failed.";
+        responseError.message = error.response?.data?.message || "Please check your inputs and try again.";
         break;
 
       case 500:

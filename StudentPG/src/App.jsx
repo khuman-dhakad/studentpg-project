@@ -22,10 +22,11 @@ import AddPG from "./pages/AddPG";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import OwnerProfile from "./pages/OwnerProfile";
+import Support from "./pages/Support";
 
 /**
  * ============================
- * BULLETPROOF PROTECTED ROUTE ENGINE
+ * ROUTE GUARD FOR PROTECTED PAGES
  * ============================
  */
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -34,7 +35,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (loading) {
     return (
       <div className="flex-grow flex items-center justify-center bg-slate-50 text-xs font-semibold text-slate-400">
-        Authenticating platform session...
+        Checking your login status...
       </div>
     );
   }
@@ -59,7 +60,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 /**
  * ============================
- * APP CONTAINER ENTRYPOINT
+ * MAIN APPLICATION ROUTING CONTAINER
  * ============================
  */
 export default function App() {
@@ -71,17 +72,18 @@ export default function App() {
           <Navbar />
 
           <Routes>
-            {/* PUBLIC STUDENT ACCESS ROUTES */}
+            {/* PUBLIC PAGES FOR STUDENTS */}
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/pg/:id" element={<PGDetails />} />
             <Route path="/owner/profile" element={<OwnerProfile />} />
+            <Route path="/support" element={<Support />} />
             
-            {/* AUTH STREAM ROUTES */}
+            {/* LOGIN & SIGNUP PAGES */}
             <Route path="/owner/register" element={<OwnerRegister />} />
             <Route path="/owner/login" element={<OwnerLogin />} />
 
-            {/* OWNER CONSOLE PROTECTED ENGINE */}
+            {/* PROTECTED PAGES FOR PG OWNERS */}
             <Route
               path="/add-pg"
               element={
@@ -91,8 +93,8 @@ export default function App() {
               }
             />
 
-            {/* SYSTEM ADMIN MANAGEMENT CONTROL PLATFORM */}
-            {/* ✅ FIXED: Dono admin routes ko cleanly handle kiya hai with dynamic role guard */}
+            {/* PROTECTED PAGES FOR SYSTEM ADMINS */}
+            {/* Both admin routes are securely handled using the user role checker */}
             <Route
               path="/admin"
               element={
@@ -111,7 +113,7 @@ export default function App() {
               }
             />
 
-            {/* FIXED CLEAN REDIRECT LINERS */}
+            {/* AUTOMATIC REDIRECT LINKS FOR SHORTCUTS */}
             <Route path="/login" element={<Navigate to="/owner/login" replace />} />
             <Route path="/register" element={<Navigate to="/owner/register" replace />} />
             <Route path="*" element={<NotFound />} />
