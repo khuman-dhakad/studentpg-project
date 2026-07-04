@@ -18,7 +18,7 @@ export default function PGDetails() {
   const [error, setError] = useState("");
 
   /**
-   * FETCH LIVE PG DATA FROM BACKEND BY ID
+   * FETCH LIVE PG DATA
    */
   useEffect(() => {
     let isMounted = true;
@@ -28,7 +28,6 @@ export default function PGDetails() {
     api.get(`${ENDPOINTS.pgs.base}/${id}`)
       .then((res) => {
         if (isMounted && res.data) {
-          console.log("=== API RESPONSE RECEIVED IN PG-DETAILS ===", res.data); // Debug tracking logger
           setPg(res.data);
           if (res.data.images && res.data.images.length > 0) {
             setActiveImage(res.data.images[0].url || res.data.images[0]);
@@ -37,7 +36,6 @@ export default function PGDetails() {
       })
       .catch((err) => {
         if (isMounted) {
-          console.error("API Fetch Error on Details Node:", err);
           setError(err?.response?.data?.message || err?.message || "Property information could not be found.");
         }
       })
@@ -70,16 +68,15 @@ export default function PGDetails() {
   const pgImagesList = pg?.images && pg.images.length > 0 ? pg.images.map(img => img.url || img) : [];
   const heroDisplayImage = activeImage || pgImagesList[0] || pg?.image || "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1000";
 
-  // =========================================================================
-  // 🟢 CRITICAL RESOLUTION LAYER: Deep scanning nested objects or fallback keys
-  // =========================================================================
-  const targetOwnerName = pg?.owner?.name || pg?.ownerName || pg?.owner?.ownerName || pg?.owner?.username || "Authorized Verified Owner";
-  
-  const targetPhoneCall = pg?.owner?.phone || pg?.ownerPhone || pg?.phone || pg?.owner?.mobile || pg?.mobile || "9";
-  
-  const targetWhatsappNumber = pg?.owner?.whatsappNumber || pg?.owner?.whatsappnumber || pg?.whatsappNumber || pg?.ownerWhatsapp || pg?.owner?.whatsapp || targetPhoneCall;
-  
-  const targetEmailAddress = pg?.owner?.email || pg?.ownerEmail || pg?.email || pg?.owner?.ownerEmail || "care@studentpg.com";
+  // RESOLUTION LAYER: Extracting credentials exactly how they are structured inside the owner relations object
+  const rawPhone = pg.owner?.phone || pg.ownerPhone || pg.phone || pg.owner?.mobile;
+  const targetPhoneCall = (rawPhone && rawPhone !== "N/A" && rawPhone !== "0000000000") ? rawPhone : "Helpline UnsetValue";
+
+  const rawWhatsapp = pg.owner?.whatsappNumber || pg.whatsappNumber || pg.ownerWhatsapp || pg.owner?.whatsapp || rawPhone;
+  const targetWhatsappNumber = (rawWhatsapp && rawWhatsapp !== "N/A" && rawWhatsapp !== "0000000000") ? rawWhatsapp : "Helpline UnsetValue";
+
+  const rawEmail = pg.owner?.email || pg.ownerEmail || pg.email;
+  const targetEmailAddress = (rawEmail && rawEmail !== "N/A") ? rawEmail : "support@studentpg.com";
 
   const whatsappTemplateMsg = encodeURIComponent(`Hello, I am interested in booking a slot at your property "${pg.pgName || pg.title || 'Premium Co-living Space'}" listed on StudentPG.`);
 
@@ -154,11 +151,11 @@ export default function PGDetails() {
             </div>
           </div>
 
-          {/* HOST DATA SECTION */}
+          {/* HOST DATA */}
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
             <h3 className="text-xs uppercase font-black tracking-wider text-slate-400">Host Details</h3>
             <div className="text-xs font-bold text-slate-800 space-y-1">
-              <p className="flex items-center gap-1.5"><MdInfo className="text-emerald-500 text-sm" /> Host Profile: <span className="font-semibold text-slate-600">{targetOwnerName}</span></p>
+              <p className="flex items-center gap-1.5"><MdInfo className="text-emerald-500 text-sm" /> Host Profile: <span className="font-semibold text-slate-600">{pg.owner?.name || pg.ownerName || "Authorized Verified Owner"}</span></p>
               <p className="flex items-center gap-1.5"><MdMail className="text-emerald-500 text-sm" /> Business Email: <span className="font-mono font-medium text-slate-500">{targetEmailAddress}</span></p>
               <p className="flex items-center gap-1.5"><MdPhone className="text-emerald-500 text-sm" /> Direct Phone Line: <span className="font-semibold text-slate-600">{targetPhoneCall}</span></p>
               <p className="flex items-center gap-1.5"><MdChat className="text-emerald-500 text-sm" /> WhatsApp: <span className="font-semibold text-slate-600">{targetWhatsappNumber}</span></p>
@@ -185,7 +182,7 @@ export default function PGDetails() {
             <div className="space-y-1.5">
               <h3 className="font-black text-slate-900 text-xs uppercase tracking-wider text-slate-400">Connect with the Owner</h3>
               <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                No middleman required. Click below to reach out to the property owner directly:
+                No middleman or complex forms required. Click below to reach out to the property owner directly:
               </p>
             </div>
 
@@ -194,7 +191,7 @@ export default function PGDetails() {
               
               {/* WHATSAPP */}
               <a 
-                href={`https://wa.me/91${targetWhatsappNumber.replace(/[^0-9]/g, "")}?text=${whatsappTemplateMsg}`}
+                href={targetWhatsappNumber !== "Helpline UnsetValue" ? `https://wa.me/91${targetWhatsappNumber.replace(/[^0-9]/g, "")}?text=${whatsappTemplateMsg}` : "#"}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-2.5 rounded-lg text-xs tracking-wide uppercase flex items-center justify-center gap-2 transition-all shadow-sm h-11"
@@ -205,7 +202,7 @@ export default function PGDetails() {
 
               {/* DIRECT CALL */}
               <a 
-                href={`tel:${targetPhoneCall}`}
+                href={targetPhoneCall !== "Helpline UnsetValue" ? `tel:${targetPhoneCall}` : "#"}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 rounded-lg text-xs tracking-wide uppercase flex items-center justify-center gap-2 transition-all shadow-sm h-11"
               >
                 <FaPhoneAlt className="text-xs" />

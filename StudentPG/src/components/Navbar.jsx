@@ -21,6 +21,9 @@ export default function Navbar() {
     navigate('/');
   };
 
+  // REAL AUTH VALIDATION: Checks if the user is truly authorized with a valid role
+  const isSuccessfullyLoggedIn = user && (user.role === 'ADMIN' || user.role === 'OWNER' || user.role === 'STUDENT') && (user.username || user.email);
+
   return (
     <header className="bg-slate-900/95 backdrop-blur-md text-white sticky top-0 z-50 border-b border-slate-800 shadow-lg">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -52,7 +55,7 @@ export default function Navbar() {
             Support / Complain
           </Link>
           
-          {user ? (
+          {isSuccessfullyLoggedIn ? (
             <div className="flex items-center gap-4 normal-case tracking-normal text-sm font-medium">
               
               {/* ADMIN OPTION */}
@@ -70,7 +73,7 @@ export default function Navbar() {
               )}
               
               {/* ROLE BASED PROFILE REDIRECTION */}
-             <Link 
+              <Link 
                 to={user.role === 'ADMIN' ? "/admin/dashboard" : user.role === 'OWNER' ? "/owner/profile" : "/profile"} 
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all font-black uppercase tracking-wider text-xs bg-slate-800/40 border border-slate-700/50 ${isActive('/owner/profile') || isActive('/profile') || isActive('/admin/dashboard') ? 'text-emerald-400 border-emerald-500/30' : 'text-slate-300 hover:text-emerald-400'}`}
               >
@@ -141,7 +144,7 @@ export default function Navbar() {
 
           <hr className="border-slate-800 my-1" />
 
-          {user ? (
+          {isSuccessfullyLoggedIn ? (
             <div className="space-y-3 pt-1">
               <div className="px-3 py-1.5 text-xs font-black text-slate-500 uppercase tracking-wider">
                 Logged in as: <span className="text-slate-300 font-bold normal-case text-sm ml-1">{user.username}</span>
