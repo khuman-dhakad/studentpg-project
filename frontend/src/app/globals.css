@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 30% 98%;
+    --foreground: 180 50% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 180 50% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 180 50% 5%;
+    --primary: 174 100% 29%;
+    --primary-foreground: 40 30% 98%;
+    --secondary: 45 100% 45%;
+    --secondary-foreground: 180 50% 5%;
+    --muted: 180 10% 90%;
+    --muted-foreground: 180 10% 35%;
+    --accent: 45 100% 45%;
+    --accent-foreground: 40 30% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 180 10% 88%;
+    --input: 180 10% 88%;
+    --ring: 174 100% 29%;
+    --brand: 174 100% 29%;
+    --brand-dark: 174 75% 42%;
+    --brand-soft: 174 100% 15%;
+    --cream: 40 100% 97%;
+    --surface: 0 0% 98%;
+    --ink: 210 10% 12%;
+    --ink-soft: 210 10% 55%;
+    --line: 220 15% 88%;
+    --danger: 0 84% 60%;
+    --danger-soft: 0 84% 20%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 180 40% 6%;
+    --foreground: 40 20% 96%;
+    --card: 180 35% 8%;
+    --card-foreground: 40 20% 96%;
+    --popover: 180 35% 8%;
+    --popover-foreground: 40 20% 96%;
+    --primary: 174 75% 42%;
+    --primary-foreground: 180 40% 6%;
+    --secondary: 45 90% 50%;
+    --secondary-foreground: 180 40% 6%;
+    --muted: 180 15% 16%;
+    --muted-foreground: 180 10% 65%;
+    --accent: 45 90% 50%;
+    --accent-foreground: 180 40% 6%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 40 20% 96%;
+    --border: 180 15% 16%;
+    --input: 180 15% 16%;
+    --ring: 174 75% 42%;
+    --brand: 174 75% 42%;
+    --brand-dark: 174 50% 35%;
+    --brand-soft: 174 50% 15%;
+    --cream: 40 40% 20%;
+    --surface: 180 20% 12%;
+    --ink: 210 10% 95%;
+    --ink-soft: 210 10% 70%;
+    --line: 210 10% 30%;
+    --danger: 0 63% 45%;
+    --danger-soft: 0 63% 25%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    min-height: 100vh;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+a,
+input,
+textarea,
+select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    @apply bg-brand/20 text-ink;
+  }
+}
