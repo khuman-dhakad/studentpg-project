@@ -1,7 +1,3 @@
 {
-  "/page": "app/page.js",
-  "/(public)/search/page": "app/(public)/search/page.js",
-  "/(public)/support/page": "app/(public)/support/page.js",
-  "/(auth)/owner/login/page": "app/(auth)/owner/login/page.js",
-  "/(public)/pg/[id]/page": "app/(public)/pg/[id]/page.js"
+  "/page": "app/page.js"
 }
