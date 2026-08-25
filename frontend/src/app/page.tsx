@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 const CITY_GRADIENTS = [
   'from-blue-600 to-indigo-900',
