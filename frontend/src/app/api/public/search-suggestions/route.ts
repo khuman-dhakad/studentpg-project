@@ -44,29 +44,19 @@ export async function GET(
     );
 
 
-  } catch (error: any) {
-
-    console.error(
-      'Search suggestions error:',
-      error
-    );
-
+  } catch (error: unknown) {
+    console.error('Search suggestions error:', error);
+    const err = error as { status?: number; message?: string };
 
     return NextResponse.json(
       {
-        status:
-          error.status || 500,
-
-        message:
-          error.message ||
-          'Failed to load search suggestions.',
+        status: err.status || 500,
+        message: err.message || 'Failed to load search suggestions.',
       },
       {
-        status:
-          error.status || 500,
+        status: err.status || 500,
       }
     );
-
   }
 
 }

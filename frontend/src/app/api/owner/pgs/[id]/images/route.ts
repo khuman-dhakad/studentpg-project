@@ -13,10 +13,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const body = await request.json(); // Array of { publicId, url }
     const feedback = await backendClient.post<string>(BACKEND_ENDPOINTS.PGS.IMAGES(id), body);
     return NextResponse.json({ message: feedback });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Image list append operation rejected.' },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Image list append operation rejected.' },
+      { status: err.status || 400 }
     );
   }
 }
@@ -52,15 +53,16 @@ export async function DELETE(
       message: feedback || 'Image deleted successfully.',
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
       {
-        status: error.status || 400,
+        status: err.status || 400,
         message:
-          error.message || 'Image deletion failed.',
+          err.message || 'Image deletion failed.',
       },
       {
-        status: error.status || 400,
+        status: err.status || 400,
       }
     );
   }

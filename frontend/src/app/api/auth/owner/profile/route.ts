@@ -11,10 +11,11 @@ export async function PUT(request: NextRequest) {
     );
 
     return NextResponse.json({ message: responseMessage });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Profile update failed.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Profile update failed.' },
+      { status: err.status || 500 }
     );
   }
 }

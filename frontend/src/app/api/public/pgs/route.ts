@@ -43,10 +43,11 @@ export async function GET(request: NextRequest) {
 
     const properties = await backendClient.get<PagedResponse<PG>>(endpoint);
     return NextResponse.json(properties);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Failed to fetch public PG listings.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Failed to fetch public PG listings.' },
+      { status: err.status || 500 }
     );
   }
 }

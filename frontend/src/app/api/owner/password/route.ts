@@ -10,10 +10,11 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const result = await backendClient.put<string>(BACKEND_ENDPOINTS.OWNERS.CHANGE_PASSWORD, body);
     return NextResponse.json({ message: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Credential alteration rejected.' },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Credential alteration rejected.' },
+      { status: err.status || 400 }
     );
   }
 }

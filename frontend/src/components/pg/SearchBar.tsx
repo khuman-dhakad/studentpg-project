@@ -384,214 +384,60 @@ export function SearchBar({
 
 
         {/* INPUT */}
-
         <input
-
-          value={
-            value
-          }
-
-
-          onChange={(
-
-            event
-
-          ) => {
-
-
-            const nextValue =
-              event.target.value;
-
-
-            setValue(
-              nextValue
-            );
-
-
-            setShowSuggestions(
-
-              nextValue.trim()
-                .length >= 2
-
-            );
-
+          id="search-input"
+          name="search"
+          type="search"
+          aria-label="Search by PG name, city or location"
+          value={value}
+          onChange={(event) => {
+            const nextValue = event.target.value;
+            setValue(nextValue);
+            setShowSuggestions(nextValue.trim().length >= 2);
           }}
-
-
           onFocus={() => {
-
-
-            if (
-
-              value.trim()
-                .length >= 2
-
-            ) {
-
-              setShowSuggestions(
-                true
-              );
-
+            if (value.trim().length >= 2) {
+              setShowSuggestions(true);
             }
-
           }}
-
-
-          onKeyDown={(
-
-            event
-
-          ) => {
-
-
-            if (
-
-              event.key === 'Enter'
-
-            ) {
-
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
               event.preventDefault();
-
-
-              submit(
-                value
-              );
-
+              submit(value);
             }
-
-
-            if (
-
-              event.key === 'Escape'
-
-            ) {
-
+            if (event.key === 'Escape') {
               clearSearch();
-
             }
-
           }}
-
-
-          placeholder="
-            Search by PG name, city or location...
-          "
-
-
-          className="
-            min-w-0
-            flex-1
-            border-0
-            bg-transparent
-            px-1
-            py-2
-            text-xs
-            font-medium
-            text-slate-800
-            outline-none
-            placeholder:text-xs
-            placeholder:text-slate-400
-          "
-
+          placeholder="Search by PG name, city or location..."
+          className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2 text-xs font-medium text-slate-800 outline-none placeholder:text-xs placeholder:text-slate-400"
         />
 
-
         {/* CLEAR SEARCH BUTTON */}
-
         {value.trim().length > 0 && (
-
           <button
-
             type="button"
-
-            onClick={
-              clearSearch
-            }
-
-            aria-label="
-              Clear search
-            "
-
-            className="
-              mr-1
-              flex
-              h-8
-              w-8
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              text-slate-400
-              transition-colors
-              hover:bg-slate-100
-              hover:text-slate-700
-            "
-
+            onClick={clearSearch}
+            aria-label="Clear search"
+            className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
           >
-
-            <X
-              className="
-                h-4
-                w-4
-              "
-            />
-
+            <X className="h-4 w-4" />
           </button>
-
         )}
-
 
         {/* LOADING */}
-
         {isFetching && (
-
-          <Loader2
-
-            className="
-              mr-2
-              h-4
-              w-4
-              shrink-0
-              animate-spin
-              text-teal-600
-            "
-
-          />
-
+          <Loader2 className="mr-2 h-4 w-4 shrink-0 animate-spin text-teal-600" />
         )}
 
-
         {/* SEARCH BUTTON */}
-
         <button
-
           type="button"
-
-          onClick={() =>
-            submit(value)
-          }
-
-          className="
-            shrink-0
-            rounded-xl
-            bg-teal-600
-            px-5
-            py-3
-            text-xs
-            font-black
-            uppercase
-            tracking-wide
-            text-white
-            shadow-sm
-            transition-all
-            hover:bg-teal-700
-            active:scale-[0.98]
-          "
-
+          onClick={() => submit(value)}
+          aria-label="Search properties"
+          className="shrink-0 rounded-xl bg-teal-600 px-5 py-3 text-xs font-black uppercase tracking-wide text-white shadow-sm transition-all hover:bg-teal-700 active:scale-[0.98]"
         >
-
           Search
-
         </button>
 
 

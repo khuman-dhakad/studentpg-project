@@ -22,10 +22,11 @@ export async function GET(request: NextRequest) {
     const searchResults = await backendClient.get<PagedResponse<PG>>(searchUrl);
 
     return NextResponse.json(searchResults);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Text search operation failed.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Text search operation failed.' },
+      { status: err.status || 500 }
     );
   }
 }

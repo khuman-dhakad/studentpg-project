@@ -192,9 +192,9 @@ export function SiteFooter() {
                 <a
                   href="https://www.youtube.com/@studentpgdotin"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
+                  aria-label="StudentPG on YouTube"
                   className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-red-200 hover:bg-red-50 hover:text-red-600 hover:shadow-md"
-                  title="YouTube"
                 >
                   <Youtube size={18} />
                 </a>
@@ -203,9 +203,9 @@ export function SiteFooter() {
                 <a
                   href="https://www.instagram.com/studentpg.in/"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
+                  aria-label="StudentPG on Instagram"
                   className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-pink-200 hover:bg-pink-50 hover:text-pink-600 hover:shadow-md"
-                  title="Instagram"
                 >
                   <Instagram size={18} />
                 </a>
@@ -214,9 +214,9 @@ export function SiteFooter() {
                 <a
                   href="https://www.facebook.com/profile.php?id=61591929654056"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
+                  aria-label="StudentPG on Facebook"
                   className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
-                  title="Facebook"
                 >
                   <Facebook size={18} />
                 </a>
@@ -225,9 +225,9 @@ export function SiteFooter() {
                 <a
                   href="https://x.com/studentpgdotin"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
+                  aria-label="StudentPG on Twitter"
                   className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 hover:shadow-md"
-                  title="Twitter / X"
                 >
                   <Twitter size={16} />
                 </a>

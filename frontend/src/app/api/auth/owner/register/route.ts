@@ -27,14 +27,15 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true, message: response?.message || 'Registration successful' });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string; errors?: unknown };
     return NextResponse.json(
       {
-        status: error.status || 400,
-        message: error.message || 'Registration processing failure.',
-        errors: error.errors
+        status: err.status || 400,
+        message: err.message || 'Registration processing failure.',
+        errors: err.errors
       },
-      { status: error.status || 400 }
+      { status: err.status || 400 }
     );
   }
 }

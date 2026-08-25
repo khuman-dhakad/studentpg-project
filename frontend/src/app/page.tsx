@@ -58,63 +58,62 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-slate-50/50 pb-24 md:pb-0 font-sans antialiased">
       {/* ============ 1. HERO SECTION ============ */}
-   <section className="relative flex h-[55vh] w-full items-center justify-center overflow-hidden px-4 md:h-[75vh]">
+      <section className="relative flex h-[55vh] w-full items-center justify-center overflow-hidden px-4 md:h-[75vh]">
+        {/* Hero Background Image */}
+        <Image
+          src="/hero-bg.jpg.png"
+          alt="Comfortable student accommodation in top educational hubs"
+          fill
+          priority
+          sizes="100vw"
+          quality={85}
+          className="object-cover"
+        />
 
-  {/* Only Image Background */}
-  <Image
-    src="/hero-bg.jpg.png"
-    alt="Comfortable PG accommodation"
-    fill
-    priority
-    className="object-cover"
-  />
+        {/* Very Light Overlay - Only for Text Readability */}
+        <div className="absolute inset-0 bg-black/20" />
 
-  {/* Very Light Overlay - Only for Text Readability */}
-  <div className="absolute inset-0 bg-black/20" />
+        <div className="relative z-10 mx-auto w-full max-w-4xl px-2 text-center">
+          <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-black/20 px-4 py-2 text-[11px] font-semibold tracking-wide text-white backdrop-blur-md md:text-xs">
+            <ShieldCheck className="h-4 w-4 text-emerald-300" />
+            Trusted by 50,000+ students & professionals
+          </span>
 
-  <div className="relative z-10 mx-auto w-full max-w-4xl px-2 text-center">
+          <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-white drop-shadow-lg sm:text-4xl md:text-6xl">
+            Find your next home,
+            <br />
+            <span className="text-emerald-300">
+              not just a room.
+            </span>
+          </h1>
 
-    <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-black/20 px-4 py-2 text-[11px] font-semibold tracking-wide text-white backdrop-blur-md md:text-xs">
-      <ShieldCheck className="h-4 w-4 text-emerald-300" />
-      Trusted by 50,000+ students & professionals
-    </span>
+          <p className="mx-auto mb-8 max-w-xl text-xs font-medium leading-relaxed text-white/90 drop-shadow-md sm:text-sm md:text-lg">
+            Verified PGs and co-living spaces with premium amenities,
+            zero brokerage, and immediate move-in options.
+          </p>
 
-    <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-white drop-shadow-lg sm:text-4xl md:text-6xl">
-      Find your next home,
-      <br />
-      <span className="text-emerald-300">
-        not just a room.
-      </span>
-    </h1>
+          <div className="mx-auto mt-4 max-w-2xl rounded-2xl border border-white/30 bg-white/15 p-1.5 shadow-2xl backdrop-blur-md md:rounded-full">
+            <SearchBar />
+          </div>
 
-    <p className="mx-auto mb-8 max-w-xl text-xs font-medium leading-relaxed text-white/90 drop-shadow-md sm:text-sm md:text-lg">
-      Verified PGs and co-living spaces with premium amenities,
-      zero brokerage, and immediate move-in options.
-    </p>
+          <div className="mt-6 hidden items-center justify-center gap-2.5 text-xs font-medium text-white/80 md:flex">
+            <span className="flex items-center gap-1 text-white">
+              <MapPin className="h-3.5 w-3.5" />
+              Popular Searches:
+            </span>
 
-    <div className="mx-auto mt-4 max-w-2xl rounded-2xl border border-white/30 bg-white/15 p-1.5 shadow-2xl backdrop-blur-md md:rounded-full">
-      <SearchBar />
-    </div>
-
-    <div className="mt-6 hidden items-center justify-center gap-2.5 text-xs font-medium text-white/80 md:flex">
-
-      <span className="flex items-center gap-1 text-white">
-        <MapPin className="h-3.5 w-3.5" />
-        Popular Searches:
-      </span>
-
-      {['Bhopal', 'Indore', 'MP Nagar', 'Near MANIT'].map((tag) => (
-        <button
-          key={tag}
-          className="rounded-full border border-white/30 bg-black/20 px-3.5 py-1.5 text-white backdrop-blur-sm transition-all duration-300 hover:border-emerald-300 hover:bg-black/30"
-        >
-          {tag}
-        </button>
-      ))}
-    </div>
-
-  </div>
-</section>
+            {['Bhopal', 'Indore', 'MP Nagar', 'Near MANIT'].map((tag) => (
+              <Link
+                key={tag}
+                href={`/search?q=${encodeURIComponent(tag)}`}
+                className="rounded-full border border-white/30 bg-black/20 px-3.5 py-1.5 text-white backdrop-blur-sm transition-all duration-300 hover:border-emerald-300 hover:bg-black/30"
+              >
+                {tag}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ============ 2. TRUST BADGES ============ */}
       <div className="max-w-6xl mx-auto px-4 -mt-10 sm:-mt-12 relative z-20">
@@ -187,8 +186,9 @@ export default async function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {cities.length ? (
             cities.map((city) => (
-              <button
+              <Link
                 key={city.name}
+                href={`/search?city=${encodeURIComponent(city.name)}`}
                 className={`group relative h-28 sm:h-36 rounded-2xl overflow-hidden bg-gradient-to-br ${city.gradient} text-left p-4 sm:p-5 flex flex-col justify-end shadow-md shadow-slate-200 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl active:scale-98`}
               >
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
@@ -197,7 +197,7 @@ export default async function HomePage() {
                 </div>
                 <span className="relative text-white font-black text-base md:text-lg tracking-tight">{city.name}</span>
                 <span className="relative text-white/80 text-[11px] md:text-xs font-medium mt-0.5">{city.count}</span>
-              </button>
+              </Link>
             ))
           ) : (
             <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white p-4 text-sm font-semibold text-slate-500">
@@ -231,16 +231,18 @@ export default async function HomePage() {
       </section>
 
       {/* ============ 6. BOTTOM NAV (Mobile Only) ============ */}
-      <div className="fixed bottom-0 left-0 right-0 w-full bg-white/90 backdrop-blur-lg border-t border-slate-200/80 flex justify-around py-2.5 md:hidden z-50 shadow-2xl rounded-t-2xl">
+      <nav aria-label="Mobile Navigation" className="fixed bottom-0 left-0 right-0 w-full bg-white/90 backdrop-blur-lg border-t border-slate-200/80 flex justify-around py-2.5 md:hidden z-50 shadow-2xl rounded-t-2xl">
         {[
           { label: 'Home', icon: HomeIcon, href: '/', active: true },
           { label: 'Search', icon: Search, href: ROUTES.SEARCH },
-          { label: 'Saved', icon: Bookmark, href: '#' },
+          { label: 'Saved', icon: Bookmark, href: ROUTES.SEARCH },
           { label: 'Profile', icon: User, href: ROUTES.OWNER.LOGIN },
         ].map((nav, idx) => (
           <Link
             key={idx}
             href={nav.href}
+            aria-label={nav.label}
+            aria-current={nav.active ? 'page' : undefined}
             className={`flex flex-col items-center gap-1 px-4 py-1 rounded-xl transition-all ${
               nav.active ? 'text-emerald-600 scale-105 font-black' : 'text-slate-400 hover:text-slate-600 font-bold'
             }`}
@@ -249,7 +251,7 @@ export default async function HomePage() {
             <span className="text-[10px] tracking-wide">{nav.label}</span>
           </Link>
         ))}
-      </div>
+      </nav>
     </div>
   );
 }

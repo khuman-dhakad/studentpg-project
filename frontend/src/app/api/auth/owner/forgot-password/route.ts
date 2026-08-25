@@ -25,16 +25,17 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: response?.message || 'If an account exists with this email, a reset code has been sent.' });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Forgot password error:', error);
+    const err = error as { message?: string; status?: number };
 
     return NextResponse.json(
       {
         success: false,
-        message: error?.message || 'Failed to send OTP',
+        message: err?.message || 'Failed to send OTP',
       },
       {
-        status: error?.status || 500,
+        status: err?.status || 500,
       }
     );
   }

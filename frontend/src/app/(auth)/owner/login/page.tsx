@@ -1,10 +1,14 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { OwnerLoginForm } from '@/features/auth/components/OwnerLoginForm';
 import { ShieldCheck, MapPin, Heart, Users, Home, Globe, Headphones } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Owner Login',
+  description: 'Sign in to your StudentPG property management portal to manage listings, bookings, and inquiries.',
+};
 
 export default function OwnerLoginPage() {
   return (

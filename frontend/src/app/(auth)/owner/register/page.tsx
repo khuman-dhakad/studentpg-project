@@ -1,11 +1,13 @@
-'use client';
-
 import React from 'react';
-// import Link from 'next/link';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { OwnerRegisterForm } from '@/features/auth/components/OwnerRegisterForm';
-// import { ROUTES } from '@/constants/routes';
 import { ShieldCheck, MapPin, Heart, Users, Home, Globe, Headphones } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Owner Registration',
+  description: 'Register as a PG Owner on StudentPG to list your property and connect directly with student tenants.',
+};
 
 export default function OwnerRegisterPage() {
   return (

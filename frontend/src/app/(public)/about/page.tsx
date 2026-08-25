@@ -1,5 +1,4 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { 
   Users, 
@@ -12,6 +11,11 @@ import {
   Headphones,
   ChevronRight 
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn about StudentPG, India’s trusted student accommodation discovery platform.',
+};
 
 export default function AboutUsPage() {
   const stats = [
