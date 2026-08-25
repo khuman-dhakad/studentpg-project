@@ -40,6 +40,8 @@ export const BACKEND_ENDPOINTS = {
   PGS: {
     OWNER_LISTINGS: "/api/owner/pgs",
 
+    UPLOAD_IMAGE: "/api/owner/pgs/images/upload",
+
     BY_ID: (id: string) =>
       `/api/owner/pgs/${encodeURIComponent(id)}`,
 

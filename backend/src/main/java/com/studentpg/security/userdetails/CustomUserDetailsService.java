@@ -67,28 +67,29 @@ public class CustomUserDetailsService
          */
         
 
-       Owner owner =
-        ownerRepository
-                .findByEmailIgnoreCase(
-                        normalizedEmail
-                )
-                .orElse(null);
+        Owner owner =
+                ownerRepository
+                        .findByEmailIgnoreCase(
+                                normalizedEmail
+                        )
+                        .orElse(null);
 
-if (owner != null) {
+        if (owner != null) {
+            if (!owner.isActive()) {
+                throw new UsernameNotFoundException(
+                        "User not found"
+                );
+            }
 
-    if (!owner.isActive()) {
-
-        throw new UsernameNotFoundException(
-                "User not found"
-        );
-    }
-
-    return buildUserDetails(
-            owner.getEmail(),
-            owner.getPassword(),
-            owner.getRole()
-    );
-}
+            return new StudentPgUserDetails(
+                    owner.getId(),
+                    owner.getEmail().trim().toLowerCase(),
+                    owner.getPassword(),
+                    owner.getRole(),
+                    owner.getTokenVersion(),
+                    owner.isActive()
+            );
+        }
 
 
         /*
@@ -123,10 +124,13 @@ if (owner != null) {
             }
 
 
-            return buildUserDetails(
-                    admin.getEmail(),
+            return new StudentPgUserDetails(
+                    admin.getId(),
+                    admin.getEmail().trim().toLowerCase(),
                     admin.getPassword(),
-                    admin.getRole()
+                    admin.getRole(),
+                    0L,
+                    admin.isActive()
             );
         }
 

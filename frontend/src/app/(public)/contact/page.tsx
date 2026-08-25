@@ -97,7 +97,7 @@ export default function ContactUsPage() {
       const data = await res.json();
       setCaptchaQuestion(data.question_ || data.question || '');
       setCaptchaToken(data.token_ || data.token || '');
-    } catch (err) {
+    } catch {
       // ignore — user can still attempt to submit but server will reject
     }
   };

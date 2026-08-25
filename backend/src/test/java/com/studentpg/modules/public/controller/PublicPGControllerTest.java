@@ -13,7 +13,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.studentpg.security.jwt.JwtService;
+import com.studentpg.security.userdetails.CustomUserDetailsService;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
 @WebMvcTest(PublicPGController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class PublicPGControllerTest {
 
     @Autowired
@@ -21,6 +26,12 @@ class PublicPGControllerTest {
 
     @MockBean
     private StudentService studentService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void getPublicPG_returnsOk() throws Exception {

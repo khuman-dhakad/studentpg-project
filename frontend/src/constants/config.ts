@@ -4,9 +4,8 @@
 const GENDER_VALUES = ["MALE", "FEMALE", "UNISEX"] as const;
 
 export const CONFIG = {
-
-  MAX_IMAGE_COUNT: 3,
-
+  MIN_IMAGE_COUNT: 5,
+  MAX_IMAGE_COUNT: 10,
   MAX_IMAGE_SIZE_BYTES: 5 * 1024 * 1024,
 
   GENDERS: [
@@ -31,14 +30,4 @@ export const CONFIG = {
 } as const;
 
 export const BACKEND_API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? '';
-  // console.log("NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
-
-if (!BACKEND_API_URL) {
-  throw new Error(
-    'NEXT_PUBLIC_API_URL is not configured.'
-  );
-
-
-  
-}
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';

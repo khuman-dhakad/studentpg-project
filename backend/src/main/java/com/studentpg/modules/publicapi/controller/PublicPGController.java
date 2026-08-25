@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/public/pg")
-@CrossOrigin(origins = "${app.frontend.url}", allowCredentials = "true")
 @RequiredArgsConstructor
 public class PublicPGController {
 

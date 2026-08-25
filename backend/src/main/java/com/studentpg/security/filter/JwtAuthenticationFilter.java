@@ -223,16 +223,19 @@ public class JwtAuthenticationFilter
                             );
 
 
-            boolean valid =
+            Long expectedTokenVersion = (userDetails instanceof com.studentpg.security.userdetails.StudentPgUserDetails)
+                    ? ((com.studentpg.security.userdetails.StudentPgUserDetails) userDetails).getTokenVersion()
+                    : null;
 
-                    jwtService.isTokenValid(
-
+            boolean valid = (expectedTokenVersion != null)
+                    ? jwtService.isTokenValid(
                             token,
-
-                            userDetails
-
-                                    .getUsername()
-
+                            userDetails.getUsername(),
+                            expectedTokenVersion
+                    )
+                    : jwtService.isTokenValid(
+                            token,
+                            userDetails.getUsername()
                     );
 
 

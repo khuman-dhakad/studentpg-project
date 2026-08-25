@@ -176,6 +176,7 @@ export default function AddPgPage() {
       const response = await fetch(BACKEND_ENDPOINTS.PGS.OWNER_LISTINGS, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
+        credentials: 'include',
         body: JSON.stringify(payload) 
       });
       

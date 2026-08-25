@@ -22,16 +22,21 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
 
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final RestTemplate restTemplate;
 
-  
-    private RestTemplate restTemplate;
+    public EmailService(
+            @Autowired(required = false) JavaMailSender mailSender,
+            @Autowired(required = false) RestTemplate restTemplate
+    ) {
+        this.mailSender = mailSender;
+        this.restTemplate = restTemplate;
+    }
     @Value("${brevo.url}")
 private String brevoUrl;
 

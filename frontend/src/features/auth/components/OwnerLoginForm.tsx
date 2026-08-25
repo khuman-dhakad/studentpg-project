@@ -121,12 +121,14 @@ const role =
 
       router.refresh();
 
-    } catch (error: any) {
-    setGlobalError(
-        error?.data?.message ??
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string }; message?: string };
+      setGlobalError(
+        err?.data?.message ??
+        err?.message ??
         'Invalid email or password.'
-    );
-}
+      );
+    }
   };
 
   return (

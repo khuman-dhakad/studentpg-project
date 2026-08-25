@@ -326,19 +326,13 @@ public class OwnerService {
                 request.getName().trim()
         );
 
-        owner.setEmail(newEmail);
-
-       owner.setPhone(
-        request.getPhone().trim()
-                );
+        owner.setPhone(
+                request.getPhone().trim()
+        );
         owner.setWhatsappNumber(
-
-        request.getWhatsappNumber() == null
-
-                ? null
-
-                : request.getWhatsappNumber().trim()
-
+                request.getWhatsappNumber() == null
+                        ? null
+                        : request.getWhatsappNumber().trim()
         );
 
         ownerRepository.save(owner);
@@ -378,6 +372,7 @@ public class OwnerService {
                         request.getNewPassword()
                 )
         );
+        owner.setTokenVersion(owner.getTokenVersion() + 1);
 
         ownerRepository.save(owner);
 
@@ -500,24 +495,12 @@ public class OwnerService {
         String email =
                 normalizeEmail(request.getEmail());
 
-        logger.info(
-                "Password reset debug - email received: {}",
-                email
-        );
-
         Owner owner =
                 ownerRepository.findByEmail(email).orElse(null);
 
         if (owner == null) {
-            logger.info(
-                    "Password reset debug - owner found: false"
-            );
             return "Invalid password reset request.";
         }
-
-        logger.info(
-                "Password reset debug - owner found: true"
-        );
 
         if (owner.getResetOtpHash() == null) {
             return "Invalid password reset request.";
@@ -526,15 +509,8 @@ public class OwnerService {
         if (owner.getResetOtpExpiry() == null
                 || System.currentTimeMillis()
                 > owner.getResetOtpExpiry()) {
-            logger.info(
-                    "Password reset debug - expiry status: expired"
-            );
             return "Reset code expired. Please request a new one.";
         }
-
-        logger.info(
-                "Password reset debug - expiry status: valid"
-        );
 
         if (owner.getResetOtpAttempts() >= 5) {
             return "Too many incorrect attempts. Please request a new code.";
@@ -548,22 +524,8 @@ public class OwnerService {
         String submittedOtpHash =
                 hashOtp(submittedOtp);
 
-        // logger.info(
-        //         "Password reset debug - submitted OTP hash: {}",
-        //         submittedOtpHash
-        // );
-        logger.info(
-                "Password reset debug - stored OTP hash: {}",
-                owner.getResetOtpHash()
-        );
-
         boolean otpMatches =
                 owner.getResetOtpHash().equals(submittedOtpHash);
-
-        logger.info(
-                "Password reset debug - OTP hash comparison result: {}",
-                otpMatches
-        );
 
         if (!otpMatches) {
             owner.setResetOtpAttempts(owner.getResetOtpAttempts() + 1);
@@ -571,10 +533,6 @@ public class OwnerService {
             return "Incorrect reset code.";
         }
         validatePassword(request.getNewPassword());
-
-        logger.info(
-                "Password reset debug - password encoding started"
-        );
 
         owner.setPassword(
                 passwordEncoder.encode(
@@ -590,29 +548,8 @@ public class OwnerService {
         owner.setLockedUntil(null);
         owner.setTokenVersion(owner.getTokenVersion() + 1);
 
-        Owner savedOwner = ownerRepository.save(owner);
-        logger.info(
-                "Password reset debug - repository save completed"
-        );
-
-        Owner persistedOwner = ownerRepository.findByEmail(email).orElse(null);
-        boolean passwordVerified = persistedOwner != null
-                && persistedOwner.getPassword() != null
-                && passwordEncoder.matches(
-                        request.getNewPassword(),
-                        persistedOwner.getPassword()
-                );
-
-        logger.info(
-                "Password reset debug - password verification after save: {}",
-                passwordVerified
-        );
-
-        if (!passwordVerified) {
-            throw new IllegalStateException(
-                    "Password was not persisted correctly"
-            );
-        }
+        ownerRepository.save(owner);
+        logger.info("Password reset successfully for owner: {}", email);
 
         return "Password reset successfully.";
     }

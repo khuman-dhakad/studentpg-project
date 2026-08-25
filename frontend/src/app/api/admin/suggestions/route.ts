@@ -10,10 +10,11 @@ export async function GET() {
   try {
     const recommendations = await backendClient.get<AdminSuggestion[]>(BACKEND_ENDPOINTS.ADMIN.SUGGESTIONS);
     return NextResponse.json(recommendations);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Failed to compile index lookups.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Failed to compile index lookups.' },
+      { status: err.status || 500 }
     );
   }
 }

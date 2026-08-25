@@ -25,9 +25,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+import com.studentpg.infrastructure.cloudinary.CloudinaryService;
+import com.studentpg.modules.pg.entity.PGImage;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "${app.frontend.url}", allowCredentials = "true")
 public class ContactController {
 
     private static final int MAX_PER_DAY = 5;
@@ -39,8 +44,19 @@ public class ContactController {
             .maximumSize(200_000)
             .build();
 
+    private final MongoTemplate mongoTemplate;
+    private final CloudinaryService cloudinaryService;
+
     @Value("${app.captcha.secret:}")
     private String captchaSecret;
+
+    public ContactController(
+            @org.springframework.beans.factory.annotation.Autowired(required = false) MongoTemplate mongoTemplate,
+            @org.springframework.beans.factory.annotation.Autowired(required = false) CloudinaryService cloudinaryService
+    ) {
+        this.mongoTemplate = mongoTemplate;
+        this.cloudinaryService = cloudinaryService;
+    }
 
     @GetMapping("/public/captcha")
     public ResponseEntity<Object> getCaptcha() {
@@ -82,7 +98,16 @@ public class ContactController {
         String subject = HtmlUtils.htmlEscape(req.getSubject().trim());
         String message = HtmlUtils.htmlEscape(req.getMessage().trim());
 
-        // TODO: enqueue email / store in DB for processing. For now just acknowledge.
+        if (mongoTemplate != null) {
+            org.bson.Document doc = new org.bson.Document()
+                    .append("name", name)
+                    .append("email", email)
+                    .append("subject", subject)
+                    .append("message", message)
+                    .append("clientIp", ip)
+                    .append("createdAt", Instant.now().toString());
+            mongoTemplate.save(doc, "contact_messages");
+        }
 
         return ResponseEntity.ok(new MessageResponse(true, "Your message has been received."));
     }
@@ -99,6 +124,7 @@ public class ContactController {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(new MessageResponse(false, "Rate limit exceeded. Please try again later."));
         }
 
+        List<String> uploadedImageUrls = new ArrayList<>();
         // Validate files
         if (req.getImages() != null) {
             for (MultipartFile img : req.getImages()) {
@@ -110,6 +136,15 @@ public class ContactController {
                 if (img.getSize() > 5L * 1024 * 1024) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Each image must be smaller than 5MB."));
                 }
+                try {
+                    if (cloudinaryService != null) {
+                        PGImage uploaded = cloudinaryService.uploadImage(img);
+                        if (uploaded != null && uploaded.getUrl() != null) {
+                            uploadedImageUrls.add(uploaded.getUrl());
+                        }
+                    }
+                } catch (Exception ignored) {
+                }
             }
         }
 
@@ -117,7 +152,15 @@ public class ContactController {
         String title = HtmlUtils.htmlEscape(req.getTitle().trim());
         String detail = HtmlUtils.htmlEscape(req.getDetail().trim());
 
-        // TODO: store report and attached images securely
+        if (mongoTemplate != null) {
+            org.bson.Document doc = new org.bson.Document()
+                    .append("title", title)
+                    .append("detail", detail)
+                    .append("images", uploadedImageUrls)
+                    .append("clientIp", ip)
+                    .append("createdAt", Instant.now().toString());
+            mongoTemplate.save(doc, "issue_reports");
+        }
 
         return ResponseEntity.ok(new MessageResponse(true, "Report received. Thank you."));
     }

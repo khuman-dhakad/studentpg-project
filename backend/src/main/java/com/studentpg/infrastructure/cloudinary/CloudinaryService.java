@@ -70,7 +70,7 @@ public class CloudinaryService {
         "Cloudinary image deleted: {}",
         publicId
 );
-logger.warn(
+        logger.debug(
         "Cloudinary delete response: {}",
         result
 );

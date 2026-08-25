@@ -49,20 +49,36 @@ public class JwtService {
 
 
      public String generateToken(String email) {
+         return generateToken(email, 0L);
+     }
 
-    Date now = new Date();
+     public String generateToken(String email, long tokenVersion) {
+         Date now = new Date();
+         Date expiry = new Date(now.getTime() + jwtExpiration);
 
-    Date expiry = new Date(now.getTime() + jwtExpiration);
+         return Jwts.builder()
+             .id(java.util.UUID.randomUUID().toString())
+             .subject(email)
+             .claim("tokenVersion", tokenVersion)
+             .issuedAt(now)
+             .issuer("StudentPG")
+             .expiration(expiry)
+             .signWith(getSigningKey())
+             .compact();
+     }
 
-    return Jwts.builder()
-        .id(java.util.UUID.randomUUID().toString())
-            .subject(email)
-            .issuedAt(now)
-            .issuer("StudentPG")
-            .expiration(expiry)
-            .signWith(getSigningKey())
-            .compact();
-}
+     public Long extractTokenVersion(String token) {
+         try {
+             Claims claims = extractAllClaims(token);
+             Object versionObj = claims.get("tokenVersion");
+             if (versionObj instanceof Number) {
+                 return ((Number) versionObj).longValue();
+             }
+             return null;
+         } catch (Exception e) {
+             return null;
+         }
+     }
  
 
     public String extractEmail(
@@ -115,77 +131,51 @@ public void init() {
 
 
     public boolean isTokenValid(
-
             String token,
-
-            String email
-
+            String email,
+            Long expectedTokenVersion
     ) {
-
-
         try {
+            Claims claims = extractAllClaims(token);
+            String tokenEmail = claims.getSubject();
+            Date expiration = claims.getExpiration();
 
+            boolean emailMatches = tokenEmail != null && tokenEmail.equalsIgnoreCase(email);
+            boolean notExpired = expiration != null && expiration.after(new Date());
 
-            Claims claims =
+            if (!emailMatches || !notExpired) {
+                return false;
+            }
 
-                    extractAllClaims(
+            if (expectedTokenVersion != null) {
+                Object versionObj = claims.get("tokenVersion");
+                if (versionObj instanceof Number) {
+                    long tokenVersion = ((Number) versionObj).longValue();
+                    if (tokenVersion != expectedTokenVersion) {
+                        logger.debug("JWT tokenVersion mismatch: token={}, expected={}", tokenVersion, expectedTokenVersion);
+                        return false;
+                    }
+                }
+            }
 
-                            token
-
-                    );
-
-
-            String tokenEmail =
-
-                    claims.getSubject();
-
-
-            Date expiration =
-
-                    claims.getExpiration();
-
-
-            return tokenEmail != null
-
-                    && tokenEmail.equalsIgnoreCase(
-
-                    email
-
-            )
-
-                    && expiration != null
-
-                    && expiration.after(
-
-                    new Date()
-
-            );
-
-
+            return true;
+        } catch (ExpiredJwtException ex) {
+            logger.debug("JWT expired.");
+            return false;
+        } catch (JwtException ex) {
+            logger.warn("Invalid JWT.");
+            return false;
+        } catch (Exception ex) {
+            logger.error("JWT validation error.", ex);
+            return false;
         }
+    }
 
-       catch (ExpiredJwtException ex) {
-
-    logger.debug("JWT expired.");
-
-    return false;
-
-}
-catch (JwtException ex) {
-
-    logger.warn("Invalid JWT.");
-
-    return false;
-
-}
-catch (Exception ex) {
-
-    logger.error("JWT validation error.", ex);
-
-    return false;
-
-} 
-
+    public boolean isTokenValid(
+            String token,
+            String email
+    ) {
+        return isTokenValid(token, email, null);
     }
 
 }

@@ -17,10 +17,35 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   variable: '--font-display',
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://studentpg.in';
+
 export const metadata: Metadata = {
-  title: 'Premium Paying Guest Network | StudentPG',
+  title: {
+    default: 'StudentPG | Premium Student Accommodations & Hostels',
+    template: '%s | StudentPG',
+  },
   description: 'Discover premium, verified student and working professional accommodations across top educational hubs instantly.',
-  metadataBase: new URL('https://studentpg.example.com'),
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'StudentPG | Premium Student Accommodations & Hostels',
+    description: 'Find verified PGs and hostels near universities with high-speed Wi-Fi, food, laundry, and security.',
+    url: siteUrl,
+    siteName: 'StudentPG',
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'StudentPG | Premium Student Accommodations',
+    description: 'Find verified PGs and hostels near universities.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
