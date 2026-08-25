@@ -60,10 +60,11 @@ export async function POST(request: NextRequest) {
           : undefined,
       }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Administrative gateway unreachable.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Administrative gateway unreachable.' },
+      { status: err.status || 500 }
     );
   }
 }

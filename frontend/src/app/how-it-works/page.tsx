@@ -1,6 +1,5 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -17,6 +16,11 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
+
+export const metadata: Metadata = {
+  title: 'How It Works',
+  description: 'Learn how students find verified PGs and how property owners list rooms on StudentPG.',
+};
 
 export default function HowItWorksPage() {
 

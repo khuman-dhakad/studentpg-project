@@ -1,10 +1,14 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ShieldCheck, KeyRound } from 'lucide-react';
 import { OwnerForgotPasswordForm } from '@/features/auth/components/OwnerForgotPasswordForm';
+
+export const metadata: Metadata = {
+  title: 'Forgot Password',
+  description: 'Recover access to your StudentPG property owner account securely.',
+};
 
 export default function OwnerForgotPasswordPage() {
   return (

@@ -50,6 +50,7 @@ export function SiteHeader() {
               src="/Pglogo.jpeg"
               alt="StudentPG Logo"
               fill
+              sizes="48px"
               className="object-cover"
               priority
             />

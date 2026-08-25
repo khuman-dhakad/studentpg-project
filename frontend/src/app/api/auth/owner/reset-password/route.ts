@@ -9,19 +9,20 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await backendClient.post<any>(
+    const response = await backendClient.post<unknown>(
       BACKEND_ENDPOINTS.OWNERS.RESET_PASSWORD,
       body
     );
 
     return NextResponse.json(response);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
       {
         success: false,
-        message: error.message || 'Password reset configuration rejected.',
+        message: err.message || 'Password reset configuration rejected.',
       },
-      { status: error.status || 400 }
+      { status: err.status || 400 }
     );
   }
 }

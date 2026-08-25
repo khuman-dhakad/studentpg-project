@@ -10,10 +10,11 @@ export async function GET() {
   try {
     const profile = await backendClient.get<OwnerProfile>(BACKEND_ENDPOINTS.OWNERS.PROFILE);
     return NextResponse.json(profile);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Failed to fetch owner profile.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Failed to fetch owner profile.' },
+      { status: err.status || 500 }
     );
   }
 }
@@ -26,10 +27,11 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const result = await backendClient.put<string>(BACKEND_ENDPOINTS.OWNERS.PROFILE, body);
     return NextResponse.json({ message: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string; errors?: unknown };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Profile modification rejected.', errors: error.errors },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Profile modification rejected.', errors: err.errors },
+      { status: err.status || 400 }
     );
   }
 }

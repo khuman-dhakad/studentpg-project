@@ -127,8 +127,27 @@ export default async function PgDetailsPage({
     icon: React.ElementType;
   }[];
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LodgingBusiness',
+    name: title,
+    description: description,
+    image: image,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: listing.city,
+      addressRegion: listing.state,
+      addressCountry: 'IN',
+    },
+    priceRange: typeof listing.rent === 'number' ? `₹${listing.rent}` : undefined,
+  };
+
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <div className="mx-auto max-w-6xl">
 

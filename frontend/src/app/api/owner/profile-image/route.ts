@@ -10,10 +10,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json(); // { publicId: string, url: string }
     const result = await backendClient.post<string>(BACKEND_ENDPOINTS.OWNERS.PROFILE_IMAGE, body);
     return NextResponse.json({ message: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Profile avatar association failed.' },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Profile avatar association failed.' },
+      { status: err.status || 400 }
     );
   }
 }

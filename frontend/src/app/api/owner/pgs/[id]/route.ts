@@ -13,10 +13,11 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const { id } = await context.params;
     const property = await backendClient.get<PG>(BACKEND_ENDPOINTS.PGS.BY_ID(id));
     return NextResponse.json(property);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 404, message: error.message || 'Accommodation document not found.' },
-      { status: error.status || 404 }
+      { status: err.status || 404, message: err.message || 'Accommodation document not found.' },
+      { status: err.status || 404 }
     );
   }
 }
@@ -30,10 +31,11 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     const body = await request.json();
     const updatedProperty = await backendClient.put<PG>(BACKEND_ENDPOINTS.PGS.BY_ID(id), body);
     return NextResponse.json(updatedProperty);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string; errors?: unknown };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Accommodation modification declined.', errors: error.errors },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Accommodation modification declined.', errors: err.errors },
+      { status: err.status || 400 }
     );
   }
 }
@@ -46,10 +48,11 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     const { id } = await context.params;
     const feedback = await backendClient.delete<string>(BACKEND_ENDPOINTS.PGS.BY_ID(id));
     return NextResponse.json({ message: feedback });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Failed to evict listing document.' },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Failed to evict listing document.' },
+      { status: err.status || 400 }
     );
   }
 }

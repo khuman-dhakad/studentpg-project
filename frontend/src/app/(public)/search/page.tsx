@@ -1,4 +1,6 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import { SearchBar } from '@/components/pg/SearchBar';
 import { ListingFilters } from '@/components/pg/ListingFilters';
 import { PGCard } from '@/components/pg/PGCard';
@@ -7,6 +9,11 @@ import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 import { ShieldCheck, Info, Sparkles } from 'lucide-react';
 import type { PagedResponse } from '@/types/api.types';
 import type { PG } from '@/types/pg.types';
+
+export const metadata: Metadata = {
+  title: 'Search Verified PGs & Hostels',
+  description: 'Explore verified student accommodations, compare amenities, rent prices, and locations across India.',
+};
 
 // ==========================================
 // SERVER-SIDE DATA FETCHING LAYER (RSC)
@@ -120,10 +127,18 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<Rec
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 antialiased pb-20">
       
       {/* HERO SECTION */}
-      <section 
-        className="relative bg-cover bg-center bg-no-repeat py-14 md:py-24 text-white overflow-hidden shadow-lg border-b border-slate-100"
-        style={{ backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.85) 40%, rgba(30, 41, 59, 0.4)), url('/findyour pg.jpeg')` }}
-      >
+      <section className="relative py-14 md:py-24 text-white overflow-hidden shadow-lg border-b border-slate-100">
+        <Image
+          src="/findyour pg.jpeg"
+          alt="Find student PG and co-living accommodations"
+          fill
+          priority
+          sizes="100vw"
+          quality={85}
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-slate-900/40" />
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-1.5 bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md">

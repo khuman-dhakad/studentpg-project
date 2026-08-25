@@ -1,7 +1,15 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import { AdminLoginForm } from '@/features/auth/components/AdminLoginForm';
+
+export const metadata: Metadata = {
+  title: 'Admin Portal Login',
+  description: 'Authorized personnel access terminal for StudentPG administration.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function AdminLoginPage() {
   return (
