@@ -80,6 +80,8 @@ You'll need:
 - Maven (or the `mvnw` wrapper if the backend includes one)
 - A MongoDB Atlas account (the free tier works fine), or a local MongoDB instance
 
+A sample environment file is available at [.env.example](.env.example). Copy it to `.env` and fill in the required values before starting the services.
+
 **1. Clone the repo**
 
 ```bash
@@ -107,6 +109,8 @@ Then run it:
 ```
 
 This starts the backend on `http://localhost:8080`.
+
+The API documentation is available at `http://localhost:8080/swagger-ui/index.html` once the backend is running.
 
 **3. Set up the frontend**
 

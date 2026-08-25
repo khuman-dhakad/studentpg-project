@@ -9,7 +9,7 @@ export const pgFormSchema = z.object({
   state: z.string().min(2, 'State is mandatory'),
   pincode: z.string().length(6, 'Pincode must be exactly 6 digits'),
   rent: z.coerce.number().positive('Rent amount must be a positive number'),
-  gender: z.enum(CONFIG.GENDERS, {
+  gender: z.enum(["MALE", "FEMALE", "UNISEX"], {
     errorMap: () => ({ message: 'Please select a valid target gender category' }),
   }),
   roomType: z.string().min(2, 'Room category breakdown description required'),

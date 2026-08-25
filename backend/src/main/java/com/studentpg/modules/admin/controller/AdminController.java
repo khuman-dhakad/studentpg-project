@@ -1,81 +1,250 @@
 package com.studentpg.modules.admin.controller;
 
-import com.studentpg.modules.pg.entity.PG;
+import com.studentpg.common.util.PageableUtils;
+import com.studentpg.modules.admin.dto.request.RejectPGRequest;
 import com.studentpg.modules.admin.service.AdminService;
-import com.studentpg.common.response.PagedResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.studentpg.modules.pg.entity.PG;
+
+import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/pgs")
 @PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "*")
 public class AdminController {
 
-    @Autowired
-    private AdminService adminService;
+    private final AdminService adminService;
 
-    @GetMapping("/pgs/pending")
-    public PagedResponse<PG> getPendingPGs(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
 
-        Pageable pageable = com.studentpg.common.util.PageableUtils.build(page, size, sortBy, direction);
-        Page<PG> result = adminService.getPendingPGs(pageable);
+    public AdminController(
+            AdminService adminService
+    ) {
 
-        return new PagedResponse<>(
-                result.getContent(),
-                result.getNumber(),
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages());
+        this.adminService =
+                adminService;
     }
 
-    @PutMapping("/pgs/{id}/approve")
-    public String approvePG(@PathVariable String id) {
-        return adminService.approvePG(id);
-    }
 
-    @DeleteMapping("/pgs/{id}")
-    public String rejectPG(@PathVariable String id) {
-        return adminService.rejectPG(id);
-    }
+    /*
+     * =====================================================
+     * GET PG LISTINGS BY STATUS
+     * =====================================================
+     *
+     * GET /api/admin/pgs?status=ALL
+     * GET /api/admin/pgs?status=PENDING
+     * GET /api/admin/pgs?status=APPROVED
+     * GET /api/admin/pgs?status=REJECTED
+     */
 
-    @GetMapping("/pgs/stats")
+    @GetMapping
+public ResponseEntity<Page<PG>> getPGs(
+
+        @RequestParam(defaultValue = "ALL")
+        String status,
+
+        @RequestParam(defaultValue = "0")
+        int page,
+
+        @RequestParam(defaultValue = "10")
+        int size,
+
+        @RequestParam(required = false)
+        String sortBy,
+
+        @RequestParam(defaultValue = "asc")
+        String direction
+) {
+
+    Pageable pageable = PageableUtils.build(
+            page,
+            size,
+            sortBy,
+            direction
+    );
+
+    return ResponseEntity.ok(
+            adminService.getAllPGsByStatus(
+                    status,
+                    pageable
+            )
+    );
+} 
+
+
+    /*
+     * =====================================================
+     * GET ADMIN STATISTICS
+     * =====================================================
+     *
+     * GET /api/admin/pgs/stats
+     */
+
+    @GetMapping("/stats")
     public ResponseEntity<Map<String, Long>> getStats() {
-        return ResponseEntity.ok(adminService.getAdminStats());
+
+        return ResponseEntity.ok(
+
+                adminService.getAdminStats()
+
+        );
     }
 
-    @GetMapping("/pgs")
-    public PagedResponse<PG> getPGs(
-            @RequestParam(defaultValue = "ALL") String status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
 
-        Pageable pageable = com.studentpg.common.util.PageableUtils.build(page, size, sortBy, direction);
-        Page<PG> result = adminService.getAllPGsByStatus(status, pageable);
+    /*
+     * =====================================================
+     * GET PENDING PGs
+     * =====================================================
+     *
+     * GET /api/admin/pgs/pending
+     */
+@GetMapping("/{id}")
+public ResponseEntity<PG> getPGById(
+        @PathVariable String id
+) {
 
-        return new PagedResponse<>(
-                result.getContent(),
-                result.getNumber(),
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages());
+    return ResponseEntity.ok(
+            adminService.getPGById(id)
+    );
+}
+
+
+
+@DeleteMapping("/{id}")
+public ResponseEntity<String> deletePG(
+        @PathVariable String id
+) {
+
+    return ResponseEntity.ok(
+            adminService.deletePG(id)
+    );
+}
+
+
+   @GetMapping("/pending")
+public ResponseEntity<Page<PG>> getPendingPGs(
+
+        @RequestParam(defaultValue = "0")
+        int page,
+
+        @RequestParam(defaultValue = "10")
+        int size,
+
+        @RequestParam(required = false)
+        String sortBy,
+
+        @RequestParam(defaultValue = "asc")
+        String direction
+
+) {
+
+    Pageable pageable = PageableUtils.build(
+            page,
+            size,
+            sortBy,
+            direction
+    );
+
+    return ResponseEntity.ok(
+            adminService.getPendingPGs(pageable)
+    );
+}
+
+    /*
+     * =====================================================
+     * APPROVE PG
+     * =====================================================
+     *
+     * PATCH /api/admin/pgs/{id}/approve
+     */
+
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<String> approvePG(
+
+            @PathVariable
+            String id
+
+    ) {
+
+        return ResponseEntity.ok(
+
+                adminService.approvePG(
+                        id
+                )
+
+        );
     }
 
-    @GetMapping("/pgs/suggestions")
-    public ResponseEntity<List<PG>> getSuggestions(@RequestParam String query) {
-        return ResponseEntity.ok(adminService.getSearchSuggestions(query));
+
+    /*
+     * =====================================================
+     * REJECT PG
+     * =====================================================
+     *
+     * PATCH /api/admin/pgs/{id}/reject
+     *
+     * Body:
+     *
+     * {
+     *     "reason": "Required documents are missing"
+     * }
+     */
+
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<String> rejectPG(
+
+            @PathVariable
+            String id,
+
+            @Valid
+            @RequestBody
+            RejectPGRequest request
+
+    ) {
+
+        return ResponseEntity.ok(
+
+                adminService.rejectPG(
+
+                        id,
+
+                        request.getReason()
+
+                )
+
+        );
     }
+
+
+    /*
+     * =====================================================
+     * PG SEARCH SUGGESTIONS
+     * =====================================================
+     *
+     * GET /api/admin/pgs/suggestions?query=bhopal
+     */
+
+
+   @GetMapping("/suggestions")
+public ResponseEntity<List<String>> getSearchSuggestions(
+
+        @RequestParam
+        String query
+
+) {
+
+    return ResponseEntity.ok(
+            adminService.getSearchSuggestions(query)
+    );
+}
 }

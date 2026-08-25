@@ -1,31 +1,86 @@
-export interface DecodedJWTPayload {
-  sub: string; // User email addresses
-  exp: number; // Unix Epoch lifecycle boundaries
+import { jwtVerify, type JWTPayload } from 'jose';
+
+export interface DecodedJWTPayload extends JWTPayload {
+  sub: string;
 }
 
 /**
- * Inspects token string bytes defensively without execution side-effects.
+ * Returns the JWT verification secret.
+ *
+ * This secret must be the same secret used by the backend
+ * to sign the JWT.
  */
-export function decodeAndVerifyTokenLifecycle(token: string): { email: string | null; isExpired: boolean } {
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret) {
+    throw new Error(
+      'JWT_SECRET is not configured in the frontend environment.'
+    );
+  }
+
+  return new TextEncoder().encode(secret);
+}
+
+/**
+ * Cryptographically verifies the JWT signature and validates
+ * the token lifecycle.
+ *
+ * Important:
+ * This function does NOT merely decode the payload.
+ * It verifies that the token was actually signed by the trusted backend.
+ */
+export async function decodeAndVerifyTokenLifecycle(
+  token: string
+): Promise<{
+  email: string | null;
+  isExpired: boolean;
+}> {
   try {
-    const componentChunks = token.split('.');
-    if (componentChunks.length !== 3 || !componentChunks[1]) {
-      return { email: null, isExpired: true };
+    if (!token || typeof token !== 'string') {
+      return {
+        email: null,
+        isExpired: true,
+      };
     }
 
-    // Node buffer translation process
-    const verifiedJson = Buffer.from(componentChunks[1], 'base64').toString('utf-8');
-    const parsedPayload = JSON.parse(verifiedJson) as DecodedJWTPayload;
+    const { payload } = await jwtVerify(
+      token,
+      getJwtSecret(),
+      {
+        algorithms: ['HS256'],
+      }
+    );
 
-    if (!parsedPayload.sub || !parsedPayload.exp) {
-      return { email: null, isExpired: true };
+    const email =
+      typeof payload.sub === 'string'
+        ? payload.sub.trim().toLowerCase()
+        : null;
+
+    const exp =
+      typeof payload.exp === 'number'
+        ? payload.exp
+        : null;
+
+    if (!email || exp === null) {
+      return {
+        email: null,
+        isExpired: true,
+      };
     }
 
-    const currentUnixEpoch = Math.floor(Date.now() / 1000);
-    const tokenIsExpired = parsedPayload.exp < currentUnixEpoch;
+    const currentUnixEpoch = Math.floor(
+      Date.now() / 1000
+    );
 
-    return { email: parsedPayload.sub, isExpired: tokenIsExpired };
+    return {
+      email,
+      isExpired: exp <= currentUnixEpoch,
+    };
   } catch {
-    return { email: null, isExpired: true };
+    return {
+      email: null,
+      isExpired: true,
+    };
   }
 }

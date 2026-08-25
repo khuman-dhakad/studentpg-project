@@ -5,11 +5,11 @@ import { StoreProvider } from '@/store/StoreProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
-import '@/app/globals.css';
+import './globals.css';
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-sans',  
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({

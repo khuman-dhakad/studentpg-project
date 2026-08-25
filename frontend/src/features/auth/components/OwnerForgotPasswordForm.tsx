@@ -1,8 +1,11 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 
 export function OwnerForgotPasswordForm() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -13,28 +16,58 @@ export function OwnerForgotPasswordForm() {
   const requestCode = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const response = await fetch('/api/auth/owner/forgot-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    const data = await response.json();
-    setMessage(data.message || 'If an account exists, a reset code has been sent.');
-    setStep('reset');
-    setLoading(false);
+
+    try {
+      const normalizedEmail = email.trim().toLowerCase();
+      const response = await fetch(BACKEND_ENDPOINTS.OWNERS.FORGOT_PASSWORD, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normalizedEmail }),
+      });
+
+      const data = await response.json();
+      const nextMessage = data?.message || 'If an account exists, a reset code has been sent.';
+      setMessage(nextMessage);
+
+      if (response.ok && data?.success !== false) {
+        setStep('reset');
+      }
+    } catch (error) {
+      setMessage('Unable to send reset code. Please check your network connection and try again.');
+      console.error('Forgot password request failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetPassword = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const response = await fetch('/api/auth/owner/reset-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp, newPassword }),
-    });
-    const data = await response.json();
-    setMessage(data.message || 'Password updated.');
-    setLoading(false);
+
+    try {
+      const normalizedEmail = email.trim().toLowerCase();
+      const trimmedOtp = otp.trim();
+      const response = await fetch(BACKEND_ENDPOINTS.OWNERS.RESET_PASSWORD, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normalizedEmail, otp: trimmedOtp, newPassword }),
+      });
+
+      const data = await response.json();
+      const nextMessage = data?.message || 'Password updated.';
+      setMessage(nextMessage);
+
+      if (response.ok && data?.success !== false) {
+        setOtp('');
+        setNewPassword('');
+        router.push('/owner/login');
+      }
+    } catch (error) {
+      setMessage('Unable to reset password. Please check your network connection and try again.');
+      console.error('Reset password request failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

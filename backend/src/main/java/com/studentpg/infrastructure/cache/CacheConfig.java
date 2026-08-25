@@ -21,6 +21,7 @@ public class CacheConfig {
                 Caffeine.newBuilder()
                         .expireAfterWrite(5, TimeUnit.MINUTES) // cache refreshes every 5 minutes
                         .maximumSize(500)
+                        .recordStats()
         );
 
         return cacheManager;

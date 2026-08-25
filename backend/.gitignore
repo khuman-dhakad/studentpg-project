@@ -37,3 +37,24 @@ build/
 
 # Local Spring Configuration
 src/main/resources/application-local.properties
+
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Build
+target/

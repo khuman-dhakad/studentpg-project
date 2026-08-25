@@ -6,7 +6,7 @@ import { PG } from '@/types/pg.types';
 /**
  * Pulls all custom accommodations managed by the calling owner account.
  */
-export async function GET() {
+export async function GET(_request: NextRequest) {
   try {
     const properties = await backendClient.get<PG[]>(BACKEND_ENDPOINTS.PGS.OWNER_LISTINGS);
     return NextResponse.json(properties);
@@ -24,11 +24,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const createdProperty = await backendClient.post<PG>(BACKEND_ENDPOINTS.PGS.BASE, body);
+    const createdProperty = await backendClient.post<{ success: boolean; message: string }>(BACKEND_ENDPOINTS.PGS.OWNER_LISTINGS, body);
     return NextResponse.json(createdProperty);
   } catch (error: any) {
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Accommodation creation rejected.', errors: error.errors },
+      { success: false, status: error.status || 400, message: error.message || 'Accommodation creation rejected.', errors: error.errors },
       { status: error.status || 400 }
     );
   }

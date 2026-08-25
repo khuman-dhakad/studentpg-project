@@ -1,14 +1,21 @@
-import { OwnerProfile } from './owner.types';
+import type {
+  OwnerProfile,
+} from './owner.types';
 
-/**
- * Global Frontend-facing state metrics for identity contexts.
- */
+export interface AuthUser {
+
+  email: string;
+
+  role: 'OWNER' | 'ADMIN';
+
+}
 
 export interface AuthSessionState {
+
   isAuthenticated: boolean;
-  user: {
-    email: string | null;
-    role: 'OWNER' | 'ADMIN' | null;
-  } | null;
+
+  user: AuthUser | null;
+
   profile: OwnerProfile | null;
+
 }

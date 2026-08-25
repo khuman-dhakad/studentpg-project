@@ -10,16 +10,25 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CloudinaryService {
-
-    @Autowired
-    private Cloudinary cloudinary;
+    private final Cloudinary cloudinary;
+    private static final Logger logger =
+        LoggerFactory.getLogger(CloudinaryService.class);
 
     public PGImage uploadImage(MultipartFile image) throws IOException {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(
-                image.getBytes(), ObjectUtils.asMap("folder", "studentpg"));
+                image.getBytes(), ObjectUtils.asMap(
+        "folder",
+        "studentpg",
+        "resource_type",
+        "image"
+));
 
         String publicId = uploadResult.get("public_id").toString();
         String url = uploadResult.get("secure_url").toString();
@@ -28,7 +37,13 @@ public class CloudinaryService {
 
     public Map<String, String> uploadProfileImage(MultipartFile image) throws IOException {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(
-                image.getBytes(), ObjectUtils.asMap("folder", "studentpg/owners"));
+                image.getBytes(), 
+                ObjectUtils.asMap(
+        "folder",
+        "studentpg/owners",
+        "resource_type",
+        "image"
+));
 
         Map<String, String> response = new HashMap<>();
         response.put("publicId", uploadResult.get("public_id").toString());
@@ -36,8 +51,28 @@ public class CloudinaryService {
         return response;
     }
 
+    
     public void deleteImage(String publicId) throws IOException {
-        Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-        System.out.println("Cloudinary Delete Response: " + result);
+        if (publicId == null || publicId.isBlank()) {
+
+    throw new IllegalArgumentException(
+            "Public ID is required."
+    );
+}
+        Map<?, ?> result = cloudinary.uploader().destroy(
+        publicId,
+        ObjectUtils.asMap(
+                "resource_type",
+                "image"
+        )
+);
+        logger.info(
+        "Cloudinary image deleted: {}",
+        publicId
+);
+logger.warn(
+        "Cloudinary delete response: {}",
+        result
+);
     }
 }

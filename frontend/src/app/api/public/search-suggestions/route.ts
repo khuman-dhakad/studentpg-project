@@ -1,27 +1,72 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { backendClient } from '@/api/backendClient';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 
-/**
- * Provides ultra-fast search typeahead suggestions based on active city keywords.
- */
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const city = searchParams.get('city') || '';
 
-    if (!city.trim()) {
+export async function GET(
+  request: NextRequest
+) {
+
+  try {
+
+    const {
+      searchParams,
+    } = new URL(request.url);
+
+
+    const query =
+      searchParams.get('q') || '';
+
+
+    if (
+      query.trim().length < 2
+    ) {
+
       return NextResponse.json([]);
+
     }
 
-    const suggestionsUrl = `${BACKEND_ENDPOINTS.STUDENT.SEARCH_CITY}?city=${encodeURIComponent(city)}`;
-    const uniqueCities = await backendClient.get<string[]>(suggestionsUrl);
 
-    return NextResponse.json(uniqueCities);
-  } catch (error: any) {
+    const suggestionsUrl =
+      `${BACKEND_ENDPOINTS.STUDENT.SEARCH_SUGGESTIONS}` +
+      `?q=${encodeURIComponent(query)}`;
+
+
+    const suggestions =
+      await backendClient.get(
+        suggestionsUrl
+      );
+
+
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Failed to populate lookup suggestions.' },
-      { status: error.status || 500 }
+      suggestions
     );
+
+
+  } catch (error: any) {
+
+    console.error(
+      'Search suggestions error:',
+      error
+    );
+
+
+    return NextResponse.json(
+      {
+        status:
+          error.status || 500,
+
+        message:
+          error.message ||
+          'Failed to load search suggestions.',
+      },
+      {
+        status:
+          error.status || 500,
+      }
+    );
+
   }
+
 }

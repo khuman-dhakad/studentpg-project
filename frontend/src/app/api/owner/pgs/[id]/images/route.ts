@@ -20,3 +20,48 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  context: RouteContext
+) {
+  try {
+    const { id } = await context.params;
+
+    const publicId =
+      request.nextUrl.searchParams.get('publicId');
+
+    if (!publicId) {
+      return NextResponse.json(
+        {
+          message: 'publicId is required.',
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const feedback = await backendClient.delete<string>(
+      `${BACKEND_ENDPOINTS.PGS.IMAGES(id)}?publicId=${encodeURIComponent(
+        publicId
+      )}`
+    );
+
+    return NextResponse.json({
+      message: feedback || 'Image deleted successfully.',
+    });
+
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        status: error.status || 400,
+        message:
+          error.message || 'Image deletion failed.',
+      },
+      {
+        status: error.status || 400,
+      }
+    );
+  }
+}

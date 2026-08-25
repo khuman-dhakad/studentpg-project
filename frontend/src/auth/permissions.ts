@@ -1,5 +1,5 @@
 /**
- * Edge firewall matrices built to prevent route bypass vulnerabilities.
+ * Route access control based on authenticated user role.
  */
 
 export const PROTECTED_ZONES = {
@@ -7,18 +7,48 @@ export const PROTECTED_ZONES = {
   ADMIN: '/admin',
 } as const;
 
-export function evaluateRouteClearance(role: 'OWNER' | 'ADMIN' | null, routePath: string): boolean {
-  if (routePath.startsWith(PROTECTED_ZONES.ADMIN)) {
+export type UserRole = 'OWNER' | 'ADMIN' | null;
+
+export function evaluateRouteClearance(
+  role: UserRole,
+  routePath: string,
+): boolean {
+  /*
+   * ADMIN routes
+   */
+
+  if (
+    routePath === PROTECTED_ZONES.ADMIN ||
+    routePath.startsWith(`${PROTECTED_ZONES.ADMIN}/`)
+  ) {
     return role === 'ADMIN';
   }
 
-  if (routePath.startsWith(PROTECTED_ZONES.OWNER)) {
-    // Escape routes for public registration/login entry points
-    if (routePath === '/owner/login' || routePath === '/owner/register') {
+  /*
+   * OWNER routes
+   */
+
+  if (
+    routePath === PROTECTED_ZONES.OWNER ||
+    routePath.startsWith(`${PROTECTED_ZONES.OWNER}/`)
+  ) {
+    /*
+     * Public owner entry routes
+     */
+
+    if (
+      routePath === '/owner/login' ||
+      routePath === '/owner/register'
+    ) {
       return true;
     }
+
     return role === 'OWNER';
   }
+
+  /*
+   * Public routes
+   */
 
   return true;
 }

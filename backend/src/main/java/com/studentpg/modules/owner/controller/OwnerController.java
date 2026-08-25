@@ -2,69 +2,210 @@ package com.studentpg.modules.owner.controller;
 
 import com.studentpg.modules.owner.dto.request.ChangePasswordRequest;
 import com.studentpg.modules.owner.dto.request.ForgotPasswordRequest;
-import com.studentpg.modules.owner.dto.response.LoginResponse;
-import com.studentpg.modules.owner.dto.request.OwnerLoginRequest;
-import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
 import com.studentpg.modules.owner.dto.request.OwnerRegisterRequest;
 import com.studentpg.modules.owner.dto.request.ResetPasswordRequest;
 import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
+
+import com.studentpg.modules.owner.dto.response.MessageResponse;
+import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
+
 import com.studentpg.modules.owner.service.OwnerService;
+
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/api/owners")
-@CrossOrigin("*")
+@RequiredArgsConstructor
 public class OwnerController {
 
-    @Autowired
-    private OwnerService ownerService;
 
-    @PostMapping("/register")
-    public String registerOwner(@Valid @RequestBody OwnerRegisterRequest request) {
-        return ownerService.registerOwner(request);
-    }
+    private final OwnerService ownerService;
 
-    @PostMapping("/login")
-    public LoginResponse loginOwner(@Valid @RequestBody OwnerLoginRequest request) {
-        return ownerService.loginOwner(request);
-    }
+
+   @PostMapping("/register")
+public MessageResponse registerOwner(
+
+        @Valid
+
+        @RequestBody
+
+        OwnerRegisterRequest request
+
+) {
+
+    String message = ownerService.registerOwner(request);
+
+    return new MessageResponse(
+            true,
+            message
+    );
+}
+
 
     @GetMapping("/profile")
     public OwnerProfileResponse getMyProfile() {
+
         return ownerService.getMyProfile();
+
     }
 
-    @PutMapping("/profile")
-    public String updateMyProfile(@Valid @RequestBody UpdateOwnerProfileRequest request) {
-        return ownerService.updateMyProfile(request);
-    }
+
+   @PutMapping("/profile")
+public ResponseEntity<MessageResponse> updateMyProfile(
+        @Valid
+        @RequestBody
+        UpdateOwnerProfileRequest request
+) {
+
+    String message = ownerService.updateMyProfile(request);
+
+    return ResponseEntity.ok(
+            new MessageResponse(true, message)
+    );
+}
+
+    
+
 
     @PutMapping("/change-password")
-    public String changePassword(@Valid @RequestBody ChangePasswordRequest request) {
-        return ownerService.changePassword(request);
+public ResponseEntity<MessageResponse> changePassword(
+        @Valid
+        @RequestBody
+        ChangePasswordRequest request
+) {
+
+    String message = ownerService.changePassword(request);
+
+    return ResponseEntity.ok(
+            new MessageResponse(true, message)
+    );
+}
+
+
+    @PostMapping({
+
+            "/forgot-password",
+
+            "/send-otp",
+
+            "/request-otp"
+
+    })
+
+    public MessageResponse forgotPassword(
+
+            @Valid
+
+            @RequestBody
+
+            ForgotPasswordRequest request
+
+    ) {
+
+
+        String message =
+
+                ownerService.forgotPassword(
+
+                        request
+
+                );
+
+
+        return new MessageResponse(
+
+                true,
+
+                message
+
+        );
+
     }
 
-    @PostMapping("/forgot-password")
-    public String forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        return ownerService.forgotPassword(request);
-    }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        return ownerService.resetPassword(request);
+    public MessageResponse resetPassword(
+
+            @Valid
+
+            @RequestBody
+
+            ResetPasswordRequest request
+
+    ) {
+
+
+        String message =
+
+                ownerService.resetPassword(
+
+                        request
+
+                );
+
+
+        boolean success =
+
+                "Password reset successfully."
+
+                        .equals(message);
+
+
+        return new MessageResponse(
+
+                success,
+
+                message
+
+        );
+
     }
 
-    @PostMapping("/profile-image")
-    public String uploadProfileImage(@RequestParam("image") MultipartFile image) throws IOException {
-        return ownerService.uploadProfileImage(image);
-    }
+
+    @PostMapping(
+        value = "/profile-image",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+)
+public ResponseEntity<MessageResponse> uploadProfileImage(
+        @RequestParam("image")
+        MultipartFile image
+) throws IOException {
+
+    String message = ownerService.uploadProfileImage(image);
+
+    return ResponseEntity.ok(
+            new MessageResponse(true, message)
+    );
+}
+
 
     @DeleteMapping("/profile-image")
-    public String deleteProfileImage() throws IOException {
-        return ownerService.deleteProfileImage();
-    }
+public ResponseEntity<MessageResponse> deleteProfileImage()
+        throws IOException {
+
+    String message = ownerService.deleteProfileImage();
+
+    return ResponseEntity.ok(
+            new MessageResponse(true, message)
+    );
+}
+
 }

@@ -16,7 +16,10 @@ export async function GET() {
       return NextResponse.json({ isAuthenticated: false, user: null, profile: null });
     }
 
-    const { email, isExpired } = decodeAndVerifyTokenLifecycle(token);
+    const {
+  email,
+  isExpired,
+} = await decodeAndVerifyTokenLifecycle(token);
 
     if (isExpired || !email) {
       return NextResponse.json({ isAuthenticated: false, user: null, profile: null });

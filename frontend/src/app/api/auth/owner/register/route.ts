@@ -10,16 +10,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // The backend returns a plain JSON string ("Owner registered successfully") with Content-Type: application/json
-    const rawStringResult = await backendClient.post<string>(
+    const response = await backendClient.post<{ success?: boolean; message?: string }>(
       BACKEND_ENDPOINTS.OWNERS.REGISTER,
       body
     );
 
-    // Business rule guard: checking for successful responses that indicate email duplication alerts
-    if (rawStringResult === 'Email already exists') {
+    if (response?.message === 'Email already exists') {
       return NextResponse.json(
         {
+          success: false,
           status: 400,
           message: 'The requested email address is already associated with another account.'
         },
@@ -27,7 +26,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ message: rawStringResult });
+    return NextResponse.json({ success: true, message: response?.message || 'Registration successful' });
   } catch (error: any) {
     return NextResponse.json(
       {

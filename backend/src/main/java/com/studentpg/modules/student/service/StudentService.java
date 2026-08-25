@@ -1,91 +1,350 @@
 package com.studentpg.modules.student.service;
 
+import com.studentpg.modules.owner.entity.Owner;
+import com.studentpg.modules.owner.repository.OwnerRepository;
+import com.studentpg.modules.pg.entity.ApprovalStatus;
+import com.studentpg.modules.pg.entity.Gender;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.pg.repository.PGRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.studentpg.modules.student.dto.response.PGDetailsResponse;
+import com.studentpg.modules.student.dto.response.PGSuggestionResponse;
+
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.regex.Pattern;
+
+
 
 @Service
 public class StudentService {
 
-    @Autowired
-    private PGRepository pgRepository;
+    private final PGRepository pgRepository;
+    private final MongoTemplate mongoTemplate;
+    private final OwnerRepository ownerRepository;
+    private final PGPublicResponseMapper responseMapper;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    public StudentService(
+            PGRepository pgRepository,
+            MongoTemplate mongoTemplate,
+            OwnerRepository ownerRepository,
+            PGPublicResponseMapper responseMapper
+    ) {
+        this.pgRepository = pgRepository;
+        this.mongoTemplate = mongoTemplate;
+        this.ownerRepository = ownerRepository;
+        this.responseMapper = responseMapper;
+    }
 
-    @Cacheable(value = "approvedPgs", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort")
+    /**
+     * Fetch only approved PG listings for students.
+     */
+    @Cacheable(
+            value = "approvedPgs",
+            key = "#pageable.pageNumber + '-' + "
+                    + "#pageable.pageSize + '-' "
+                    + "+ #pageable.sort"
+    )
     public Page<PG> getApprovedPGs(Pageable pageable) {
-        return pgRepository.findByApprovalStatus("APPROVED", pageable);
+        return pgRepository.findByApprovalStatus(
+                ApprovalStatus.APPROVED,
+                pageable
+        );
     }
 
-    public PG getPGDetails(String id) {
-        return pgRepository.findByIdAndApprovalStatus(id, "APPROVED").orElse(null);
+    /**
+     * Fetch one approved PG by ID.
+     *
+     * Students must never receive PENDING or REJECTED listings.
+     */
+    public PGDetailsResponse getPGDetails(String id) {
+
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+
+        PG pg = pgRepository
+                .findByIdAndApprovalStatus(
+                        id,
+                        ApprovalStatus.APPROVED
+                )
+                .orElse(null);
+
+        if (pg == null) {
+            return null;
+        }
+
+        Owner owner = null;
+        if (pg.getOwnerId() != null && !pg.getOwnerId().isBlank()) {
+            owner = ownerRepository.findById(pg.getOwnerId()).orElse(null);
+        }
+
+        return responseMapper.toPublicResponse(pg, owner);
     }
 
-    public Page<PG> searchByCity(String city, Pageable pageable) {
-        return pgRepository.findByApprovalStatusAndCity("APPROVED", city, pageable);
+    /**
+     * Search approved PGs by exact city.
+     */
+    public Page<PG> searchByCity(
+            String city,
+            Pageable pageable
+    ) {
+
+        if (city == null || city.isBlank()) {
+            return Page.empty(pageable);
+        }
+
+        return pgRepository.findByApprovalStatusAndCity(
+                ApprovalStatus.APPROVED,
+                city.trim(),
+                pageable
+        );
     }
 
-    public Page<PG> filterByGender(String gender, Pageable pageable) {
-        return pgRepository.findByApprovalStatusAndGender("APPROVED", gender, pageable);
+    /**
+     * Filter approved PGs by gender/category.
+     */
+   public Page<PG> filterByGender(
+        String gender,
+        Pageable pageable
+) {
+
+    if (gender == null || gender.isBlank()) {
+        return Page.empty(pageable);
     }
 
-    public Page<PG> filterByRent(double rent, Pageable pageable) {
-        return pgRepository.findByApprovalStatusAndRentLessThanEqual("APPROVED", rent, pageable);
+    Gender genderEnum = Gender.parse(gender);
+
+    if (genderEnum == null) {
+        return Page.empty(pageable);
     }
-    public List<PG> getSearchSuggestions(String query) {
-        if (query == null || query.trim().length() < 2) {
-    return List.of();
+
+    return pgRepository.findByApprovalStatusAndGender(
+            ApprovalStatus.APPROVED,
+            genderEnum,
+            pageable
+    );
 }
+
+    /**
+     * Filter approved PGs by maximum rent.
+     */
+    public Page<PG> filterByRent(
+            double rent,
+            Pageable pageable
+    ) {
+
+        if (rent < 0) {
+            return Page.empty(pageable);
+        }
+
+        return pgRepository.findByApprovalStatusAndRentLessThanEqual(
+        ApprovalStatus.APPROVED,
+        BigDecimal.valueOf(rent),
+        pageable
+);
+    }
+
+    /**
+     * Search suggestions for PG name and city.
+     *
+     * Only approved PGs are exposed.
+     *
+     * Only _id, pgName and city are returned.
+     */
+    public List<PGSuggestionResponse> getSearchSuggestions(String query) {
+
+    if (query == null || query.trim().length() < 2) {
+        return List.of();
+    }
 
     query = query.trim();
 
     Query mongoQuery = new Query();
 
     mongoQuery.addCriteria(
-            Criteria.where("approvalStatus").is("APPROVED")
-                    .orOperator(
-                            Criteria.where("pgName").regex("^" + query, "i"),
-                            Criteria.where("city").regex("^" + query, "i")
+            new Criteria().andOperator(
+
+                    Criteria.where("approvalStatus")
+                            .is(ApprovalStatus.APPROVED),
+
+                    new Criteria().orOperator(
+
+                            Criteria.where("pgName")
+                                    .regex(
+                                            "^" + Pattern.quote(query),
+                                            "i"
+                                    ),
+
+                            Criteria.where("address")
+                                    .regex(
+                                            "^" + Pattern.quote(query),
+                                            "i"
+                                    ),
+
+                            Criteria.where("city")
+                                    .regex(
+                                            "^" + Pattern.quote(query),
+                                            "i"
+                                    ),
+
+                            Criteria.where("state")
+                                    .regex(
+                                            "^" + Pattern.quote(query),
+                                            "i"
+                                    )
                     )
+            )
     );
 
-    mongoQuery.limit(8);
+    mongoQuery
+            .limit(8)
+            .fields()
+            .include("_id")
+            .include("pgName")
+            .include("address")
+            .include("city")
+            .include("state");
 
-    return mongoTemplate.find(mongoQuery, PG.class);
+    return mongoTemplate
+        .find(mongoQuery, PG.class)
+        .stream()
+        .map(pg -> new PGSuggestionResponse(
+                pg.getId(),
+                pg.getPgName(),
+                pg.getAddress(),
+                pg.getCity(),
+                pg.getState()
+        ))
+        .toList();
 }
 
-    public Page<PG> filterPGs(String city, String category, Double maxRent, Boolean food,
-                               Boolean wifi, Boolean parking, Boolean laundry, String roomType,
-                               Pageable pageable) {
+    /**
+     * Dynamic filter for approved PGs.
+     */
+    public Page<PG> filterPGs(
+            String city,
+            String category,
+            Double maxRent,
+            Boolean food,
+            Boolean wifi,
+            Boolean parking,
+            Boolean laundry,
+            String roomType,
+            Pageable pageable
+    ) {
 
-        Query query = new Query().with(pageable);
-        query.addCriteria(Criteria.where("approvalStatus").is("APPROVED"));
+        Query query = new Query();
 
-        if (city != null) query.addCriteria(Criteria.where("city").is(city));
-        if (category != null) query.addCriteria(Criteria.where("gender").is(category));
-        if (maxRent != null) query.addCriteria(Criteria.where("rent").lte(maxRent));
-        if (food != null) query.addCriteria(Criteria.where("foodAvailable").is(food));
-        if (wifi != null) query.addCriteria(Criteria.where("wifiAvailable").is(wifi));
-        if (parking != null) query.addCriteria(Criteria.where("parkingAvailable").is(parking));
-        if (laundry != null) query.addCriteria(Criteria.where("laundryAvailable").is(laundry));
-        if (roomType != null) query.addCriteria(Criteria.where("roomType").is(roomType));
+        /*
+         * Always restrict results to approved PGs.
+         */
+        query.addCriteria(
+                Criteria.where("approvalStatus")
+                        .is("APPROVED")
+        );
 
-        List<PG> results = mongoTemplate.find(query, PG.class);
+        /*
+         * Apply optional filters only when supplied.
+         */
+        if (city != null && !city.isBlank()) {
 
-        Query countQuery = Query.of(query).limit(-1).skip(-1);
-        long total = mongoTemplate.count(countQuery, PG.class);
+            query.addCriteria(
+                    Criteria.where("city")
+                            .is(city.trim())
+            );
+        }
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> total);
+        if (category != null && !category.isBlank()) {
+
+            query.addCriteria(
+                    Criteria.where("category")
+                            .is(category.trim())
+            );
+        }
+
+        if (maxRent != null && maxRent >= 0) {
+
+            query.addCriteria(
+                    Criteria.where("rent")
+                            .lte(maxRent)
+            );
+        }
+
+        if (food != null) {
+
+            query.addCriteria(
+                    Criteria.where("foodAvailable")
+                            .is(food)
+            );
+        }
+
+        if (wifi != null) {
+
+            query.addCriteria(
+                    Criteria.where("wifiAvailable")
+                            .is(wifi)
+            );
+        }
+
+        if (parking != null) {
+
+            query.addCriteria(
+                    Criteria.where("parkingAvailable")
+                            .is(parking)
+            );
+        }
+
+        if (laundry != null) {
+
+            query.addCriteria(
+                    Criteria.where("laundryAvailable")
+                            .is(laundry)
+            );
+        }
+
+        if (roomType != null && !roomType.isBlank()) {
+
+            query.addCriteria(
+                    Criteria.where("roomType")
+                            .is(roomType.trim())
+            );
+        }
+
+        /*
+         * Apply pagination and sorting.
+         */
+        query.with(pageable);
+
+        List<PG> results =
+                mongoTemplate.find(query, PG.class);
+
+        /*
+         * Create a separate count query without pagination.
+         */
+        Query countQuery =
+                Query.of(query)
+                        .limit(-1)
+                        .skip(-1);
+
+        long total =
+                mongoTemplate.count(
+                        countQuery,
+                        PG.class
+                );
+
+        return PageableExecutionUtils.getPage(
+                results,
+                pageable,
+                () -> total
+        );
     }
 }

@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAdminLoginMutation } from '@/features/auth/api/authApi';
+import {
+  useLoginMutation,
+} from '@/features/auth/api/authApi';
 
 export function AdminLoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [adminLogin, { isLoading }] = useAdminLoginMutation();
+  const [adminLogin, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

@@ -3,6 +3,9 @@ package com.studentpg.modules.search.controller;
 import com.studentpg.common.response.PagedResponse;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.search.service.SearchService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,11 +14,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/search")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins="*")
+@RequiredArgsConstructor
 public class SearchController {
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchService searchService;
+
 
     @GetMapping
     public PagedResponse<PG> search(
