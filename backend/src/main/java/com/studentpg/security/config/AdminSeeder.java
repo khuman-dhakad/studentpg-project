@@ -135,13 +135,11 @@ public class AdminSeeder
                 );
 
 
-        adminRepository.save(admin);
-
-
-        logger.info(
-
-                "Default admin created successfully"
-
-        );
+        try {
+            adminRepository.save(admin);
+            logger.info("Default admin created successfully: {}", email);
+        } catch (org.springframework.dao.DuplicateKeyException ex) {
+            logger.info("Default admin already initialized by another instance: {}", email);
+        }
     }
 }
