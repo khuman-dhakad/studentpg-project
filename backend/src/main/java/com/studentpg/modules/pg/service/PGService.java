@@ -689,6 +689,33 @@ if (!owner.isActive()) {
 
     /*
      * ============================================================
+     * UPLOAD SINGLE IMAGE
+     * ============================================================
+     */
+
+    public PGImage uploadSingleImage(MultipartFile image) throws IOException {
+        Owner owner = getAuthenticatedOwner();
+        if (owner == null) {
+            throw new SecurityException("Authentication required.");
+        }
+        if (!owner.isActive()) {
+            throw new SecurityException("Account is disabled.");
+        }
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Empty image file is not allowed.");
+        }
+        String contentType = image.getContentType();
+        if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed.");
+        }
+        if (image.getSize() > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("Image size must not exceed 5 MB.");
+        }
+        return cloudinaryService.uploadImage(image);
+    }
+
+    /*
+     * ============================================================
      * UPLOAD IMAGES
      * ============================================================
      */

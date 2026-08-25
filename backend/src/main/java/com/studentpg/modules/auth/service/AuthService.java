@@ -46,18 +46,35 @@ public class AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
 
+        long now = System.currentTimeMillis();
+
         Admin admin = adminRepository.findByEmailIgnoreCase(email).orElse(null);
         if (admin != null) {
             if (!admin.isActive()) {
                 throw new BadCredentialsException("Invalid email or password");
             }
 
-            if (!passwordEncoder.matches(password, admin.getPassword())) {
+            if (admin.getLockedUntil() != null && now < admin.getLockedUntil()) {
                 throw new BadCredentialsException("Invalid email or password");
             }
 
+            if (!passwordEncoder.matches(password, admin.getPassword())) {
+                int failedAttempts = admin.getFailedLoginAttempts() + 1;
+                admin.setFailedLoginAttempts(failedAttempts);
+                if (failedAttempts >= 5) {
+                    admin.setLockedUntil(now + (15 * 60 * 1000L));
+                    admin.setFailedLoginAttempts(0);
+                }
+                adminRepository.save(admin);
+                throw new BadCredentialsException("Invalid email or password");
+            }
+
+            admin.setFailedLoginAttempts(0);
+            admin.setLockedUntil(null);
+            adminRepository.save(admin);
+
             String normalizedEmail = admin.getEmail().trim().toLowerCase();
-            String accessToken = jwtService.generateToken(normalizedEmail);
+            String accessToken = jwtService.generateToken(normalizedEmail, 0L);
             logger.info("Admin login successful: {}", normalizedEmail);
             return new AuthLoginResult(accessToken, normalizedEmail, "ADMIN");
         }
@@ -67,7 +84,6 @@ public class AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
 
-        long now = System.currentTimeMillis();
         if (owner.getLockedUntil() != null && now < owner.getLockedUntil()) {
             throw new BadCredentialsException("Invalid email or password");
         }
@@ -88,8 +104,8 @@ public class AuthService {
         ownerRepository.save(owner);
 
         String normalizedEmail = owner.getEmail().trim().toLowerCase();
-        String accessToken = jwtService.generateToken(normalizedEmail);
+        String accessToken = jwtService.generateToken(normalizedEmail, owner.getTokenVersion());
         logger.info("Owner login successful: {}", normalizedEmail);
         return new AuthLoginResult(accessToken, normalizedEmail, "OWNER");
     }
-}
+}

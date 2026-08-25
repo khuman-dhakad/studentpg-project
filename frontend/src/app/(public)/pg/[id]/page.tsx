@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { ROUTES } from '@/constants/routes';
 import { backendClient } from '@/api/backendClient';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
@@ -20,6 +19,8 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 
+import Gallery from '@/components/Gallery';
+
 async function getListing(id: string) {
   try {
     return await backendClient.get<PG>(
@@ -28,6 +29,40 @@ async function getListing(id: string) {
   } catch {
     return null;
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const listing = await getListing(id);
+  if (!listing) {
+    return {
+      title: 'Accommodation Not Found',
+    };
+  }
+
+  const title = `${listing.pgName} in ${listing.city || 'India'}`;
+  const description = listing.description || `Verified student accommodation in ${listing.city} starting from ₹${listing.rent || 0}/month.`;
+  const image = listing.images?.[0]?.url;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: image ? [{ url: image }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: image ? [image] : [],
+    },
+  };
 }
 
 export default async function PgDetailsPage({
@@ -43,8 +78,6 @@ export default async function PgDetailsPage({
   const image =
     listing.images?.[0]?.url ||
     'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80';
-
-  const Gallery = dynamic(() => import('@/components/Gallery'), { ssr: false });
 
   const title = listing.pgName || 'Student PG Listing';
 

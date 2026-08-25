@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { backendClient } from '@/api/backendClient';
 
 export async function GET(_request: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   const results: Record<string, unknown> = {};
 
   const tests = [

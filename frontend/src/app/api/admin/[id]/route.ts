@@ -16,10 +16,11 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     );
 
     return NextResponse.json({ message: operationalFeedback });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 400, message: error.message || 'Administrative eviction declined.' },
-      { status: error.status || 400 }
+      { status: err.status || 400, message: err.message || 'Administrative eviction declined.' },
+      { status: err.status || 400 }
     );
   }
 }

@@ -10,6 +10,14 @@ export default function Gallery({ images, initialIndex = 0 }: { images: Array<{ 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef<number | null>(null);
 
+  const next = React.useCallback(() => {
+    setIndex((i) => (i + 1) % images.length);
+  }, [images.length]);
+
+  const prev = React.useCallback(() => {
+    setIndex((i) => (i - 1 + images.length) % images.length);
+  }, [images.length]);
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!open) return;
@@ -19,15 +27,12 @@ export default function Gallery({ images, initialIndex = 0 }: { images: Array<{ 
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, next, prev]);
 
   const openAt = (i: number) => {
     setIndex(i);
     setOpen(true);
   };
-
-  const next = () => setIndex((i) => (i + 1) % images.length);
-  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;

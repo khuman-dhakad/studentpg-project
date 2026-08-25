@@ -21,6 +21,10 @@ public class Admin {
 
     private boolean active = true;
 
+    private int failedLoginAttempts = 0;
+
+    private Long lockedUntil;
+
 
     public Admin() {
     }
@@ -114,7 +118,22 @@ public class Admin {
     public void setActive(
             boolean active
     ) {
-
         this.active = active;
+    }
+
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public Long getLockedUntil() {
+        return lockedUntil;
+    }
+
+    public void setLockedUntil(Long lockedUntil) {
+        this.lockedUntil = lockedUntil;
     }
 }

@@ -10,10 +10,11 @@ export async function GET() {
   try {
     const pendingProperties = await backendClient.get<PG[]>(BACKEND_ENDPOINTS.ADMIN.PENDING_PGS);
     return NextResponse.json(pendingProperties);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Failed to sync unapproved accommodations.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Failed to sync unapproved accommodations.' },
+      { status: err.status || 500 }
     );
   }
 }

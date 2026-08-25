@@ -40,24 +40,14 @@ public class OwnerController {
     private final OwnerService ownerService;
 
 
-   @PostMapping("/register")
-public MessageResponse registerOwner(
-
-        @Valid
-
-        @RequestBody
-
-        OwnerRegisterRequest request
-
-) {
-
-    String message = ownerService.registerOwner(request);
-
-    return new MessageResponse(
-            true,
-            message
-    );
-}
+    @PostMapping("/register")
+    public ResponseEntity<MessageResponse> registerOwner(
+            @Valid @RequestBody OwnerRegisterRequest request
+    ) {
+        String message = ownerService.registerOwner(request);
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED)
+                .body(new MessageResponse(true, message));
+    }
 
 
     @GetMapping("/profile")

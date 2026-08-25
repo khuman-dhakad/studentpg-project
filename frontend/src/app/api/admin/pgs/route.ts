@@ -18,16 +18,17 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(properties);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
       {
-        status: error.status || 500,
+        status: err.status || 500,
         message:
-          error.message ||
+          err.message ||
           'Failed to retrieve administrative listings.',
       },
       {
-        status: error.status || 500,
+        status: err.status || 500,
       }
     );
   }

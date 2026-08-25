@@ -148,7 +148,7 @@ export default function ReportIssuePage() {
       const data = await res.json();
       setCaptchaQuestion(data.question_ || data.question || '');
       setCaptchaToken(data.token_ || data.token || '');
-    } catch (err) {
+    } catch {
       // ignore
     }
   };

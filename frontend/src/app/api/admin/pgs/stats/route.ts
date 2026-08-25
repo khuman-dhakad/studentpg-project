@@ -10,10 +10,11 @@ export async function GET() {
   try {
     const analyticalStats = await backendClient.get<AdminStats>(BACKEND_ENDPOINTS.ADMIN.STATS);
     return NextResponse.json(analyticalStats);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { status?: number; message?: string };
     return NextResponse.json(
-      { status: error.status || 500, message: error.message || 'Failed to compute backend metrics.' },
-      { status: error.status || 500 }
+      { status: err.status || 500, message: err.message || 'Failed to compute backend metrics.' },
+      { status: err.status || 500 }
     );
   }
 }

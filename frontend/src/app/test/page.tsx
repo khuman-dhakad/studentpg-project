@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from 'react';
 
+interface TestResultItem {
+  status: string;
+  data?: string;
+  error?: string;
+}
+
 export default function TestPage() {
-  const [results, setResults] = useState<Record<string, any>>({});
+  const [results, setResults] = useState<Record<string, TestResultItem>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
