@@ -16,10 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/student")
-@CrossOrigin(
-        origins = "${app.frontend.url}",
-        allowCredentials = "true"
-)
 public class StudentController {
 
     @Autowired
