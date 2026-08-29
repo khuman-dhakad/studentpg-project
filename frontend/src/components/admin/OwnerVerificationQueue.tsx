@@ -16,6 +16,7 @@ type VerificationRecord = {
   documentUrl?: string;
   verificationStatus: string;
   submittedAt?: string;
+  rejectionReason?: string;
 };
 
 type QueueStatus = 'ALL' | 'PENDING' | 'VERIFIED' | 'REJECTED';
