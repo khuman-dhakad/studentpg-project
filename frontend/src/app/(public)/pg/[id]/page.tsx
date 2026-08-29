@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 
 import Gallery from '@/components/Gallery';
+import { OwnerVerificationBadge } from '@/components/owner/OwnerVerificationBadge';
 
 async function getListing(id: string) {
   try {
@@ -173,7 +174,8 @@ export default async function PgDetailsPage({
             {/* Badge */}
             <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-brand">
               <ShieldCheck className="h-5 w-5" />
-              Verified Premium Listing
+              Approved Listing
+              {listing.owner && 'verified' in listing.owner && listing.owner.verified && <OwnerVerificationBadge compact />}
             </div>
 
             {/* Title */}
@@ -270,6 +272,9 @@ export default async function PgDetailsPage({
                   <h2 className="mt-1 text-lg font-bold text-ink">
                     {ownerName}
                   </h2>
+                  {listing.owner && 'verified' in listing.owner && listing.owner.verified && (
+                    <div className="mt-2"><OwnerVerificationBadge compact /></div>
+                  )}
                 </div>
 
               </div>

@@ -6,7 +6,7 @@ import { baseApi } from '@/api/baseApi';
 export interface Notification {
   id: string;
   pgId: string | null;
-  type: 'PG_APPROVED' | 'PG_REJECTED' | string;
+  type: 'PG_APPROVED' | 'PG_REJECTED' | 'OWNER_VERIFICATION_APPROVED' | 'OWNER_VERIFICATION_REJECTED' | string;
   title: string;
   message: string;
   read: boolean;

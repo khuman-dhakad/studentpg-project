@@ -91,6 +91,8 @@ export interface SessionProfile {
   phone?: string;
 
   profileImageUrl?: string;
+  verificationStatus?: 'NOT_VERIFIED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+  verificationRejectionReason?: string | null;
 
 }
 

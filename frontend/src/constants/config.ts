@@ -31,3 +31,6 @@ export const CONFIG = {
 
 export const BACKEND_API_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+export const SERVER_BACKEND_API_URL =
+  process.env.BACKEND_INTERNAL_URL || BACKEND_API_URL;

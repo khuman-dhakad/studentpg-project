@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ROUTES } from '@/constants/routes';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
+import { useSessionQuery } from '@/features/auth/api/authApi';
 import { uploadImageToCloudinary } from '@/lib/cloudinary';
 import { 
   Tv, 
@@ -38,6 +39,7 @@ interface ImageObject {
 
 export default function AddPgPage() {
   const router = useRouter();
+  const { data: session, isLoading: isSessionLoading } = useSessionQuery();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [message, setMessage] = useState('');
@@ -71,6 +73,7 @@ export default function AddPgPage() {
   // State for handling up to 5+ images locally for preview before upload
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const verificationStatus = session?.profile?.verificationStatus ?? 'NOT_VERIFIED';
 
   // EFFECT: Load draft data if exists on page mount
   useEffect(() => {
@@ -149,6 +152,10 @@ export default function AddPgPage() {
   // Final Form Submission Pipeline
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (verificationStatus !== 'VERIFIED') {
+      setMessage('Please verify yourself, then list your PG.');
+      return;
+    }
     if (selectedFiles.length < 5) {
       setMessage('Error: A minimum of 5 images are required before final submission.');
       setCurrentStep(4);
@@ -198,6 +205,23 @@ export default function AddPgPage() {
       setLoading(false);
     }
   };
+
+  if (isSessionLoading) {
+    return <div className="flex min-h-screen items-center justify-center bg-slate-50 text-sm font-semibold text-slate-500">Checking owner verification...</div>;
+  }
+
+  if (verificationStatus !== 'VERIFIED') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
+        <section className="w-full max-w-lg rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-sm">
+          <ShieldCheck className="mx-auto h-12 w-12 text-indigo-600" />
+          <h1 className="mt-5 text-2xl font-black text-slate-950">Please verify yourself first</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600">Complete owner verification, then list your PG. Your documents will be reviewed securely by our team.</p>
+          <Link href="/owner/settings" className="mt-6 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-indigo-700">Go to verification</Link>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/45 pb-16 pt-6 sm:py-12 antialiased">

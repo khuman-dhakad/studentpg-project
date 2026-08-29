@@ -7,6 +7,7 @@ public class OwnerSummaryResponse {
     private String email;
     private String phone;
     private String whatsappNumber;
+    private boolean verified;
 
     public OwnerSummaryResponse() {
     }
@@ -17,6 +18,12 @@ public class OwnerSummaryResponse {
         this.email = email;
         this.phone = phone;
         this.whatsappNumber = whatsappNumber;
+    }
+
+    public OwnerSummaryResponse(String id, String name, String email, String phone,
+                                String whatsappNumber, boolean verified) {
+        this(id, name, email, phone, whatsappNumber);
+        this.verified = verified;
     }
 
     public String getId() {
@@ -57,5 +64,13 @@ public class OwnerSummaryResponse {
 
     public void setWhatsappNumber(String whatsappNumber) {
         this.whatsappNumber = whatsappNumber;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

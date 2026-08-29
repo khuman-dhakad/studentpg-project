@@ -13,14 +13,15 @@ import {
   AlertCircle,
   Eye, 
   EyeOff, 
-  Loader2 
+  Loader2
 } from 'lucide-react';
 
 // RTK Query Hooks
 import { useSessionQuery } from '@/features/auth/api/authApi';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
+import { OwnerVerificationModal } from '@/components/owner/OwnerVerificationModal';
 
-type TabType = 'Profile Settings' | 'Change Password' | 'Account & Security';
+type TabType = 'Profile Settings' | 'Change Password' | 'Verification' | 'Account & Security';
 
 export default function OwnerSettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('Profile Settings');
@@ -43,6 +44,7 @@ export default function OwnerSettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
   // Sync Session Data to Form Input States
   useEffect(() => {
@@ -53,6 +55,7 @@ export default function OwnerSettingsPage() {
   }, [session]);
 
   const userEmail = session?.user?.email || session?.profile?.email || '';
+  const verificationStatus = session?.profile?.verificationStatus ?? 'NOT_VERIFIED';
 
   // 1. Profile Details Update Handler
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -184,6 +187,7 @@ export default function OwnerSettingsPage() {
           {[
             { name: 'Profile Settings', icon: User },
             { name: 'Change Password', icon: KeyRound },
+            { name: 'Verification', icon: ShieldCheck },
             { name: 'Account & Security', icon: ShieldCheck },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -388,6 +392,64 @@ export default function OwnerSettingsPage() {
             </div>
           )}
 
+          {/* TAB 3: Verification */}
+          {activeTab === 'Verification' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-lg font-black text-slate-900">Owner Verification</h2>
+                <p className="mt-1 text-xs font-semibold text-slate-400">
+                  Complete verification whenever you are ready to unlock the verified owner badge.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-emerald-100 bg-emerald-50/70 p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100">
+                    <ShieldCheck className="h-6 w-6 text-emerald-600" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-sm font-black text-slate-900">Verification status</h3>
+                      <span className="rounded-full bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-700">
+                        {verificationStatus === 'PENDING'
+                          ? 'Pending Verification'
+                          : verificationStatus === 'VERIFIED'
+                            ? 'Verified'
+                            : verificationStatus === 'REJECTED'
+                              ? 'Rejected'
+                              : 'Not Verified'}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs font-semibold leading-5 text-slate-600">
+                      {verificationStatus === 'PENDING'
+                        ? 'Your documents are being reviewed by our team.'
+                        : verificationStatus === 'REJECTED'
+                          ? 'Your previous submission needs attention. Review the note and submit again.'
+                          : verificationStatus === 'VERIFIED'
+                            ? 'Your identity is verified and your owner profile can show the verified badge.'
+                            : 'You can submit your identity documents now or come back to this page later.'}
+                    </p>
+                    {verificationStatus === 'REJECTED' && session?.profile?.verificationRejectionReason && (
+                      <p className="mt-3 rounded-xl bg-white/80 p-3 text-xs font-semibold text-rose-700">
+                        Review note: {session.profile.verificationRejectionReason}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {(verificationStatus === 'NOT_VERIFIED' || verificationStatus === 'REJECTED') && (
+                  <button
+                    type="button"
+                    onClick={() => setIsVerificationModalOpen(true)}
+                    className="mt-5 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white shadow-md shadow-emerald-100 transition-all hover:bg-emerald-700"
+                  >
+                    {verificationStatus === 'REJECTED' ? 'Review & Resubmit' : 'Start Verification'}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* TAB 3: Account & Security */}
           {/* TAB 3: Account & Security */}
 {activeTab === 'Account & Security' && (
@@ -576,6 +638,14 @@ export default function OwnerSettingsPage() {
 
         </section>
       </div>
+
+      {isVerificationModalOpen && (
+        <OwnerVerificationModal
+          status={session?.profile?.verificationStatus ?? 'NOT_VERIFIED'}
+          rejectionReason={session?.profile?.verificationRejectionReason}
+          onClose={() => setIsVerificationModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

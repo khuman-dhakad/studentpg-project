@@ -37,6 +37,9 @@ export const metadata: Metadata = {
   },
   description: 'Discover premium, verified student and working professional accommodations across top educational hubs instantly.',
   metadataBase: new URL(siteUrl),
+  icons: {
+    icon: '/favicon.svg',
+  },
   alternates: {
     canonical: '/',
   },

@@ -21,6 +21,18 @@ export interface UpdateAvatarResponse {
   profileImageUrl?: string;
 }
 
+export interface OwnerVerificationAdminRecord {
+  ownerId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  legalName: string;
+  documentType: string;
+  verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'NOT_VERIFIED';
+  submittedAt?: string;
+  rejectionReason?: string;
+}
+
 /* =========================================================
  * OWNER API
  * ========================================================= */
@@ -91,6 +103,21 @@ export const ownerApi = baseApi.injectEndpoints({
           type: 'OwnerProfile',
           id: 'CURRENT',
         },
+        'Session',
+      ],
+    }),
+
+    submitOwnerVerification: builder.mutation<
+      { success: boolean; message: string },
+      FormData
+    >({
+      query: (body) => ({
+        url: BACKEND_ENDPOINTS.OWNERS.VERIFICATION,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [
+        { type: 'OwnerProfile', id: 'CURRENT' },
         'Session',
       ],
     }),
@@ -201,6 +228,7 @@ export const {
   useGetOwnerProfileQuery,
   useUpdateOwnerProfileMutation,
   useUpdateAvatarMutation,
+  useSubmitOwnerVerificationMutation,
   useGetOwnerListingsQuery,
   useCreateListingMutation,
   useUpdateListingMutation,

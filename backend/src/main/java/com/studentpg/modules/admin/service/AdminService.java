@@ -4,6 +4,10 @@ import com.studentpg.modules.notification.service.NotificationService;
 import com.studentpg.modules.pg.entity.ApprovalStatus;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.pg.repository.PGRepository;
+import com.studentpg.modules.owner.entity.Owner;
+import com.studentpg.modules.owner.entity.VerificationStatus;
+import com.studentpg.modules.owner.repository.OwnerRepository;
+import com.studentpg.modules.admin.dto.response.OwnerVerificationAdminResponse;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.Instant;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +30,7 @@ public class AdminService {
     private final PGRepository pgRepository;
 
     private final NotificationService notificationService;
+        private final OwnerRepository ownerRepository;
 
 
     /*
@@ -53,7 +59,8 @@ public class AdminService {
 
             PGRepository pgRepository,
 
-            NotificationService notificationService
+            NotificationService notificationService,
+            OwnerRepository ownerRepository
 
     ) {
 
@@ -62,7 +69,83 @@ public class AdminService {
 
         this.notificationService =
                 notificationService;
+                this.ownerRepository = ownerRepository;
     }
+
+        public List<OwnerVerificationAdminResponse> getOwnerVerifications(String status) {
+                VerificationStatus requestedStatus;
+                try {
+                        requestedStatus = VerificationStatus.valueOf(status.trim().toUpperCase(Locale.ROOT));
+                } catch (Exception exception) {
+                        throw new IllegalArgumentException("Invalid verification status.");
+                }
+
+                return ownerRepository.findAll().stream()
+                                .filter(owner -> owner.getVerificationStatus() == requestedStatus)
+                                .map(this::toOwnerVerificationResponse)
+                                .toList();
+        }
+
+        public VerificationDocument getVerificationDocument(String ownerId) {
+                Owner owner = ownerRepository.findById(ownerId)
+                                .orElseThrow(() -> new IllegalArgumentException("Owner not found."));
+                if (owner.getVerificationDocumentData() == null
+                                || owner.getVerificationDocumentData().length == 0) {
+                        throw new IllegalArgumentException("Verification document not found.");
+                }
+                return new VerificationDocument(
+                                owner.getVerificationDocumentData(),
+                                owner.getVerificationDocumentContentType(),
+                                owner.getVerificationDocumentFilename());
+        }
+
+        public String approveOwnerVerification(String ownerId) {
+                Owner owner = getOwnerForVerificationReview(ownerId);
+                owner.setVerificationStatus(VerificationStatus.VERIFIED);
+                owner.setVerificationReviewedAt(Instant.now());
+                owner.setVerifiedAt(Instant.now());
+                owner.setVerificationReviewedBy(getCurrentAdminEmail());
+                owner.setVerificationRejectionReason(null);
+                ownerRepository.save(owner);
+                notificationService.createOwnerVerificationApprovedNotification(owner.getId());
+                return "Owner verification approved successfully.";
+        }
+
+        public String rejectOwnerVerification(String ownerId, String reason) {
+                if (reason == null || reason.isBlank()) {
+                        throw new IllegalArgumentException("Rejection reason is required.");
+                }
+                Owner owner = getOwnerForVerificationReview(ownerId);
+                owner.setVerificationStatus(VerificationStatus.REJECTED);
+                owner.setVerificationReviewedAt(Instant.now());
+                owner.setVerifiedAt(null);
+                owner.setVerificationReviewedBy(getCurrentAdminEmail());
+                owner.setVerificationRejectionReason(reason.trim());
+                ownerRepository.save(owner);
+                notificationService.createOwnerVerificationRejectedNotification(owner.getId(), reason);
+                return "Owner verification rejected.";
+        }
+
+        private Owner getOwnerForVerificationReview(String ownerId) {
+                Owner owner = ownerRepository.findById(ownerId)
+                                .orElseThrow(() -> new IllegalArgumentException("Owner not found."));
+                if (owner.getVerificationStatus() != VerificationStatus.PENDING) {
+                        throw new IllegalStateException("Only pending owner verifications can be reviewed.");
+                }
+                return owner;
+        }
+
+        private OwnerVerificationAdminResponse toOwnerVerificationResponse(Owner owner) {
+                return new OwnerVerificationAdminResponse(
+                                owner.getId(), owner.getName(), owner.getEmail(), owner.getPhone(),
+                                owner.getVerificationLegalName(), owner.getVerificationDocumentType(),
+                                owner.getVerificationDocumentNumber(), owner.getVerificationDocumentUrl(),
+                                owner.getVerificationStatus(), owner.getVerificationSubmittedAt(),
+                                owner.getVerificationReviewedAt(), owner.getVerificationReviewedBy(),
+                                owner.getVerificationRejectionReason());
+        }
+
+        public record VerificationDocument(byte[] data, String contentType, String filename) {}
 
 
     /*

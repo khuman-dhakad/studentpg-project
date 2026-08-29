@@ -81,7 +81,7 @@ public class ContactController {
     }
 
     @PostMapping("/contact")
-    public ResponseEntity<MessageResponse> contact(@RequestBody ContactRequest req, HttpServletRequest request) {
+    public ResponseEntity<MessageResponse> contact(@Valid @RequestBody ContactRequest req, HttpServletRequest request) {
         String ip = clientIp(request);
 
         if (!verifyCaptchaToken(req.getCaptchaToken(), req.getCaptchaAnswer())) {
@@ -113,7 +113,7 @@ public class ContactController {
     }
 
     @PostMapping("/report-issue")
-    public ResponseEntity<MessageResponse> reportIssue(@ModelAttribute ReportIssueRequest req, HttpServletRequest request) {
+    public ResponseEntity<MessageResponse> reportIssue(@Valid @ModelAttribute ReportIssueRequest req, HttpServletRequest request) {
         String ip = clientIp(request);
 
         if (!verifyCaptchaToken(req.getCaptchaToken(), req.getCaptchaAnswer())) {

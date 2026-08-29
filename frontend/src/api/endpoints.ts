@@ -31,6 +31,8 @@ export const BACKEND_ENDPOINTS = {
     RESET_PASSWORD: "/api/owners/reset-password",
 
     PROFILE_IMAGE: "/api/owners/profile-image",
+
+    VERIFICATION: "/api/owners/verification",
   },
 
   /* =========================================================
@@ -92,6 +94,17 @@ export const BACKEND_ENDPOINTS = {
 
     BY_ID: (id: string) =>
       `/api/admin/pgs/${encodeURIComponent(id)}`,
+
+    OWNER_VERIFICATIONS: "/api/admin/owner-verifications",
+
+    OWNER_VERIFICATION_DOCUMENT: (id: string) =>
+      `/api/admin/owner-verifications/${encodeURIComponent(id)}/document`,
+
+    APPROVE_OWNER_VERIFICATION: (id: string) =>
+      `/api/admin/owner-verifications/${encodeURIComponent(id)}/approve`,
+
+    REJECT_OWNER_VERIFICATION: (id: string) =>
+      `/api/admin/owner-verifications/${encodeURIComponent(id)}/reject`,
   },
 
   /* =========================================================

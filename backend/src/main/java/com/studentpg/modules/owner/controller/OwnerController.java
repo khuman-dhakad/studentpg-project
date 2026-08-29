@@ -5,6 +5,7 @@ import com.studentpg.modules.owner.dto.request.ForgotPasswordRequest;
 import com.studentpg.modules.owner.dto.request.OwnerRegisterRequest;
 import com.studentpg.modules.owner.dto.request.ResetPasswordRequest;
 import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
+import com.studentpg.modules.owner.dto.request.OwnerVerificationRequest;
 
 import com.studentpg.modules.owner.dto.response.MessageResponse;
 import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -197,5 +199,14 @@ public ResponseEntity<MessageResponse> deleteProfileImage()
             new MessageResponse(true, message)
     );
 }
+
+    @PostMapping(value = "/verification", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResponse> submitVerification(
+            @Valid @RequestPart("verification") OwnerVerificationRequest request,
+            @RequestPart("document") MultipartFile document
+    ) throws IOException {
+        return ResponseEntity.ok(new MessageResponse(true,
+                ownerService.submitVerification(request, document)));
+    }
 
 }

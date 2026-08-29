@@ -1,6 +1,7 @@
 package com.studentpg.modules.student.service;
 
 import com.studentpg.modules.owner.entity.Owner;
+import com.studentpg.modules.owner.entity.VerificationStatus;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.student.dto.response.OwnerSummaryResponse;
 import com.studentpg.modules.student.dto.response.PGDetailsResponse;
@@ -47,7 +48,8 @@ public class PGPublicResponseMapper {
                     owner.getName(),
                     owner.getEmail(),
                     owner.getPhone(),
-                    owner.getWhatsappNumber()
+                        owner.getWhatsappNumber(),
+                        owner.getVerificationStatus() == VerificationStatus.VERIFIED
             ));
         }
 

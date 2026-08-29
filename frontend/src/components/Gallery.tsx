@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 export default function Gallery({ images, initialIndex = 0 }: { images: Array<{ url: string }>; initialIndex?: number }) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(initialIndex);
+  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({});
   const containerRef = useRef<HTMLDivElement | null>(null);
   const touchStartX = useRef<number | null>(null);
 
@@ -54,7 +55,7 @@ export default function Gallery({ images, initialIndex = 0 }: { images: Array<{ 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {images.map((img, i) => (
           <button key={i} onClick={() => openAt(i)} className="overflow-hidden rounded-md">
-            <Image src={img.url} alt={`img-${i}`} width={400} height={300} className="h-24 w-full object-cover" loading="lazy" />
+            <Image src={failedImages[i] ? '/favicon.svg' : img.url} alt={`img-${i}`} width={400} height={300} className="h-24 w-full object-cover" loading="lazy" onError={() => setFailedImages((previous) => ({ ...previous, [i]: true }))} />
           </button>
         ))}
       </div>
@@ -71,13 +72,13 @@ export default function Gallery({ images, initialIndex = 0 }: { images: Array<{ 
 
           <div className="mx-auto max-w-4xl px-4">
             <div className="relative h-[70vh] w-[90vw] sm:h-[80vh] sm:w-[80vw]">
-              <Image src={images[index].url} alt={`img-full-${index}`} fill className="object-contain" />
+              <Image src={failedImages[index] ? '/favicon.svg' : images[index].url} alt={`img-full-${index}`} fill className="object-contain" onError={() => setFailedImages((previous) => ({ ...previous, [index]: true }))} />
             </div>
 
             <div className="mt-4 flex items-center justify-center gap-2 overflow-x-auto">
               {images.map((img, i) => (
                 <button key={i} onClick={() => setIndex(i)} className={`rounded-md overflow-hidden border ${i===index? 'ring-2 ring-white':''}`}>
-                  <Image src={img.url} alt={`thumb-${i}`} width={80} height={60} className="h-12 w-16 object-cover" loading="lazy" />
+                  <Image src={failedImages[i] ? '/favicon.svg' : img.url} alt={`thumb-${i}`} width={80} height={60} className="h-12 w-16 object-cover" loading="lazy" onError={() => setFailedImages((previous) => ({ ...previous, [i]: true }))} />
                 </button>
               ))}
             </div>

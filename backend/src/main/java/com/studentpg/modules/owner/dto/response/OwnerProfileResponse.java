@@ -1,5 +1,7 @@
 package com.studentpg.modules.owner.dto.response;
 
+import com.studentpg.modules.owner.entity.VerificationStatus;
+
 public class OwnerProfileResponse {
 
     private String id;
@@ -8,17 +10,23 @@ public class OwnerProfileResponse {
     private String phone;
     private String role;
     private String whatsappNumber;
+    private VerificationStatus verificationStatus;
+    private String verificationRejectionReason;
 
     public OwnerProfileResponse() {}
 
     public OwnerProfileResponse(String id, String name, String email, String phone,
-                                 String role, String whatsappNumber) {
+                                 String role, String whatsappNumber,
+                                 VerificationStatus verificationStatus,
+                                 String verificationRejectionReason) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.role = role;
         this.whatsappNumber = whatsappNumber;
+        this.verificationStatus = verificationStatus;
+        this.verificationRejectionReason = verificationRejectionReason;
     }
 
     public String getId() { return id; }
@@ -33,4 +41,8 @@ public class OwnerProfileResponse {
     public void setRole(String role) { this.role = role; }
     public String getWhatsappNumber() { return whatsappNumber; }
     public void setWhatsappNumber(String whatsappNumber) { this.whatsappNumber = whatsappNumber; }
+    public VerificationStatus getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(VerificationStatus verificationStatus) { this.verificationStatus = verificationStatus; }
+    public String getVerificationRejectionReason() { return verificationRejectionReason; }
+    public void setVerificationRejectionReason(String verificationRejectionReason) { this.verificationRejectionReason = verificationRejectionReason; }
 }

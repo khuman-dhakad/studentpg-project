@@ -26,6 +26,7 @@ const fallbackImage =
 export function PGCard({ pg }: PGCardProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   const isVerified = pg.approvalStatus === 'APPROVED';
 
@@ -45,7 +46,7 @@ export function PGCard({ pg }: PGCardProps) {
           },
         ];
 
-  const image = images[0].url;
+  const image = imageLoadFailed ? fallbackImage : images[0].url;
 
   /*
    * ============================================================
@@ -161,6 +162,7 @@ export function PGCard({ pg }: PGCardProps) {
   fill
   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
   className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+  onError={() => setImageLoadFailed(true)}
 />
 
           {/* IMAGE COUNT */}

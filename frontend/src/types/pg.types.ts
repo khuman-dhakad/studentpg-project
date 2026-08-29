@@ -10,6 +10,7 @@ export interface OwnerSummary {
   email: string;
   phone: string;
   whatsappNumber: string;
+  verified: boolean;
 }
 
 

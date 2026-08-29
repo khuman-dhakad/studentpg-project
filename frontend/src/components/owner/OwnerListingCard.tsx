@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Wifi, Utensils, Edit3, Trash2, MapPin, Building2 } from 'lucide-react';
+import { useState } from 'react';
 import { ROUTES } from '@/constants/routes';
 import type { PG } from '@/types/pg.types';
 
@@ -14,19 +15,21 @@ interface OwnerListingCardProps {
 export function OwnerListingCard({ pg, onDelete }: OwnerListingCardProps) {
   // डमी इमेज हटा दी गई है। अगर इमेज है तो दिखेगी, नहीं तो साफ़ UI बॉक्स दिखेगा।
   const thumbnail = pg.images?.[0]?.url;
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   return (
     <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group">
       
       {/* IMAGE CONTAINER */}
       <div className="relative h-40 w-full bg-slate-50 overflow-hidden shrink-0 flex items-center justify-center">
-        {thumbnail ? (
+        {thumbnail && !imageLoadFailed ? (
           <Image 
             src={thumbnail}
             alt={pg.pgName}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={() => setImageLoadFailed(true)}
           />
         ) : (
           <div className="flex flex-col items-center gap-1 text-slate-300">

@@ -25,6 +25,15 @@ export async  function middleware(request: NextRequest) {
       pathname.startsWith(`${prefix}/`)
   );
 
+  if (
+    pathname === '/owner/login' ||
+    pathname === '/owner/register' ||
+    pathname === '/owner/forgot-password' ||
+    pathname === '/admin/login'
+  ) {
+    return NextResponse.next();
+  }
+
   if (!isProtectedRoute) {
     return NextResponse.next();
   }

@@ -219,7 +219,9 @@ export default function NotificationBell() {
                       'PG_APPROVED' ? (
                         <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                       ) : notification.type ===
-                        'PG_REJECTED' ? (
+                                        'OWNER_VERIFICATION_APPROVED' ? (
+                                        <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                                      ) : notification.type === 'PG_REJECTED' || notification.type === 'OWNER_VERIFICATION_REJECTED' ? (
                         <XCircle className="h-5 w-5 text-rose-500" />
                       ) : (
                         <Bell className="h-5 w-5 text-indigo-500" />
