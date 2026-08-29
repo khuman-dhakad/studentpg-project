@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterInput } from '../schemas/authSchemas';
-import { useOwnerRegisterMutation } from '../api/authApi';
+import { useOwnerRegisterMutation, useVerifyOwnerRegistrationMutation } from '../api/authApi';
 import { ROUTES } from '@/constants/routes';
 import {
   User,
@@ -23,10 +23,21 @@ import {
 
 export function OwnerRegisterForm() {
   const router = useRouter();
-  const [ownerRegister, { isLoading }] = useOwnerRegisterMutation();
+  const [ownerRegister, { isLoading: isRegistering }] = useOwnerRegisterMutation();
+  const [verifyOwnerRegistration, { isLoading: isVerifying }] = useVerifyOwnerRegistrationMutation();
 
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [showPass, setShowPass] = useState(false);
+  const [showOtpStep, setShowOtpStep] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [registeredEmail, setRegisteredEmail] = useState('');
+  const [registrationPayload, setRegistrationPayload] = useState<{
+    name: string;
+    email: string;
+    password: string;
+    phone: string;
+    whatsappNumber: string;
+  } | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [modalType, setModalType] = useState<'privacy' | 'terms' | null>(null);
   const [checkboxError, setCheckboxError] = useState(false);
@@ -140,9 +151,64 @@ export function OwnerRegisterForm() {
         setGlobalError(response.message || 'Registration failed. Please try again.');
         return;
       }
-      router.replace(ROUTES.OWNER.LOGIN);
+
+      setRegistrationPayload({
+        name: payload.name as string,
+        email: payload.email as string,
+        password: payload.password as string,
+        phone: payload.phone as string,
+        whatsappNumber: payload.whatsappNumber as string,
+      });
+      setRegisteredEmail(payload.email as string);
+      setOtp('');
+      setShowOtpStep(true);
+      setGlobalError(null);
     } catch (error: unknown) {
       console.error('OWNER REGISTRATION ERROR:', error);
+      const message = extractErrorMessage(error);
+      setGlobalError(message);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!registeredEmail) {
+      setGlobalError('Please complete the registration form first.');
+      return;
+    }
+
+    const trimmedOtp = otp.trim();
+    if (trimmedOtp.length !== 6 || !/^\d{6}$/.test(trimmedOtp)) {
+      setGlobalError('Enter a valid 6-digit OTP sent to your email.');
+      return;
+    }
+
+    try {
+      const payload = registrationPayload ?? {
+        name: '',
+        email: registeredEmail,
+        password: '',
+        phone: '',
+        whatsappNumber: '',
+      };
+
+      const response = await verifyOwnerRegistration({
+        name: payload.name.trim(),
+        email: payload.email,
+        password: payload.password,
+        phone: payload.phone.replace(/\D/g, '').slice(-10),
+        whatsappNumber: payload.whatsappNumber.replace(/\D/g, '').slice(-10),
+        otp: trimmedOtp,
+      }).unwrap();
+
+      if (response?.success === false) {
+        setGlobalError(response.message || 'Verification failed. Please try again.');
+        return;
+      }
+
+      setGlobalError(null);
+      router.replace(ROUTES.OWNER.LOGIN);
+    } catch (error: unknown) {
+      console.error('OWNER REGISTRATION OTP ERROR:', error);
       const message = extractErrorMessage(error);
       setGlobalError(message);
     }
@@ -169,7 +235,15 @@ export function OwnerRegisterForm() {
           </div>
         )}
 
-        {/* NAME + EMAIL */}
+        {showOtpStep && (
+          <div className="rounded-xl border border-brand/20 bg-brand/5 p-3.5 text-xs text-brand md:text-sm">
+            Verification code sent to <span className="font-bold">{registeredEmail}</span>. Enter the 6-digit OTP to activate your host account.
+          </div>
+        )}
+
+        {!showOtpStep && (
+          <>
+          {/* NAME + EMAIL */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* NAME */}
           <div>
@@ -373,43 +447,118 @@ export function OwnerRegisterForm() {
           )}
         </div>
 
-        {/* SUBMIT BUTTON */}
-        <button
-          type="submit"
-          disabled={isLoading || !agreed}
-          className={`mt-2 w-full rounded-xl py-3.5 text-sm font-bold shadow-md transition-all duration-200 ${
-            agreed && !isLoading
-              ? 'cursor-pointer bg-brand text-cream hover:bg-brand-dark active:scale-[0.98]'
-              : 'cursor-not-allowed bg-slate-200 text-slate-400 shadow-none'
-          }`}
-        >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg
-                className="h-4 w-4 animate-spin text-cream"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Creating Account...
-            </span>
-          ) : (
-            'Register Property Host'
-          )}
-        </button>
+          </>
+        )}
+
+        {showOtpStep && (
+          <div className="space-y-4 pt-2">
+            <div>
+              <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
+                Email Verification OTP
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                value={otp}
+                onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="123456"
+                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleVerifyOtp}
+              disabled={isVerifying}
+              className={`w-full rounded-xl py-3.5 text-sm font-bold shadow-md transition-all duration-200 ${
+                isVerifying ? 'cursor-not-allowed bg-slate-200 text-slate-400 shadow-none' : 'cursor-pointer bg-brand text-cream hover:bg-brand-dark active:scale-[0.98]'
+              }`}
+            >
+              {isVerifying ? 'Verifying Email...' : 'Verify & Complete Registration'}
+            </button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const formValues = (document.querySelector('form') as HTMLFormElement | null)?.elements;
+                  const name = (formValues?.namedItem('name') as HTMLInputElement | null)?.value || '';
+                  const email = registeredEmail || (formValues?.namedItem('email') as HTMLInputElement | null)?.value || '';
+                  const password = (formValues?.namedItem('password') as HTMLInputElement | null)?.value || '';
+                  const phone = (formValues?.namedItem('phone') as HTMLInputElement | null)?.value || '';
+                  const whatsappNumber = (formValues?.namedItem('whatsappNumber') as HTMLInputElement | null)?.value || '';
+
+                  const response = await ownerRegister({
+                    name: name.trim(),
+                    email: email.trim().toLowerCase(),
+                    password,
+                    phone: phone.replace(/\D/g, '').slice(-10),
+                    whatsappNumber: whatsappNumber.replace(/\D/g, '').slice(-10),
+                  }).unwrap();
+
+                  if (response?.success === false) {
+                    setGlobalError(response.message || 'Unable to resend verification code.');
+                    return;
+                  }
+
+                  setGlobalError(null);
+                  setOtp('');
+                  setShowOtpStep(true);
+                  setRegisteredEmail(email.trim().toLowerCase());
+                } catch (error: unknown) {
+                  console.error('RESEND OTP ERROR:', error);
+                  setGlobalError(extractErrorMessage(error));
+                }
+              }}
+              className="w-full text-center text-xs font-bold text-brand underline underline-offset-2"
+            >
+              Resend OTP
+            </button>
+          </div>
+        )}
+
+        {!showOtpStep && (
+          <>
+            {/* SUBMIT BUTTON */}
+            <button
+              type="submit"
+              disabled={isRegistering || !agreed}
+              className={`mt-2 w-full rounded-xl py-3.5 text-sm font-bold shadow-md transition-all duration-200 ${
+                agreed && !isRegistering
+                  ? 'cursor-pointer bg-brand text-cream hover:bg-brand-dark active:scale-[0.98]'
+                  : 'cursor-not-allowed bg-slate-200 text-slate-400 shadow-none'
+              }`}
+            >
+              {isRegistering ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg
+                    className="h-4 w-4 animate-spin text-cream"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Creating Account...
+                </span>
+              ) : (
+                'Register Property Host'
+              )}
+            </button>
+          </>
+        )}
 
         {/* FOOTER LINK */}
         <div className="mt-4 text-center text-xs text-ink-soft">

@@ -27,7 +27,11 @@ export default function OwnerSettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('Profile Settings');
 
   // Redux/RTK Query Session Hook
-  const { data: session, isLoading: isSessionLoading } = useSessionQuery();
+  const { data: session, isLoading: isSessionLoading } = useSessionQuery(undefined, {
+    pollingInterval: 15000,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
 
   // Local Form States
   const [name, setName] = useState('');
@@ -56,6 +60,9 @@ export default function OwnerSettingsPage() {
 
   const userEmail = session?.user?.email || session?.profile?.email || '';
   const verificationStatus = session?.profile?.verificationStatus ?? 'NOT_VERIFIED';
+  const isVerificationPending = verificationStatus === 'PENDING';
+  const isVerificationVerified = verificationStatus === 'VERIFIED';
+  const canSubmitVerification = verificationStatus === 'NOT_VERIFIED' || verificationStatus === 'REJECTED';
 
   // 1. Profile Details Update Handler
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -437,15 +444,27 @@ export default function OwnerSettingsPage() {
                   </div>
                 </div>
 
-                {(verificationStatus === 'NOT_VERIFIED' || verificationStatus === 'REJECTED') && (
+                {isVerificationVerified ? (
+                  <div className="mt-5 rounded-xl border border-emerald-200 bg-white px-4 py-3 text-xs font-black uppercase tracking-wide text-emerald-700">
+                    Verified
+                  </div>
+                ) : isVerificationPending ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="mt-5 cursor-not-allowed rounded-xl bg-emerald-200 px-5 py-2.5 text-xs font-black text-emerald-800 shadow-sm opacity-90"
+                  >
+                    Processing...
+                  </button>
+                ) : canSubmitVerification ? (
                   <button
                     type="button"
                     onClick={() => setIsVerificationModalOpen(true)}
                     className="mt-5 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white shadow-md shadow-emerald-100 transition-all hover:bg-emerald-700"
                   >
-                    {verificationStatus === 'REJECTED' ? 'Review & Resubmit' : 'Start Verification'}
+                    {verificationStatus === 'REJECTED' ? 'Reverification' : 'Start Verification'}
                   </button>
-                )}
+                ) : null}
               </div>
             </div>
           )}

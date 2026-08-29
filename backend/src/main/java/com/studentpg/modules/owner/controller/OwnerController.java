@@ -3,6 +3,7 @@ package com.studentpg.modules.owner.controller;
 import com.studentpg.modules.owner.dto.request.ChangePasswordRequest;
 import com.studentpg.modules.owner.dto.request.ForgotPasswordRequest;
 import com.studentpg.modules.owner.dto.request.OwnerRegisterRequest;
+import com.studentpg.modules.owner.dto.request.OwnerRegisterVerifyRequest;
 import com.studentpg.modules.owner.dto.request.ResetPasswordRequest;
 import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
 import com.studentpg.modules.owner.dto.request.OwnerVerificationRequest;
@@ -49,6 +50,15 @@ public class OwnerController {
         String message = ownerService.registerOwner(request);
         return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED)
                 .body(new MessageResponse(true, message));
+    }
+
+    @PostMapping("/verify-registration")
+    public ResponseEntity<MessageResponse> verifyRegistration(
+            @Valid @RequestBody OwnerRegisterVerifyRequest request
+    ) {
+        String message = ownerService.verifyOwnerRegistration(request);
+        boolean success = "Email verified successfully. You can now log in.".equals(message);
+        return ResponseEntity.ok(new MessageResponse(success, message));
     }
 
 

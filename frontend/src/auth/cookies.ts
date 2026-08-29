@@ -23,7 +23,7 @@ export async function setAuthCookie(token: string) {
     value: token,
     httpOnly: true,
     secure: IS_PRODUCTION,
-    sameSite: 'lax',
+    sameSite: IS_PRODUCTION ? 'none' : 'lax',
     path: '/',
     maxAge: COOKIE_MAX_AGE_SECONDS,
   });

@@ -22,6 +22,8 @@ export const BACKEND_ENDPOINTS = {
   OWNERS: {
     REGISTER: "/api/owners/register",
 
+    VERIFY_REGISTRATION: "/api/owners/verify-registration",
+
     PROFILE: "/api/owners/profile",
 
     CHANGE_PASSWORD: "/api/owners/change-password",

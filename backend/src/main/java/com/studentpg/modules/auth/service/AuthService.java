@@ -88,6 +88,10 @@ public class AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
 
+        if (!owner.isActive() || !owner.isEmailVerified()) {
+            throw new BadCredentialsException("Please verify your email before logging in.");
+        }
+
         if (!passwordEncoder.matches(password, owner.getPassword())) {
             int failedAttempts = owner.getFailedLoginAttempts() + 1;
             owner.setFailedLoginAttempts(failedAttempts);
@@ -108,4 +112,4 @@ public class AuthService {
         logger.info("Owner login successful: {}", normalizedEmail);
         return new AuthLoginResult(accessToken, normalizedEmail, "OWNER");
     }
-}
+}
