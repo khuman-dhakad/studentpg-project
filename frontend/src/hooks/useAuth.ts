@@ -118,6 +118,26 @@ export const authApi = baseApi.injectEndpoints({
 
     }),
 
+    verifyOwnerRegistration: builder.mutation<
+
+      MessageResponse,
+
+      Record<string, unknown>
+
+    >({
+
+      query: (userData) => ({
+
+        url: BACKEND_ENDPOINTS.OWNERS.VERIFY_REGISTRATION,
+
+        method: 'POST',
+
+        body: userData,
+
+      }),
+
+    }),
+
 
     /* =====================================================
      * GET CURRENT SESSION
@@ -202,6 +222,7 @@ export const {
   useLoginMutation,
 
   useOwnerRegisterMutation,
+  useVerifyOwnerRegistrationMutation,
 
   useSessionQuery,
 

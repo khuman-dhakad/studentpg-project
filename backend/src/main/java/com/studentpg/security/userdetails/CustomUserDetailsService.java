@@ -75,7 +75,7 @@ public class CustomUserDetailsService
                         .orElse(null);
 
         if (owner != null) {
-            if (!owner.isActive()) {
+            if (!owner.isActive() || !owner.isEmailVerified()) {
                 throw new UsernameNotFoundException(
                         "User not found"
                 );

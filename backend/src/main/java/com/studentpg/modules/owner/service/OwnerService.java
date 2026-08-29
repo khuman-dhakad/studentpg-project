@@ -6,6 +6,7 @@ import com.studentpg.modules.owner.dto.request.ChangePasswordRequest;
 import com.studentpg.modules.owner.dto.request.ForgotPasswordRequest;
 // import com.studentpg.modules.owner.dto.request.OwnerLoginRequest;
 import com.studentpg.modules.owner.dto.request.OwnerRegisterRequest;
+import com.studentpg.modules.owner.dto.request.OwnerRegisterVerifyRequest;
 import com.studentpg.modules.owner.dto.request.ResetPasswordRequest;
 import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
 // import com.studentpg.modules.owner.dto.response.LoginResponse;
@@ -131,14 +132,16 @@ public class OwnerService {
             normalizeEmail(request.getEmail());
             validatePassword(request.getPassword());    
 
-    if (ownerRepository.existsByEmail(email)) {
-
-        throw new IllegalStateException(
-                "Email already exists"
-        );
+    Owner existingOwner = ownerRepository.findByEmail(email).orElse(null);
+    if (existingOwner != null && existingOwner.isEmailVerified()) {
+        throw new IllegalStateException("Email already exists");
     }
 
-    Owner owner = new Owner();
+    long now = System.currentTimeMillis();
+    String otp = generateOtp();
+    String otpHash = hashOtp(otp);
+
+    Owner owner = existingOwner != null ? existingOwner : new Owner();
 
     owner.setName(
             request.getName().trim()
@@ -165,26 +168,56 @@ public class OwnerService {
     );
 
     owner.setRole("OWNER");
+    owner.setActive(false);
+    owner.setEmailVerified(false);
+    owner.setRegistrationOtpHash(otpHash);
+    owner.setRegistrationOtpExpiry(now + OTP_VALID_MILLIS);
+
+    try {
+        emailService.sendRegistrationOtpEmail(email, otp);
+    } catch (MailException ex) {
+        logger.error("Registration OTP send failed for owner {}. Error: {}", email, ex.getMessage(), ex);
+        throw new IllegalStateException("Unable to send verification OTP email", ex);
+    }
 
     ownerRepository.save(owner);
 
-    return "Owner registered successfully";
+    return "Verification code sent to your email. Please verify before logging in.";
 }
 
-    // =========================================================
-    // OWNER LOGIN
-    // =========================================================
+    public String verifyOwnerRegistration(OwnerRegisterVerifyRequest request) {
+        String email = normalizeEmail(request.getEmail());
+        String otp = request.getOtp() == null ? "" : request.getOtp().trim();
 
-//     public LoginResponse loginOwner(
-//             OwnerLoginRequest request
-//     ) {
+        Owner owner = ownerRepository.findByEmail(email).orElse(null);
+        if (owner == null) {
+            return "Invalid verification request.";
+        }
 
-//         String email =
-//                 normalizeEmail(request.getEmail());
+        if (owner.getRegistrationOtpHash() == null || owner.getRegistrationOtpExpiry() == null) {
+            return "Verification code not found. Please register again.";
+        }
 
-//         Owner owner =
-//                 ownerRepository.findByEmail(email)
-//                         .orElse(null);
+        if (System.currentTimeMillis() > owner.getRegistrationOtpExpiry()) {
+            owner.setRegistrationOtpHash(null);
+            owner.setRegistrationOtpExpiry(null);
+            owner.setActive(false);
+            ownerRepository.save(owner);
+            return "Verification code expired. Please register again.";
+        }
+
+        if (!owner.getRegistrationOtpHash().equals(hashOtp(otp))) {
+            return "Incorrect verification code.";
+        }
+
+        owner.setEmailVerified(true);
+        owner.setActive(true);
+        owner.setRegistrationOtpHash(null);
+        owner.setRegistrationOtpExpiry(null);
+        ownerRepository.save(owner);
+
+        return "Email verified successfully. You can now log in.";
+    }
 
 //         if (owner == null) {
 

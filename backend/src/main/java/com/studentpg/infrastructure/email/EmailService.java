@@ -56,41 +56,51 @@ private String brevoUrl;
     private String brevoSenderName;
 
     public void sendOtpEmail(String toEmail, String otp) {
+        validateOtpRequest(toEmail, otp);
 
+        String normalizedEmail = toEmail.trim().toLowerCase();
+        sendEmailWithFallback(normalizedEmail, otp, "StudentPG - Password Reset Code",
+                "Hello,\n\nYour password reset code is: " + otp + "\n\nThis code will expire in 10 minutes.\nIf you did not request this, please ignore this email.\n\n- StudentPG Team",
+                "<p>Hello,</p><p>Your password reset code is: <strong>" + otp + "</strong></p><p>This code will expire in 10 minutes.</p><p>If you did not request this, please ignore this email.</p>");
+    }
+
+    public void sendRegistrationOtpEmail(String toEmail, String otp) {
+        validateOtpRequest(toEmail, otp);
+
+        String normalizedEmail = toEmail.trim().toLowerCase();
+        sendEmailWithFallback(normalizedEmail, otp, "StudentPG - Email Verification Code",
+                "Hello,\n\nYour email verification code is: " + otp + "\n\nThis code will expire in 10 minutes.\nIf you did not request this, please ignore this email.\n\n- StudentPG Team",
+                "<p>Hello,</p><p>Your email verification code is: <strong>" + otp + "</strong></p><p>This code will expire in 10 minutes.</p><p>If you did not request this, please ignore this email.</p>");
+    }
+
+    private void validateOtpRequest(String toEmail, String otp) {
         if (toEmail == null || toEmail.isBlank()) {
             throw new IllegalArgumentException("Recipient email is required");
         }
-        if (!toEmail.matches(
-        "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"
-)) {
-    throw new IllegalArgumentException(
-            "Invalid email address."
-    );
-}
-
+        if (!toEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("Invalid email address.");
+        }
         if (otp == null || otp.isBlank()) {
             throw new IllegalArgumentException("OTP is required");
         }
         if (!otp.matches("\\d{6}")) {
+            throw new IllegalArgumentException("OTP must contain exactly 6 digits.");
+        }
+    }
 
-    throw new IllegalArgumentException(
-            "OTP must contain exactly 6 digits."
-    );
-}
-
+    private void sendEmailWithFallback(String toEmail, String otp, String subject, String textBody, String htmlBody) {
         String effectiveFrom = (fromEmail != null && !fromEmail.isBlank()) ? fromEmail : "studentpg.support@gmail.com";
         String effectiveSenderName = (senderName != null && !senderName.isBlank()) ? senderName : "StudentPG";
         String effectiveSender = (effectiveSenderName != null && !effectiveSenderName.isBlank())
                 ? effectiveSenderName + " <" + effectiveFrom + ">"
                 : effectiveFrom;
-        String normalizedEmail = toEmail.trim().toLowerCase();
 
         if (mailSender != null) {
             try {
-                sendOtpEmailViaSmtp(normalizedEmail, otp, effectiveSender);
+                sendOtpEmailViaSmtp(toEmail, otp, subject, textBody, effectiveSender);
                 return;
             } catch (MailException ex) {
-                logger.warn("SMTP delivery failed for OTP email to {}. Attempting Brevo API fallback. Error: {}", normalizedEmail, ex.getMessage());
+                logger.warn("SMTP delivery failed for OTP email to {}. Attempting Brevo API fallback. Error: {}", toEmail, ex.getMessage());
                 if (brevoApiKey == null || brevoApiKey.isBlank()) {
                     throw ex;
                 }
@@ -98,39 +108,33 @@ private String brevoUrl;
         }
 
         if (brevoApiKey != null && !brevoApiKey.isBlank()) {
-            sendOtpEmailViaBrevo(normalizedEmail, otp, effectiveFrom, effectiveSenderName);
+            sendOtpEmailViaBrevo(toEmail, otp, subject, htmlBody, textBody, effectiveFrom, effectiveSenderName);
             return;
         }
 
         throw new MailSendException("No email delivery provider is configured for OTP emails");
     }
 
-    private void sendOtpEmailViaSmtp(String toEmail, String otp, String effectiveSender) {
+    private void sendOtpEmailViaSmtp(String toEmail, String otp, String subject, String textBody, String effectiveSender) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(effectiveSender);
         message.setTo(toEmail);
-        message.setSubject("StudentPG - Password Reset Code");
-        message.setText(
-                "Hello,\n\n" +
-                "Your password reset code is: " + otp + "\n\n" +
-                "This code will expire in 10 minutes.\n" +
-                "If you did not request this, please ignore this email.\n\n" +
-                "- StudentPG Team"
-        );
+        message.setSubject(subject);
+        message.setText(textBody);
 
         try {
             if (mailSender == null) {
                 throw new IllegalStateException("Mail sender is not configured");
             }
             mailSender.send(message);
-            logger.info("OTP email sent successfully to {} from {}", toEmail, effectiveSender);
+            logger.info("OTP email sent successfully to {} from {} with subject {}", toEmail, effectiveSender, subject);
         } catch (MailException ex) {
             logger.error("Failed to send OTP email to {} using sender {}. Mail error: {}", toEmail, effectiveSender, ex.getMessage(), ex);
             throw ex;
         }
     }
 
-    private void sendOtpEmailViaBrevo(String toEmail, String otp, String effectiveFrom, String effectiveSenderName) {
+    private void sendOtpEmailViaBrevo(String toEmail, String otp, String subject, String htmlBody, String textBody, String effectiveFrom, String effectiveSenderName) {
         if (restTemplate == null) {
             throw new IllegalStateException("Brevo REST client is not configured");
         }
@@ -141,9 +145,9 @@ private String brevoUrl;
         Map<String, Object> payload = Map.of(
                 "sender", Map.of("name", senderName, "email", senderEmail),
                 "to", List.of(Map.of("email", toEmail)),
-                "subject", "StudentPG - Password Reset Code",
-                "htmlContent", "<p>Hello,</p><p>Your password reset code is: <strong>" + otp + "</strong></p><p>This code will expire in 10 minutes.</p><p>If you did not request this, please ignore this email.</p>",
-                "textContent", "Hello,\n\nYour password reset code is: " + otp + "\n\nThis code will expire in 10 minutes.\nIf you did not request this, please ignore this email."
+                "subject", subject,
+                "htmlContent", htmlBody,
+                "textContent", textBody
         );
 
         HttpHeaders headers = new HttpHeaders();

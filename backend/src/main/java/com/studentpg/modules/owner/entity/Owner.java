@@ -72,6 +72,10 @@ public class Owner {
     private String resetOtpHash;
     @JsonIgnore
     private Long resetOtpExpiry;
+    @JsonIgnore
+    private String registrationOtpHash;
+    @JsonIgnore
+    private Long registrationOtpExpiry;
     private int resetOtpAttempts = 0;
 
     /*
@@ -224,6 +228,22 @@ public void setActive(boolean active) {
 
     public void setResetOtpExpiry(Long resetOtpExpiry) {
         this.resetOtpExpiry = resetOtpExpiry;
+    }
+
+    public String getRegistrationOtpHash() {
+        return registrationOtpHash;
+    }
+
+    public void setRegistrationOtpHash(String registrationOtpHash) {
+        this.registrationOtpHash = registrationOtpHash;
+    }
+
+    public Long getRegistrationOtpExpiry() {
+        return registrationOtpExpiry;
+    }
+
+    public void setRegistrationOtpExpiry(Long registrationOtpExpiry) {
+        this.registrationOtpExpiry = registrationOtpExpiry;
     }
 
     public int getResetOtpAttempts() {

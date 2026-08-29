@@ -3,6 +3,7 @@ package com.studentpg.modules.auth.controller;
 import com.studentpg.modules.admin.entity.Admin;
 import com.studentpg.modules.admin.repository.AdminRepository;
 import com.studentpg.modules.auth.service.AuthService;
+import com.studentpg.modules.owner.entity.Owner;
 import com.studentpg.modules.owner.repository.OwnerRepository;
 import com.studentpg.security.filter.JwtAuthenticationFilter;
 import com.studentpg.security.jwt.JwtService;
@@ -87,5 +88,24 @@ class AuthControllerIntegrationTest {
                 .andExpect(jsonPath("$.isAuthenticated").value(true))
                 .andExpect(jsonPath("$.user.email").value("admin@example.com"))
                 .andExpect(jsonPath("$.user.role").value("ADMIN"));
+    }
+
+    @Test
+    void loginFailsForOwnerWhoseEmailIsNotVerified() throws Exception {
+        Owner owner = new Owner();
+        owner.setName("Owner One");
+        owner.setEmail("owner@example.com");
+        owner.setPassword(passwordEncoder.encode("Secret123!"));
+        owner.setRole("OWNER");
+        owner.setActive(false);
+        owner.setEmailVerified(false);
+
+        when(ownerRepository.findByEmailIgnoreCase("owner@example.com"))
+                .thenReturn(Optional.of(owner));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"owner@example.com\",\"password\":\"Secret123!\"}"))
+                .andExpect(status().isUnauthorized());
     }
 }
