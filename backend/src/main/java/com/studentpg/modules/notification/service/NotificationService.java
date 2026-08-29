@@ -75,6 +75,31 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
+        public void createOwnerVerificationApprovedNotification(String ownerId) {
+                validateOwnerId(ownerId);
+                notificationRepository.save(new Notification(
+                                ownerId,
+                                null,
+                                "OWNER_VERIFICATION_APPROVED",
+                                "Owner verification approved",
+                                "Your owner verification has been approved. Your verified owner badge is now active."
+                ));
+        }
+
+        public void createOwnerVerificationRejectedNotification(String ownerId, String reason) {
+                validateOwnerId(ownerId);
+                if (reason == null || reason.isBlank()) {
+                        throw new IllegalArgumentException("Verification rejection reason is required.");
+                }
+                notificationRepository.save(new Notification(
+                                ownerId,
+                                null,
+                                "OWNER_VERIFICATION_REJECTED",
+                                "Owner verification rejected",
+                                "Your owner verification was rejected. Reason: " + reason.trim()
+                ));
+        }
+
 
     /*
      * =====================================================

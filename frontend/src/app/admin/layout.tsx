@@ -1,12 +1,30 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/constants/routes';
 import AdminLogoutButton from '@/features/auth/components/AdminLogoutButton';
+import { useSessionQuery } from '@/features/auth/api/authApi';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { data: session, isLoading } = useSessionQuery();
+
+  useEffect(() => {
+    if (!isLoading && (!session?.isAuthenticated || session.user?.role !== 'ADMIN')) {
+      router.replace(ROUTES.ADMIN.LOGIN);
+    }
+  }, [isLoading, router, session?.isAuthenticated, session?.user?.role]);
+
+  if (isLoading || !session?.isAuthenticated || session.user?.role !== 'ADMIN') {
+    return <div className="flex min-h-screen items-center justify-center bg-cream text-sm font-semibold text-ink-soft">Checking admin access...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-cream">
 

@@ -10,6 +10,7 @@ import {
 import type { PG } from '@/types/pg.types';
 
 import { AdminPGList } from '@/components/pg/AdminPGList';
+import { OwnerVerificationQueue } from '@/components/admin/OwnerVerificationQueue';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 import { BACKEND_API_URL } from '@/constants/config';
 
@@ -554,6 +555,8 @@ export default function AdminDashboardPage() {
         lg:px-8
       "
     >
+
+      <OwnerVerificationQueue />
 
       {/* =================================================
           HEADER

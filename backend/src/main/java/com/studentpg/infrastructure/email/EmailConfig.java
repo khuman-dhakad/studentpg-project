@@ -36,9 +36,7 @@ public class EmailConfig {
         mailSender.setUsername(username);
         mailSender.setPassword(password);
 
-        // Debug logging - verify env vars are loaded
-        logger.info("Mail configuration loaded - Host: {}, Port: {}, Username: {}, Password length: {}", 
-                    host, port, username, password != null ? password.length() : 0);
+        logger.info("Mail transport configured for host {} on port {}", host, port);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -50,7 +48,7 @@ public class EmailConfig {
         props.put("mail.smtp.connectiontimeout", "10000");
         props.put("mail.smtp.timeout", "10000");
         props.put("mail.smtp.writetimeout", "10000");
-        props.put("mail.smtp.debug", "true");
+        props.put("mail.smtp.debug", "false");
 
         return mailSender;
     }

@@ -2,6 +2,7 @@ package com.studentpg.modules.pg.service;
 
 import com.studentpg.infrastructure.cloudinary.CloudinaryService;
 import com.studentpg.modules.owner.entity.Owner;
+import com.studentpg.modules.owner.entity.VerificationStatus;
 import com.studentpg.modules.owner.repository.OwnerRepository;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.pg.entity.PGImage;
@@ -99,6 +100,10 @@ private final CloudinaryService cloudinaryService;
             throw new SecurityException("Account is disabled.");
         }
 
+                if (owner.getVerificationStatus() != VerificationStatus.VERIFIED) {
+                        throw new IllegalStateException("Please verify yourself, then list your PG.");
+                }
+
         if (owner.getId() == null || owner.getId().isBlank()) {
             return "Authenticated owner not found.";
         }
@@ -107,6 +112,8 @@ private final CloudinaryService cloudinaryService;
          */
 
         pg.setOwnerId(owner.getId());
+        // Creation must never reuse a client-supplied Mongo document id.
+        pg.setId(null);
 
 
         /*

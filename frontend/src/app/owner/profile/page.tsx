@@ -18,6 +18,7 @@ import {
   useGetOwnerProfileQuery,
   useUpdateOwnerProfileMutation,
 } from '@/api/ownerApi';
+import { OwnerVerificationBadge } from '@/components/owner/OwnerVerificationBadge';
 
 
 /* =========================================================
@@ -411,6 +412,18 @@ export default function OwnerProfilePage() {
 
           </h1>
 
+          {profile?.verificationStatus === 'VERIFIED' && (
+            <div className="mt-3"><OwnerVerificationBadge /></div>
+          )}
+
+          {profile?.verificationStatus === 'PENDING' && (
+            <p className="mt-3 text-sm font-bold text-amber-700">Pending Verification: your information is under review.</p>
+          )}
+
+          {profile?.verificationStatus === 'REJECTED' && (
+            <p className="mt-3 text-sm font-bold text-rose-700">Verification Rejected: review the note in Settings and resubmit.</p>
+          )}
+
 
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-500">
 
@@ -773,10 +786,14 @@ export default function OwnerProfilePage() {
                 </p>
 
 
-                <p className="mt-1 text-sm font-black text-amber-600">
-
-                  Verification pending
-
+                <p className={`mt-1 text-sm font-black ${profile?.verificationStatus === 'VERIFIED' ? 'text-emerald-600' : profile?.verificationStatus === 'REJECTED' ? 'text-rose-600' : profile?.verificationStatus === 'PENDING' ? 'text-amber-600' : 'text-slate-500'}`}>
+                  {profile?.verificationStatus === 'VERIFIED'
+                    ? 'Verified'
+                    : profile?.verificationStatus === 'REJECTED'
+                      ? 'Rejected'
+                      : profile?.verificationStatus === 'PENDING'
+                        ? 'Pending Verification'
+                        : 'Not Verified'}
                 </p>
 
               </div>

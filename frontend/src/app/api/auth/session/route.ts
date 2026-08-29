@@ -25,9 +25,17 @@ export async function GET() {
       return NextResponse.json({ isAuthenticated: false, user: null, profile: null });
     }
 
-    // Determine role by matching the administrative email configurations
-    const isAdmin = email === process.env.ADMIN_EMAIL || email.includes('admin@');
-    const role = isAdmin ? 'ADMIN' : 'OWNER';
+    const backendSession = await backendClient.get<{
+      isAuthenticated: boolean;
+      user: { email: string; role: 'OWNER' | 'ADMIN' } | null;
+    }>(BACKEND_ENDPOINTS.AUTH.SESSION, { token });
+
+    if (!backendSession.isAuthenticated || !backendSession.user) {
+      return NextResponse.json({ isAuthenticated: false, user: null, profile: null });
+    }
+
+    const role = backendSession.user.role;
+    const isAdmin = role === 'ADMIN';
 
     let profile: OwnerProfile | null = null;
 

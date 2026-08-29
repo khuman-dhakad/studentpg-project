@@ -45,7 +45,7 @@ export function SiteHeader() {
           className="group flex items-center gap-3"
         >
           {/* Logo */}
-          <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md">
+          <div className="relative h-12 w-12 overflow-hidden rounded-full bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md">
             <Image
               src="/Pglogo.jpeg"
               alt="StudentPG Logo"

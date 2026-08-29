@@ -149,12 +149,13 @@ public void init() {
 
             if (expectedTokenVersion != null) {
                 Object versionObj = claims.get("tokenVersion");
-                if (versionObj instanceof Number) {
-                    long tokenVersion = ((Number) versionObj).longValue();
-                    if (tokenVersion != expectedTokenVersion) {
-                        logger.debug("JWT tokenVersion mismatch: token={}, expected={}", tokenVersion, expectedTokenVersion);
-                        return false;
-                    }
+                if (!(versionObj instanceof Number)) {
+                    return false;
+                }
+                long tokenVersion = ((Number) versionObj).longValue();
+                if (tokenVersion != expectedTokenVersion) {
+                    logger.debug("JWT tokenVersion mismatch: token={}, expected={}", tokenVersion, expectedTokenVersion);
+                    return false;
                 }
             }
 

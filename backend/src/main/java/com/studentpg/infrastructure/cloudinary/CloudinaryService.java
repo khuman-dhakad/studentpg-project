@@ -51,6 +51,21 @@ public class CloudinaryService {
         return response;
     }
 
+        public Map<String, String> uploadVerificationDocument(MultipartFile document) throws IOException {
+                Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                                document.getBytes(),
+                                ObjectUtils.asMap(
+                                                "folder", "studentpg/owner-verifications",
+                                                "resource_type", "auto"
+                                )
+                );
+
+                Map<String, String> response = new HashMap<>();
+                response.put("publicId", uploadResult.get("public_id").toString());
+                response.put("url", uploadResult.get("secure_url").toString());
+                return response;
+        }
+
     
     public void deleteImage(String publicId) throws IOException {
         if (publicId == null || publicId.isBlank()) {

@@ -79,10 +79,10 @@ export default function ReportIssuePage() {
 
     try {
       const formData = new FormData();
-      formData.append('issueType', issueType);
+      formData.append('title', issueType);
       formData.append('pgListing', pgListing);
       formData.append('location', location);
-      formData.append('description', description);
+      formData.append('detail', description);
       if (file) {
         // client-side validation
         if (!file.type.startsWith('image/')) {

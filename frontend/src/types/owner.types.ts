@@ -12,7 +12,15 @@ export interface OwnerProfile {
   profileImageUrl?: string | null;
   profileImagePublicId?: string | null;
   emailVerified: boolean;
+  verificationStatus: VerificationStatus;
+  verificationRejectionReason?: string | null;
 }
+
+export type VerificationStatus =
+  | 'NOT_VERIFIED'
+  | 'PENDING'
+  | 'VERIFIED'
+  | 'REJECTED';
 
 export interface UpdateProfilePayload {
   name: string;

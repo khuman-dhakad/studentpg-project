@@ -9,6 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { useSessionQuery, useLogoutMutation } from '@/features/auth/api/authApi';
 import { baseApi } from '@/api/baseApi';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { OwnerVerificationBadge } from '@/components/owner/OwnerVerificationBadge';
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -100,7 +101,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
               </div>
               <div className="hidden sm:block text-left">
                 <div className="text-xs font-black text-slate-900 leading-none">{isLoading ? 'Loading...' : userName}</div>
-                <div className="text-[10px] font-semibold text-slate-400 mt-0.5">Owner</div>
+                <div className="mt-0.5 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><span>Owner</span>{session?.profile?.verificationStatus === 'VERIFIED' ? <OwnerVerificationBadge compact /> : session?.profile?.verificationStatus === 'PENDING' ? <span className="text-amber-600">Pending Verification</span> : session?.profile?.verificationStatus === 'REJECTED' ? <span className="text-rose-600">Rejected</span> : <span>Not Verified</span>}</div>
               </div>
             </Link>
           </div>

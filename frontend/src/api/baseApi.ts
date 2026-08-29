@@ -20,7 +20,6 @@ const rawBaseQuery = fetchBaseQuery({
   baseUrl: BACKEND_API_URL,
   credentials: 'include',
   prepareHeaders: (headers) => {
-    headers.set('Content-Type', 'application/json');
     headers.set('Accept', 'application/json');
     return headers;
   },

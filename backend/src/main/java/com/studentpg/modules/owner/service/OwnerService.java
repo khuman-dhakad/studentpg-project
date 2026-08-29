@@ -11,6 +11,8 @@ import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
 // import com.studentpg.modules.owner.dto.response.LoginResponse;
 import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
 import com.studentpg.modules.owner.entity.Owner;
+import com.studentpg.modules.owner.entity.VerificationStatus;
+import com.studentpg.modules.owner.dto.request.OwnerVerificationRequest;
 import com.studentpg.modules.owner.repository.OwnerRepository;
 import com.studentpg.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.time.Instant;
 
  
 
@@ -57,6 +60,7 @@ public class OwnerService {
             60 * 1000L;
 
     private static final int OTP_MAX_PER_HOUR = 5;
+        private static final long MAX_VERIFICATION_DOCUMENT_BYTES = 5L * 1024 * 1024;
 
     private static final long OTP_WINDOW_MILLIS =
             60 * 60 * 1000L;
@@ -294,9 +298,113 @@ public class OwnerService {
                 owner.getEmail(),
                 owner.getPhone(),
                 owner.getRole(),
-                owner.getWhatsappNumber()
+                                owner.getWhatsappNumber(),
+                                owner.getVerificationStatus(),
+                                owner.getVerificationRejectionReason()
         );
     }
+
+        public String submitVerification(OwnerVerificationRequest request, MultipartFile document)
+                        throws IOException {
+                Owner owner = getLoggedInOwner();
+
+                if (owner.getVerificationStatus() == VerificationStatus.VERIFIED) {
+                        throw new IllegalStateException("Your owner profile is already verified.");
+                }
+                if (owner.getVerificationStatus() == VerificationStatus.PENDING) {
+                        throw new IllegalStateException("Your verification is already under review.");
+                }
+                if (document == null || document.isEmpty()) {
+                        throw new IllegalArgumentException("A verification document is required.");
+                }
+                if (document.getSize() > MAX_VERIFICATION_DOCUMENT_BYTES) {
+                        throw new IllegalArgumentException("Verification document must be 5 MB or smaller.");
+                }
+
+                String contentType = document.getContentType();
+                if (contentType == null || !java.util.Set.of("application/pdf", "image/jpeg", "image/png").contains(contentType)) {
+                        throw new IllegalArgumentException("Only PDF, JPG, and PNG documents are supported.");
+                }
+
+                byte[] documentBytes = document.getBytes();
+                if (!hasValidDocumentSignature(documentBytes, contentType)) {
+                        throw new IllegalArgumentException("The uploaded file content does not match its file type. Please upload a valid document.");
+                }
+
+                String legalName = request.getLegalName().trim();
+                if (!legalName.matches("^[\\p{L}][\\p{L} .'-]{1,99}$")) {
+                        throw new IllegalArgumentException("Full legal name contains invalid characters.");
+                }
+                String documentType = request.getDocumentType().trim().toUpperCase();
+                String documentNumber = request.getDocumentNumber().replaceAll("[\\s-]", "").toUpperCase();
+                validateDocumentNumber(documentType, documentNumber);
+
+                Map<String, String> uploadedDocument;
+                try {
+                        uploadedDocument = cloudinaryService.uploadVerificationDocument(document);
+                } catch (IOException exception) {
+                        logger.error("Verification document upload failed for owner {}", owner.getId(), exception);
+                        throw new IllegalStateException("Document upload failed. Please try again in a moment.");
+                }
+
+                owner.setVerificationLegalName(legalName);
+                owner.setVerificationDocumentType(documentType);
+                owner.setVerificationDocumentNumber(documentNumber);
+                owner.setVerificationDocumentData(documentBytes);
+                owner.setVerificationDocumentContentType(contentType);
+                owner.setVerificationDocumentFilename(document.getOriginalFilename() == null
+                                ? "verification-document"
+                                : document.getOriginalFilename().replaceAll("[^A-Za-z0-9._-]", "_"));
+                owner.setVerificationDocumentUrl(uploadedDocument.get("url"));
+                owner.setVerificationDocumentPublicId(uploadedDocument.get("publicId"));
+                owner.setVerificationStatus(VerificationStatus.PENDING);
+                owner.setVerificationSubmittedAt(Instant.now());
+                owner.setVerificationReviewedAt(null);
+                owner.setVerificationReviewedBy(null);
+                owner.setVerifiedAt(null);
+                owner.setVerificationRejectionReason(null);
+                ownerRepository.save(owner);
+                return "Verification submitted successfully. Our team will review your information.";
+        }
+
+        private void validateDocumentNumber(String documentType, String documentNumber) {
+                String pattern = switch (documentType) {
+                        case "AADHAAR" -> "\\d{12}";
+                        case "PAN" -> "[A-Z]{5}\\d{4}[A-Z]";
+                        case "PASSPORT" -> "[A-Z]\\d{7}";
+                        case "DRIVING_LICENSE" -> "[A-Z]{2}\\d{2}\\d{4}\\d{7}";
+                        case "VOTER_ID" -> "[A-Z]{3}\\d{7}";
+                        default -> throw new IllegalArgumentException("Please select a supported identity document.");
+                };
+
+                if (!documentNumber.matches(pattern)) {
+                        String format = switch (documentType) {
+                                case "AADHAAR" -> "12 digits";
+                                case "PAN" -> "5 letters, 4 digits, then 1 letter (example: ABCDE1234F)";
+                                case "PASSPORT" -> "1 letter followed by 7 digits";
+                                case "DRIVING_LICENSE" -> "2 state letters, 2 digits, 4 year digits, then 7 digits";
+                                case "VOTER_ID" -> "3 letters followed by 7 digits";
+                                default -> "the correct format";
+                        };
+                        throw new IllegalArgumentException("Invalid " + documentType.replace('_', ' ') + " number. Use " + format + ".");
+                }
+        }
+
+        private boolean hasValidDocumentSignature(byte[] bytes, String contentType) {
+                if (bytes.length < 4) {
+                        return false;
+                }
+                return switch (contentType) {
+                        case "application/pdf" -> bytes[0] == '%' && bytes[1] == 'P' && bytes[2] == 'D' && bytes[3] == 'F';
+                        case "image/jpeg" -> bytes.length >= 3 && (bytes[0] & 0xFF) == 0xFF
+                                && (bytes[1] & 0xFF) == 0xD8 && (bytes[2] & 0xFF) == 0xFF;
+                        case "image/png" -> bytes.length >= 8 && (bytes[0] & 0xFF) == 0x89
+                                && bytes[1] == 'P' && bytes[2] == 'N' && bytes[3] == 'G'
+                                && (bytes[4] & 0xFF) == 0x0D && (bytes[5] & 0xFF) == 0x0A
+                                && (bytes[6] & 0xFF) == 0x1A && (bytes[7] & 0xFF) == 0x0A;
+                        default -> false;
+                };
+        }
 
     // =========================================================
     // UPDATE PROFILE
@@ -325,6 +433,8 @@ public class OwnerService {
         owner.setName(
                 request.getName().trim()
         );
+
+        owner.setEmail(newEmail);
 
         owner.setPhone(
                 request.getPhone().trim()

@@ -1,13 +1,13 @@
 import { ApiError } from '@/errors/ApiError';
 import { ERROR_MESSAGES } from '@/errors/errorMessages';
-import { BACKEND_API_URL } from '@/constants/config';
+import { SERVER_BACKEND_API_URL } from '@/constants/config';
 
 
 /* =========================================================
  * CONFIGURATION
  * ========================================================= */
 
-const BACKEND_URL = BACKEND_API_URL;
+const BACKEND_URL = SERVER_BACKEND_API_URL;
 const NORMALIZED_BACKEND_URL = BACKEND_URL.replace(/\/+$/, '');
 
 let lastSetCookieHeader: string | null = null;
@@ -37,6 +37,7 @@ export function clearLastSetCookieHeader() {
 interface RequestOptions extends RequestInit {
   token?: string;
   isMultipart?: boolean;
+  onSetCookie?: (value: string | null) => void;
 }
 
 
@@ -255,16 +256,18 @@ export const backendClient = {
 
     try {
 
+      const { onSetCookie, ...fetchOptions } = options;
       const response =
        await fetch(url,{
-    ...options,
+     ...fetchOptions,
     headers,
 
     cache:"no-store",
     credentials: "include",
 })
 
-      captureSetCookieHeader(response);
+      const setCookieHeader = captureSetCookieHeader(response);
+      onSetCookie?.(setCookieHeader);
 
       /*
        * Authentication failures
@@ -376,6 +379,19 @@ export const backendClient = {
               : JSON.stringify(body),
       },
     );
+  },
+
+  async postWithSetCookie<T>(
+    endpoint: string,
+    body?: unknown,
+  ): Promise<{ data: T; setCookie: string | null }> {
+    let setCookie: string | null = null;
+    const data = await this.post<T>(endpoint, body, {
+      onSetCookie: (value) => {
+        setCookie = value;
+      },
+    });
+    return { data, setCookie };
   },
 
 

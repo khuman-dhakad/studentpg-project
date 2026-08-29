@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { backendClient, getLastSetCookieHeader } from '@/api/backendClient';
+import { backendClient } from '@/api/backendClient';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 import { setAuthCookie } from '@/auth/cookies';
 import { BaseLoginResponse } from '@/types/api.types';
@@ -31,12 +31,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const responseData = await backendClient.post<BaseLoginResponse>(
+    const { data: responseData, setCookie: setCookieHeader } = await backendClient.postWithSetCookie<BaseLoginResponse>(
       BACKEND_ENDPOINTS.AUTH.LOGIN,
       body
     );
 
-    const setCookieHeader = getLastSetCookieHeader();
     const accessToken = parseAccessTokenFromCookieHeader(setCookieHeader);
 
     if (!accessToken) {
@@ -46,6 +45,13 @@ export async function POST(request: NextRequest) {
           message: responseData.message || 'Invalid credentials or account locked.',
         },
         { status: 400 }
+      );
+    }
+
+    if (responseData.role !== 'OWNER') {
+      return NextResponse.json(
+        { status: 403, message: 'This account is not an owner account.' },
+        { status: 403 }
       );
     }
 
