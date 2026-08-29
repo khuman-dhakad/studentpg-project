@@ -13,6 +13,10 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
+DEPLOYMENT_ENV_SETUP.md 
+DEPLOYMENT_QUICKFIX.md
+
 
 # Logs
 logs
