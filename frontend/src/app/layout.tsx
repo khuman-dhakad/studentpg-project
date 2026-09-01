@@ -5,6 +5,7 @@ import { StoreProvider } from '@/store/StoreProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
+import { BottomNav } from '@/components/layout/BottomNav';
 import './globals.css';
 
 const inter = Inter({
@@ -88,8 +89,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider>
             <div className="flex min-h-screen flex-col overflow-x-hidden">
               <SiteHeader />
-              <div className="flex-1">{children}</div>
+              <div className="flex-1 pb-16 md:pb-0">{children}</div>
               <SiteFooter />
+              <BottomNav />
             </div>
           </ThemeProvider>
         </StoreProvider>

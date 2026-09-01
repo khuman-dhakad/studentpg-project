@@ -17,6 +17,12 @@ import {
   UserRound,
   ShieldCheck,
   ArrowLeft,
+  Snowflake,
+  BatteryCharging,
+  BedDouble,
+  Clock,
+  Banknote,
+  Users,
 } from 'lucide-react';
 
 import Gallery from '@/components/Gallery';
@@ -45,7 +51,7 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${listing.pgName} in ${listing.city || 'India'}`;
+  const title = `${listing.pgName} in ${listing.city || 'Bhopal'}`;
   const description = listing.description || `Verified student accommodation in ${listing.city} starting from ₹${listing.rent || 0}/month.`;
   const image = listing.images?.[0]?.url;
 
@@ -80,53 +86,64 @@ export default async function PgDetailsPage({
     listing.images?.[0]?.url ||
     'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80';
 
-  const title = listing.pgName || 'Student PG Listing';
+  const title = listing.pgName || 'Student PG Accommodation';
 
   const description =
     listing.description ||
-    'A comfortable and verified student accommodation option.';
+    'Comfortable, fully furnished and verified student accommodation in prime educational hub.';
 
   const location =
-    [listing.city, listing.state].filter(Boolean).join(', ') ||
-    'Location not provided';
+    [listing.address, listing.landmark, listing.city, listing.state]
+      .filter(Boolean)
+      .join(', ') || 'Bhopal, Madhya Pradesh';
 
   const rent =
     typeof listing.rent === 'number'
-      ? `₹${listing.rent.toLocaleString('en-IN')} / month`
-      : 'Rent not provided';
+      ? `₹${listing.rent.toLocaleString('en-IN')}`
+      : 'Contact for rent';
 
-  const ownerName = listing.owner?.name || 'Property Owner';
+  const ownerName = listing.owner?.name || 'Property Host';
   const ownerEmail = listing.owner?.email || '';
   const contactNumber = listing.owner?.phone || '';
   const whatsappContact = listing.owner?.whatsappNumber || contactNumber;
 
   const cleanWhatsAppNumber = (whatsappContact ?? '').replace(/\D/g, '');
-
   const whatsappNumber = cleanWhatsAppNumber.startsWith('91')
     ? cleanWhatsAppNumber
     : `91${cleanWhatsAppNumber}`;
 
   const amenities = [
-    listing.wifiAvailable && {
+    {
       label: 'High-speed Wi-Fi',
+      available: listing.wifiAvailable,
       icon: Wifi,
     },
-    listing.foodAvailable && {
-      label: 'Meals included',
+    {
+      label: 'Meals / Food Included',
+      available: listing.foodAvailable,
       icon: Utensils,
     },
-    listing.parkingAvailable && {
-      label: 'Parking available',
+    {
+      label: 'Air Conditioner (AC)',
+      available: listing.acAvailable,
+      icon: Snowflake,
+    },
+    {
+      label: '24x7 Power Backup',
+      available: listing.powerBackup,
+      icon: BatteryCharging,
+    },
+    {
+      label: 'Reserved Parking',
+      available: listing.parkingAvailable,
       icon: Car,
     },
-    listing.laundryAvailable && {
-      label: 'Laundry support',
+    {
+      label: 'Laundry Service',
+      available: listing.laundryAvailable,
       icon: WashingMachine,
     },
-  ].filter(Boolean) as {
-    label: string;
-    icon: React.ElementType;
-  }[];
+  ];
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -136,232 +153,310 @@ export default async function PgDetailsPage({
     image: image,
     address: {
       '@type': 'PostalAddress',
+      streetAddress: listing.address,
       addressLocality: listing.city,
       addressRegion: listing.state,
+      postalCode: listing.pincode,
       addressCountry: 'IN',
     },
     priceRange: typeof listing.rent === 'number' ? `₹${listing.rent}` : undefined,
   };
 
+  const isOwnerVerified = Boolean(
+    listing.owner &&
+      ('verified' in listing.owner
+        ? listing.owner.verified
+        : (listing.owner as { verificationStatus?: string }).verificationStatus === 'VERIFIED')
+  );
+
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-cream px-4 py-6 sm:px-6 lg:px-8 pb-28 md:pb-16 text-ink antialiased">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       <div className="mx-auto max-w-6xl">
-
-        {/* Back Button */}
+        {/* Breadcrumb / Back Button */}
         <Link
           href={ROUTES.SEARCH}
-          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-brand"
+          className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-brand"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to listings
+          <span>Back to Search Listings</span>
         </Link>
 
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-
-          {/* ================= IMAGE ================= */}
-          <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-sm p-4">
-            <Gallery images={(listing.images || []).map(i => ({ url: i.url || image }))} initialIndex={0} />
-          </div>
-
-          {/* ================= DETAILS ================= */}
-          <div className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
-
-            {/* Badge */}
-            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-brand">
-              <ShieldCheck className="h-5 w-5" />
-              Approved Listing
-              {listing.owner && 'verified' in listing.owner && listing.owner.verified && <OwnerVerificationBadge compact />}
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
+          {/* ================= LEFT: MEDIA & DESCRIPTION ================= */}
+          <div className="space-y-6">
+            {/* Gallery Card */}
+            <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-xs p-4">
+              <Gallery
+                images={(listing.images || []).map((i) => ({
+                  url: i.url || image,
+                }))}
+                initialIndex={0}
+              />
             </div>
 
-            {/* Title */}
-            <h1 className="mt-4 font-display text-3xl font-black leading-tight text-ink sm:text-4xl">
-              {title}
-            </h1>
+            {/* Description & Overview */}
+            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
+              <h2 className="text-base font-black uppercase tracking-wider text-ink">
+                About This Property
+              </h2>
+              <p className="mt-3 text-xs sm:text-sm leading-relaxed text-ink-soft font-normal">
+                {description}
+              </p>
 
-            {/* Location */}
-            <div className="mt-4 flex items-center gap-2 text-sm font-medium text-ink-soft">
-              <MapPin className="h-4 w-4 text-brand" />
-              {location}
-            </div>
-
-            {/* Description */}
-            <p className="mt-5 text-sm leading-7 text-ink-soft">
-              {description}
-            </p>
-
-            {/* Location + Rent */}
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-
-              <div className="rounded-2xl border border-line bg-cream p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Location
-                </p>
-
-                <p className="mt-2 font-semibold text-ink">
-                  {location}
-                </p>
+              {/* Full Address details */}
+              <div className="mt-6 rounded-2xl bg-cream p-4 border border-border">
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="h-5 w-5 text-brand shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-xs font-black uppercase tracking-wide text-ink">
+                      Location & Landmark
+                    </h3>
+                    <p className="mt-1 text-xs text-ink-soft font-medium">
+                      {location}
+                    </p>
+                    {listing.pincode && (
+                      <p className="mt-0.5 text-[11px] font-bold text-brand">
+                        PIN: {listing.pincode}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
-
-              <div className="rounded-2xl border border-line bg-cream p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Monthly Rent
-                </p>
-
-                <p className="mt-2 font-semibold text-ink">
-                  {rent}
-                </p>
-              </div>
-
             </div>
 
-            {/* ================= AMENITIES ================= */}
-            <div className="mt-6 rounded-2xl border border-line bg-cream p-5">
-
-              <h2 className="font-display text-xl font-bold text-ink">
-                Included amenities
+            {/* Amenities Matrix */}
+            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
+              <h2 className="text-base font-black uppercase tracking-wider text-ink">
+                Amenities & Facilities
               </h2>
 
-              {amenities.length > 0 ? (
-                <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {amenities.map((amenity) => {
+                  const Icon = amenity.icon;
+                  const isAvailable = Boolean(amenity.available);
 
-                  {amenities.map((amenity) => {
-                    const Icon = amenity.icon;
-
-                    return (
-                      <div
-                        key={amenity.label}
-                        className="flex items-center gap-2 rounded-xl border border-line bg-surface p-3"
-                      >
-                        <Icon className="h-4 w-4 text-brand" />
-
-                        <span className="text-xs font-semibold text-ink">
-                          {amenity.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-
-                </div>
-              ) : (
-                <p className="mt-3 text-sm text-ink-soft">
-                  No amenities information available.
-                </p>
-              )}
-
+                  return (
+                    <div
+                      key={amenity.label}
+                      className={`flex items-center gap-2.5 rounded-2xl border p-3.5 transition-all ${
+                        isAvailable
+                          ? 'border-brand/30 bg-brand/5 text-ink'
+                          : 'border-border bg-cream/40 text-ink-soft opacity-60'
+                      }`}
+                    >
+                      <Icon
+                        className={`h-4 w-4 shrink-0 ${
+                          isAvailable ? 'text-brand' : 'text-ink-soft'
+                        }`}
+                      />
+                      <span className="text-[11px] font-bold tracking-tight">
+                        {amenity.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+          </div>
 
-            {/* ================= OWNER INFO ================= */}
-            <div className="mt-6 rounded-2xl border border-line bg-cream p-5">
-
-              <div className="flex items-center gap-3">
-
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10">
-                  <UserRound className="h-6 w-6 text-brand" />
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                    Listed by
-                  </p>
-
-                  <h2 className="mt-1 text-lg font-bold text-ink">
-                    {ownerName}
-                  </h2>
-                  {listing.owner && 'verified' in listing.owner && listing.owner.verified && (
-                    <div className="mt-2"><OwnerVerificationBadge compact /></div>
-                  )}
-                </div>
-
+          {/* ================= RIGHT: PRICING, SPECS & HOST CARD ================= */}
+          <div className="space-y-6 lg:sticky lg:top-24">
+            {/* Main Header & Pricing Card */}
+            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-emerald-700">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                  Verified Listing
+                </span>
+                {isOwnerVerified && (
+                  <OwnerVerificationBadge compact />
+                )}
               </div>
 
-              <div className="mt-5 space-y-3">
+              <h1 className="mt-4 text-2xl sm:text-3xl font-black leading-tight tracking-tight text-ink">
+                {title}
+              </h1>
 
-                {/* Owner Phone */}
+              <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
+                <MapPin className="h-3.5 w-3.5 text-brand" />
+                <span>{listing.city || 'Bhopal'}, {listing.state || 'Madhya Pradesh'}</span>
+              </div>
+
+              {/* Price Display */}
+              <div className="mt-6 flex items-baseline gap-2 border-t border-border pt-4">
+                <span className="text-3xl sm:text-4xl font-black tracking-tight text-brand">
+                  {rent}
+                </span>
+                <span className="text-xs font-bold uppercase tracking-wider text-ink-soft">
+                  / month
+                </span>
+              </div>
+
+              {/* Key Specs Matrix */}
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-border bg-cream p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
+                    <Users className="h-3.5 w-3.5 text-brand" />
+                    <span>Category</span>
+                  </div>
+                  <p className="mt-1 text-xs font-black text-ink">
+                    {listing.category || listing.gender || 'Student Accommodation'}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-cream p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
+                    <BedDouble className="h-3.5 w-3.5 text-brand" />
+                    <span>Room Type</span>
+                  </div>
+                  <p className="mt-1 text-xs font-black text-ink">
+                    {listing.roomType || 'Standard Room'}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-cream p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
+                    <Banknote className="h-3.5 w-3.5 text-brand" />
+                    <span>Deposit</span>
+                  </div>
+                  <p className="mt-1 text-xs font-black text-ink">
+                    {typeof listing.securityDeposit === 'number'
+                      ? `₹${listing.securityDeposit.toLocaleString('en-IN')}`
+                      : 'Zero / Refundable'}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-cream p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
+                    <Clock className="h-3.5 w-3.5 text-brand" />
+                    <span>Notice Period</span>
+                  </div>
+                  <p className="mt-1 text-xs font-black text-ink">
+                    {listing.noticePeriod ? `${listing.noticePeriod} Days` : '30 Days'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Host Profile & Contact Card */}
+            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+                  <UserRound className="h-6 w-6" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-ink-soft">
+                    Property Host
+                  </div>
+                  <h3 className="text-base font-black text-ink">
+                    {ownerName}
+                  </h3>
+                  {isOwnerVerified && (
+                    <div className="mt-1"><OwnerVerificationBadge compact /></div>
+                  )}
+                </div>
+              </div>
+
+              {/* Verified Contact Details */}
+              <div className="mt-5 space-y-2.5 border-t border-border pt-4 text-xs font-semibold text-ink-soft">
                 {contactNumber && (
-                  <div className="flex items-center gap-3 text-sm text-ink-soft">
-                    <Phone className="h-4 w-4 text-brand" />
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-3.5 w-3.5 text-brand" />
                     <span>{contactNumber}</span>
                   </div>
                 )}
-
-                {/* Owner Email */}
                 {ownerEmail && (
-                  <div className="flex items-center gap-3 break-all text-sm text-ink-soft">
-                    <Mail className="h-4 w-4 shrink-0 text-brand" />
+                  <div className="flex items-center gap-2 break-all">
+                    <Mail className="h-3.5 w-3.5 text-brand" />
                     <span>{ownerEmail}</span>
                   </div>
                 )}
-
               </div>
 
-            </div>
+              {/* Action Buttons */}
+              <div className="mt-6 flex flex-col gap-2.5">
+                {whatsappContact ? (
+                  <a
+                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+                      `Hi ${ownerName}, I found your listing "${title}" on StudentPG Bhopal and would like to inquire about room availability.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all active:scale-95"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Chat on WhatsApp</span>
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="flex items-center justify-center gap-2 rounded-xl bg-border px-5 py-3.5 text-xs font-bold text-ink-soft"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>WhatsApp Unavailable</span>
+                  </button>
+                )}
 
-            {/* ================= CONTACT BUTTONS ================= */}
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-
-              {/* WhatsApp */}
-              {whatsappContact ? (
-                <a
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi ${ownerName}, I am interested in your PG listing: ${title}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#20bd5a] hover:shadow-lg"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  WhatsApp
-                </a>
-              ) : (
-                <button disabled className="flex items-center justify-center gap-2 rounded-xl bg-slate-200 px-4 py-3.5 text-sm font-bold text-slate-400 shadow-sm">
-                  <MessageCircle className="h-5 w-5" />
-                  WhatsApp
-                </button>
-              )}
-
-              {/* Phone Call */}
-              {contactNumber ? (
-                <a
-                  href={`tel:${contactNumber}`}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3.5 text-sm font-bold text-cream shadow-sm transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg"
-                >
-                  <Phone className="h-5 w-5" />
-                  Call Owner
-                </a>
-              ) : (
-                <button disabled className="flex items-center justify-center gap-2 rounded-xl bg-slate-200 px-4 py-3.5 text-sm font-bold text-slate-400 shadow-sm">
-                  <Phone className="h-5 w-5" />
-                  Call Owner
-                </button>
-              )}
-
-              {/* Email */}
-              {ownerEmail ? (
-                <a
-                  href={`mailto:${ownerEmail}?subject=${encodeURIComponent(`Inquiry about ${title}`)}`}
-                  className="flex items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 py-3.5 text-sm font-bold text-ink shadow-sm transition-all hover:-translate-y-0.5 hover:bg-cream hover:shadow-lg"
-                >
-                  <Mail className="h-5 w-5" />
-                  Email
-                </a>
-              ) : (
-                <button disabled className="flex items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 py-3.5 text-sm font-bold text-slate-400 shadow-sm">
-                  <Mail className="h-5 w-5" />
-                  Email
-                </button>
-              )}
-
+                {contactNumber && (
+                  <a
+                    href={`tel:${contactNumber}`}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-brand hover:bg-brand-dark px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all active:scale-95"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span>Call Property Host</span>
+                  </a>
+                )}
+              </div>
             </div>
 
           </div>
-
         </div>
-
       </div>
 
+      {/* ================= STICKY MOBILE CONVERSION BAR ================= */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl shadow-2xl md:hidden">
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">
+              Monthly Rent
+            </div>
+            <div className="text-base font-black text-brand">
+              {rent}
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            {whatsappContact && (
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+                  `Hi ${ownerName}, I am interested in your PG listing "${title}" on StudentPG.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 rounded-xl bg-[#25D366] px-4 py-2.5 text-xs font-black text-white shadow-xs"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span>WhatsApp</span>
+              </a>
+            )}
+
+            {contactNumber && (
+              <a
+                href={`tel:${contactNumber}`}
+                className="flex items-center gap-1.5 rounded-xl bg-brand px-4 py-2.5 text-xs font-black text-white shadow-xs"
+              >
+                <Phone className="h-4 w-4" />
+                <span>Call Host</span>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
