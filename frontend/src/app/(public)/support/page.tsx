@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ROUTES } from '@/constants/routes';
-import { Home, KeyRound, Building2, ArrowRight, ShieldCheck, CheckCircle2, Zap, MessageSquare } from 'lucide-react';
+import { Home, KeyRound, Building2, ArrowRight, ShieldCheck, CheckCircle2, Zap } from 'lucide-react';
 
 const supportTopics = [
   {

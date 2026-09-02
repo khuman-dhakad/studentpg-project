@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Calendar, Lock, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
   const [activeSection, setActiveSection] = useState('1');
