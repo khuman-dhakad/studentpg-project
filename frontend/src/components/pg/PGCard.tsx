@@ -218,7 +218,7 @@ export function PGCard({ pg }: PGCardProps) {
 
               <div className="min-w-0 flex-1">
 
-                <h2 className="line-clamp-1 font-sans text-base font-black tracking-tight text-slate-950 transition-colors group-hover:text-indigo-600">
+                <h2 className="line-clamp-1 font-sans text-base font-black tracking-tight text-slate-950 transition-colors group-hover:text-emerald-700">
                   {pg.pgName}
                 </h2>
 
@@ -252,7 +252,7 @@ export function PGCard({ pg }: PGCardProps) {
 
             {/* ROOM TYPE */}
 
-            <div className="inline-flex rounded-lg bg-indigo-50/70 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-indigo-600">
+            <div className="inline-flex rounded-lg bg-emerald-50/80 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-emerald-700 border border-emerald-100/60">
               {pg.roomType || 'Premium Stay'}
             </div>
 

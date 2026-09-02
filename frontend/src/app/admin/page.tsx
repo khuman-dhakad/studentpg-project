@@ -542,564 +542,154 @@ export default function AdminDashboardPage() {
   =================================================== */
 
   return (
-    <main
-      className="
-        mx-auto
-        flex
-        max-w-7xl
-        flex-col
-        gap-8
-        px-4
-        py-8
-        sm:px-6
-        lg:px-8
-      "
-    >
-
+    <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 antialiased">
       <OwnerVerificationQueue />
 
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <section
-        className="
-          rounded-3xl
-          border
-          border-line
-          bg-surface
-          p-8
-          shadow-sm
-        "
-      >
-
-        <p
-          className="
-            text-sm
-            font-bold
-            uppercase
-            tracking-[0.25em]
-            text-brand
-          "
-        >
-          Admin Oversight
-        </p>
-
-        <h1
-          className="
-            mt-3
-            font-display
-            text-3xl
-            font-black
-            text-ink
-          "
-        >
-          Curate the premium network.
-        </h1>
-
-        <p
-          className="
-            mt-3
-            max-w-2xl
-            text-sm
-            leading-7
-            text-ink-soft
-          "
-        >
-          Review and manage every PG listing submitted to the
-          StudentPG platform.
-        </p>
-
-      </section>
-
-      {/* =================================================
-          ERROR
-      ================================================= */}
-
-      {error && (
-        <section
-          className="
-            rounded-2xl
-            border
-            border-red-200
-            bg-red-50
-            p-4
-            text-sm
-            font-semibold
-            text-red-700
-          "
-        >
-
-          <div
-            className="
-              flex
-              flex-col
-              gap-3
-              sm:flex-row
-              sm:items-center
-              sm:justify-between
-            "
-          >
-
-            <span>
-              {error}
-            </span>
-
-            <button
-              type="button"
-              onClick={() => {
-                window.location.reload();
-              }}
-              className="
-                w-fit
-                rounded-lg
-                underline
-              "
-            >
-              Retry
-            </button>
-
-          </div>
-
-        </section>
-      )}
-
-      {/* =================================================
-          STATS
-      ================================================= */}
-
-      <section
-        className="
-          grid
-          gap-4
-          md:grid-cols-4
-        "
-      >
-
-        {/* TOTAL */}
-
-        <button
-          type="button"
-          onClick={() =>
-            handleStatusChange(
-              'ALL'
-            )
-          }
-          className={`
-            rounded-2xl
-            border
-            bg-surface
-            p-5
-            text-left
-            shadow-sm
-            transition
-            hover:-translate-y-1
-            hover:shadow-md
-            ${
-              selectedStatus ===
-              'ALL'
-                ? 'border-brand ring-2 ring-brand/20'
-                : 'border-line'
-            }
-          `}
-        >
-
-          <p
-            className="
-              text-sm
-              font-semibold
-              text-ink-soft
-            "
-          >
-            Total Listings
-          </p>
-
-          <p
-            className="
-              mt-2
-              font-display
-              text-3xl
-              font-black
-              text-ink
-            "
-          >
-            {isLoading
-              ? '—'
-              : stats.total}
-          </p>
-
-          <p
-            className="
-              mt-2
-              text-xs
-              font-bold
-              text-brand
-            "
-          >
-            View all listings →
-          </p>
-
-        </button>
-
-        {/* PENDING */}
-
-        <button
-          type="button"
-          onClick={() =>
-            handleStatusChange(
-              'PENDING'
-            )
-          }
-          className={`
-            rounded-2xl
-            border
-            bg-surface
-            p-5
-            text-left
-            shadow-sm
-            transition
-            hover:-translate-y-1
-            hover:shadow-md
-            ${
-              selectedStatus ===
-              'PENDING'
-                ? 'border-yellow-500 ring-2 ring-yellow-500/20'
-                : 'border-line'
-            }
-          `}
-        >
-
-          <p
-            className="
-              text-sm
-              font-semibold
-              text-ink-soft
-            "
-          >
-            Pending Review
-          </p>
-
-          <p
-            className="
-              mt-2
-              font-display
-              text-3xl
-              font-black
-              text-ink
-            "
-          >
-            {isLoading
-              ? '—'
-              : stats.pending}
-          </p>
-
-          <p
-            className="
-              mt-2
-              text-xs
-              font-bold
-              text-yellow-600
-            "
-          >
-            Review pending PGs →
-          </p>
-
-        </button>
-
-        {/* APPROVED */}
-
-        <button
-          type="button"
-          onClick={() =>
-            handleStatusChange(
-              'APPROVED'
-            )
-          }
-          className={`
-            rounded-2xl
-            border
-            bg-surface
-            p-5
-            text-left
-            shadow-sm
-            transition
-            hover:-translate-y-1
-            hover:shadow-md
-            ${
-              selectedStatus ===
-              'APPROVED'
-                ? 'border-emerald-500 ring-2 ring-emerald-500/20'
-                : 'border-line'
-            }
-          `}
-        >
-
-          <p
-            className="
-              text-sm
-              font-semibold
-              text-ink-soft
-            "
-          >
-            Approved
-          </p>
-
-          <p
-            className="
-              mt-2
-              font-display
-              text-3xl
-              font-black
-              text-ink
-            "
-          >
-            {isLoading
-              ? '—'
-              : stats.approved}
-          </p>
-
-          <p
-            className="
-              mt-2
-              text-xs
-              font-bold
-              text-emerald-600
-            "
-          >
-            View approved PGs →
-          </p>
-
-        </button>
-
-        {/* REJECTED */}
-
-        <button
-          type="button"
-          onClick={() =>
-            handleStatusChange(
-              'REJECTED'
-            )
-          }
-          className={`
-            rounded-2xl
-            border
-            bg-surface
-            p-5
-            text-left
-            shadow-sm
-            transition
-            hover:-translate-y-1
-            hover:shadow-md
-            ${
-              selectedStatus ===
-              'REJECTED'
-                ? 'border-red-500 ring-2 ring-red-500/20'
-                : 'border-line'
-            }
-          `}
-        >
-
-          <p
-            className="
-              text-sm
-              font-semibold
-              text-ink-soft
-            "
-          >
-            Rejected
-          </p>
-
-          <p
-            className="
-              mt-2
-              font-display
-              text-3xl
-              font-black
-              text-ink
-            "
-          >
-            {isLoading
-              ? '—'
-              : stats.rejected}
-          </p>
-
-          <p
-            className="
-              mt-2
-              text-xs
-              font-bold
-              text-red-600
-            "
-          >
-            View rejected PGs →
-          </p>
-
-        </button>
-
-      </section>
-
-      {/* =================================================
-          PG LIST
-      ================================================= */}
-
-      <section
-        className="
-          rounded-2xl
-          border
-          border-line
-          bg-surface
-          p-6
-          shadow-sm
-        "
-      >
-
-        <div
-          className="
-            flex
-            flex-col
-            gap-3
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-          "
-        >
-
+      {/* HEADER */}
+      <section className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-
-            <h2
-              className="
-                font-display
-                text-2xl
-                font-bold
-                text-ink
-              "
-            >
-              {getStatusTitle()}
-            </h2>
-
-            <p
-              className="
-                mt-1
-                text-sm
-                text-ink-soft
-              "
-            >
-              {pgs.length} listing
-              {pgs.length !== 1
-                ? 's'
-                : ''}{' '}
-              found
+            <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-2">
+              ADMIN CONTROL CENTER
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Listing Moderation &amp; Verification Desk
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-slate-500 font-medium max-w-2xl">
+              Audit, approve, or reject Paying Guest accommodations submitted by owners in Bhopal.
             </p>
-
           </div>
 
           <button
             type="button"
-            onClick={() => {
-              window.location.reload();
-            }}
-            disabled={
-              isLoading ||
-              isLoadingPGs
-            }
-            className="
-              rounded-xl
-              border
-              border-line
-              px-4
-              py-2
-              text-sm
-              font-semibold
-              text-ink
-              transition
-              hover:bg-cream
-              disabled:opacity-50
-            "
+            onClick={() => window.location.reload()}
+            disabled={isLoading || isLoadingPGs}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-all disabled:opacity-50 cursor-pointer"
           >
-            {isLoadingPGs
-              ? 'Loading...'
-              : 'Refresh'}
+            {isLoadingPGs ? 'Refreshing...' : 'Refresh All Records'}
           </button>
-
         </div>
-
-        <div
-          className="
-            mt-6
-          "
-        >
-
-          {isLoadingPGs ? (
-
-            <div
-              className="
-                rounded-xl
-                border
-                border-line
-                p-8
-                text-center
-                text-sm
-                text-ink-soft
-              "
-            >
-              Loading PG listings...
-            </div>
-
-          ) : pgs.length === 0 ? (
-
-            <div
-              className="
-                rounded-xl
-                border
-                border-line
-                p-8
-                text-center
-              "
-            >
-
-              <p
-                className="
-                  font-semibold
-                  text-ink
-                "
-              >
-                No{' '}
-                {selectedStatus.toLowerCase()}{' '}
-                listings found.
-              </p>
-
-              <p
-                className="
-                  mt-1
-                  text-sm
-                  text-ink-soft
-                "
-              >
-                There are currently no PG listings in this category.
-              </p>
-
-            </div>
-
-          ) : (
-
-            <AdminPGList
-              initialItems={
-                pgs
-              }
-              onActionCompleted={
-                handleActionCompleted
-              }
-              status={
-                selectedStatus
-              }
-            />
-
-          )}
-
-        </div>
-
       </section>
 
+      {/* ERROR */}
+      {error && (
+        <section className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-700 flex items-center justify-between gap-4">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="underline font-bold cursor-pointer"
+          >
+            Retry
+          </button>
+        </section>
+      )}
+
+      {/* STATS TILES */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* TOTAL */}
+        <button
+          type="button"
+          onClick={() => handleStatusChange('ALL')}
+          className={`rounded-2xl border p-5 text-left shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer ${
+            selectedStatus === 'ALL'
+              ? 'border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-600/20'
+              : 'border-slate-200/80 bg-white hover:border-slate-300'
+          }`}
+        >
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Listings</p>
+          <p className="mt-1.5 text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {isLoading ? '—' : stats.total}
+          </p>
+          <p className="mt-2 text-[11px] font-bold text-emerald-700">View all properties →</p>
+        </button>
+
+        {/* PENDING */}
+        <button
+          type="button"
+          onClick={() => handleStatusChange('PENDING')}
+          className={`rounded-2xl border p-5 text-left shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer ${
+            selectedStatus === 'PENDING'
+              ? 'border-amber-500 bg-amber-50/40 ring-2 ring-amber-500/20'
+              : 'border-slate-200/80 bg-white hover:border-slate-300'
+          }`}
+        >
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Pending Review</p>
+          <p className="mt-1.5 text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {isLoading ? '—' : stats.pending}
+          </p>
+          <p className="mt-2 text-[11px] font-bold text-amber-700">Audit pending listings →</p>
+        </button>
+
+        {/* APPROVED */}
+        <button
+          type="button"
+          onClick={() => handleStatusChange('APPROVED')}
+          className={`rounded-2xl border p-5 text-left shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer ${
+            selectedStatus === 'APPROVED'
+              ? 'border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-600/20'
+              : 'border-slate-200/80 bg-white hover:border-slate-300'
+          }`}
+        >
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Approved &amp; Live</p>
+          <p className="mt-1.5 text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {isLoading ? '—' : stats.approved}
+          </p>
+          <p className="mt-2 text-[11px] font-bold text-emerald-700">View active listings →</p>
+        </button>
+
+        {/* REJECTED */}
+        <button
+          type="button"
+          onClick={() => handleStatusChange('REJECTED')}
+          className={`rounded-2xl border p-5 text-left shadow-xs transition-all hover:-translate-y-0.5 cursor-pointer ${
+            selectedStatus === 'REJECTED'
+              ? 'border-rose-500 bg-rose-50/40 ring-2 ring-rose-500/20'
+              : 'border-slate-200/80 bg-white hover:border-slate-300'
+          }`}
+        >
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Rejected</p>
+          <p className="mt-1.5 text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {isLoading ? '—' : stats.rejected}
+          </p>
+          <p className="mt-2 text-[11px] font-bold text-rose-700">View declined submissions →</p>
+        </button>
+      </section>
+
+      {/* PG LIST */}
+      <section className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">{getStatusTitle()}</h2>
+            <p className="text-xs font-medium text-slate-500">
+              {pgs.length} listing{pgs.length !== 1 ? 's' : ''} in this view
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          {isLoadingPGs ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs font-semibold text-slate-500">
+              Loading PG listings...
+            </div>
+          ) : pgs.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center">
+              <p className="text-sm font-black text-slate-900">
+                No {selectedStatus.toLowerCase()} listings found.
+              </p>
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                There are currently no PG listings in this filter category.
+              </p>
+            </div>
+          ) : (
+            <AdminPGList
+              initialItems={pgs}
+              onActionCompleted={handleActionCompleted}
+              status={selectedStatus}
+            />
+          )}
+        </div>
+      </section>
     </main>
   );
 }

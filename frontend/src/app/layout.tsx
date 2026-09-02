@@ -84,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-screen bg-cream text-ink antialiased transition-colors duration-200">
+      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 transition-colors duration-200">
         <StoreProvider>
           <ThemeProvider>
             <div className="flex min-h-screen flex-col overflow-x-hidden">

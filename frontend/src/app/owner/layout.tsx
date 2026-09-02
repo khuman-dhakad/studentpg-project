@@ -64,8 +64,8 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
         <div className="space-y-8">
           <div className="flex items-center justify-between px-2">
             <Link href={ROUTES.OWNER.DASHBOARD || '/owner/dashboard'} className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-              <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-indigo-600/20">↑</div>
-              <span className="font-black text-xl tracking-tight text-slate-900">Student<span className="text-indigo-600">PG</span></span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-xs">PG</div>
+              <span className="font-black text-xl tracking-tight text-slate-900">Student<span className="text-emerald-600">PG</span></span>
             </Link>
             <button className="lg:hidden p-1 text-slate-400" onClick={() => setIsMobileMenuOpen(false)}><X className="w-5 h-5" /></button>
           </div>
@@ -75,7 +75,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
               const Icon = item.icon;
               const isActive = pathname === item.href;
               return (
-                <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black tracking-wide uppercase transition-all ${isActive ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
+                <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black tracking-wide uppercase transition-all ${isActive ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-50'}`}>
                   <Icon className="w-4 h-4 shrink-0" />
                   {item.label}
                 </Link>
@@ -84,7 +84,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
           </nav>
         </div>
 
-        <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black tracking-wide uppercase text-rose-500 hover:bg-rose-50 transition-all w-full text-left">
+        <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black tracking-wide uppercase text-rose-500 hover:bg-rose-50 transition-all w-full text-left cursor-pointer">
           <LogOut className="w-4 h-4" /> Logout
         </button>
       </aside>
@@ -96,7 +96,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-4 ml-auto">
             <NotificationBell />
             <Link href={ROUTES.OWNER.PROFILE || '/owner/profile'} className="flex items-center gap-2.5 pl-2 border-l border-slate-100">
-              <div className="w-8 h-8 rounded-full font-black flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-purple-500 text-white text-xs">
+              <div className="w-8 h-8 rounded-full font-black flex items-center justify-center bg-emerald-600 text-white text-xs shadow-xs">
                 {isLoading ? '..' : userInitials}
               </div>
               <div className="hidden sm:block text-left">

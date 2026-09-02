@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-// import Link from 'next/link';
-import { Calendar, Lock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
   const [activeSection, setActiveSection] = useState('1');
@@ -33,23 +32,23 @@ export default function PrivacyPolicyPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50/50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50/50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 antialiased">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* HERO BANNER SECTION */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-xs grid lg:grid-cols-12 gap-6 items-center">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs grid lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-8 space-y-3">
-            <span className="text-[11px] font-black tracking-widest text-indigo-600 uppercase">
+            <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-1">
               PRIVACY POLICY
             </span>
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              Your <span className="text-pink-600">Privacy,</span> Our Priority
+              Your <span className="text-emerald-600">Privacy,</span> Our Commitment
             </h1>
             <p className="text-xs sm:text-sm font-semibold text-slate-500 leading-relaxed max-w-2xl">
               At StudentPG, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data.
             </p>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 pt-2">
-              <Calendar className="w-4 h-4 text-indigo-600" />
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 pt-1">
+              <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Last Updated: 16 May 2025</span>
             </div>
           </div>
@@ -72,7 +71,7 @@ export default function PrivacyPolicyPage() {
 
           {/* LEFT NAVIGATION - DESKTOP SIDEBAR */}
           <aside className="hidden lg:block lg:col-span-4 sticky top-6 space-y-4">
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-3">
+            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
               <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
                 On this page
               </h3>
@@ -81,9 +80,9 @@ export default function PrivacyPolicyPage() {
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
+                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       activeSection === item.id
-                        ? 'bg-purple-50 text-purple-700 shadow-xs'
+                        ? 'bg-emerald-50 text-emerald-800 border-l-2 border-emerald-600 font-black'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
@@ -94,35 +93,35 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* TRUST BADGE */}
-            <div className="bg-purple-50/60 border border-purple-100 p-4 rounded-2xl flex items-center gap-3">
-              <div className="p-2.5 bg-purple-100 text-purple-700 rounded-xl shrink-0">
-                <Lock className="w-4 h-4" />
+            <div className="bg-emerald-50/70 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3">
+              <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
+                <ShieldCheck className="w-4 h-4" />
               </div>
-              <p className="text-[11px] font-bold text-purple-900 leading-snug">
-                We never sell your personal information to third parties.
+              <p className="text-[11px] font-bold text-emerald-900 leading-snug">
+                We never sell your personal information or contact details to third parties.
               </p>
             </div>
           </aside>
 
           {/* MOBILE NAVIGATION DROPDOWN */}
           <div className="lg:hidden col-span-12">
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="w-full p-4 flex items-center justify-between text-xs font-black text-slate-900"
+                className="w-full p-4 flex items-center justify-between text-xs font-black text-slate-900 cursor-pointer"
               >
                 <span>On this page</span>
-                {isMobileMenuOpen ? <ChevronUp className="w-4 h-4 text-purple-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                {isMobileMenuOpen ? <ChevronUp className="w-4 h-4 text-emerald-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
               </button>
 
               {isMobileMenuOpen && (
-                <div className="px-3 pb-3 pt-1 border-t border-slate-50 space-y-1">
+                <div className="px-3 pb-3 pt-1 border-t border-slate-100 space-y-1">
                   {navItems.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => scrollToSection(item.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold ${
-                        activeSection === item.id ? 'bg-purple-50 text-purple-700' : 'text-slate-600'
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold cursor-pointer ${
+                        activeSection === item.id ? 'bg-emerald-50 text-emerald-800' : 'text-slate-600'
                       }`}
                     >
                       {item.label}
@@ -134,13 +133,13 @@ export default function PrivacyPolicyPage() {
           </div>
 
           {/* RIGHT DETAILS CONTENT */}
-          <div className="lg:col-span-8 bg-white p-6 sm:p-10 rounded-3xl border border-slate-100 shadow-xs space-y-8 text-xs sm:text-sm font-medium text-slate-600 leading-relaxed">
+          <div className="lg:col-span-8 bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/80 shadow-xs space-y-8 text-xs sm:text-sm font-medium text-slate-600 leading-relaxed">
 
             {/* SECTION 1 */}
             <section id="section-1" className="space-y-2 scroll-mt-6">
               <h2 className="text-base sm:text-lg font-black text-slate-900">1. Introduction</h2>
               <p>
-                StudentPG ("we", "our", or "us") operates the StudentPG platform and website. This Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use our platform.
+                StudentPG (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) operates the StudentPG platform and website. This Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use our platform.
               </p>
             </section>
 
@@ -214,7 +213,7 @@ export default function PrivacyPolicyPage() {
 
             {/* SECTION 9 */}
             <section id="section-9" className="space-y-2 scroll-mt-6">
-              <h2 className="text-base sm:text-lg font-black text-slate-900">9. Children's Privacy</h2>
+              <h2 className="text-base sm:text-lg font-black text-slate-900">9. Children&apos;s Privacy</h2>
               <p>
                 Our services are intended for users aged 18 and above. We do not knowingly collect personal data from minors without parental consent.
               </p>
@@ -233,7 +232,7 @@ export default function PrivacyPolicyPage() {
               <h2 className="text-base sm:text-lg font-black text-slate-900">11. Contact Us</h2>
               <p>If you have any questions or concerns regarding this policy, please reach out to us at:</p>
               <p className="font-bold text-slate-900">
-                Email: <a href="mailto:studentpg.support@gmail.com" className="text-indigo-600 hover:underline">studentpg.support@gmail.com</a>
+                Email: <a href="mailto:studentpg.support@gmail.com" className="text-emerald-700 hover:underline">studentpg.support@gmail.com</a>
               </p>
             </section>
 

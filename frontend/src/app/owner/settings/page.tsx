@@ -154,14 +154,14 @@ export default function OwnerSettingsPage() {
   if (isSessionLoading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-2" />
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-600 mb-2" />
         <p className="text-xs font-bold text-slate-500">Loading owner session...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8 antialiased">
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Account Settings</h1>
@@ -190,7 +190,7 @@ export default function OwnerSettingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Navigation Tabs */}
-        <nav className="md:col-span-4 lg:col-span-3 bg-white p-3 rounded-3xl border border-slate-100 shadow-xs space-y-1">
+        <nav className="md:col-span-4 lg:col-span-3 bg-white p-3 rounded-3xl border border-slate-200/80 shadow-xs space-y-1">
           {[
             { name: 'Profile Settings', icon: User },
             { name: 'Change Password', icon: KeyRound },
@@ -208,7 +208,7 @@ export default function OwnerSettingsPage() {
                 }}
                 className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-black transition-all flex items-center gap-3 cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-100'
+                    ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
@@ -243,7 +243,7 @@ export default function OwnerSettingsPage() {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                         required
                       />
                     </div>
@@ -257,7 +257,7 @@ export default function OwnerSettingsPage() {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                         required
                       />
                     </div>
@@ -280,7 +280,7 @@ export default function OwnerSettingsPage() {
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md shadow-indigo-100 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer"
                 >
                   {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
                   <span>Save Details</span>
@@ -303,7 +303,7 @@ export default function OwnerSettingsPage() {
                 <form onSubmit={handleSendOtp} className="space-y-4 pt-2">
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-indigo-100 text-indigo-600 rounded-xl">
+                      <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
                         <Mail className="w-5 h-5" />
                       </div>
                       <div>
@@ -316,7 +316,7 @@ export default function OwnerSettingsPage() {
                   <button
                     type="submit"
                     disabled={isPasswordSubmitting}
-                    className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md shadow-indigo-100 cursor-pointer"
+                    className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer"
                   >
                     {isPasswordSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     <span>Send Verification Code</span>
@@ -333,7 +333,7 @@ export default function OwnerSettingsPage() {
                       onChange={(e) => setOtp(e.target.value)}
                       placeholder="123456"
                       required
-                      className="w-full sm:w-48 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center text-sm font-black tracking-widest text-slate-800 outline-none focus:border-indigo-600 focus:bg-white"
+                      className="w-full sm:w-48 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center text-sm font-black tracking-widest text-slate-800 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                     />
                   </div>
 
@@ -348,12 +348,12 @@ export default function OwnerSettingsPage() {
                           onChange={(e) => setNewPassword(e.target.value)}
                           required
                           minLength={8}
-                          className="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white"
+                          className="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPass(!showPass)}
-                          className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600"
+                          className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
                         >
                           {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
@@ -370,7 +370,7 @@ export default function OwnerSettingsPage() {
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           required
                           minLength={8}
-                          className="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-indigo-600 focus:bg-white"
+                          className="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                         />
                       </div>
                     </div>
@@ -380,7 +380,7 @@ export default function OwnerSettingsPage() {
                     <button
                       type="submit"
                       disabled={isPasswordSubmitting}
-                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-md shadow-indigo-100 transition-all flex items-center gap-2 cursor-pointer"
+                      className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer"
                     >
                       {isPasswordSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
                       <span>Update Password</span>
@@ -635,15 +635,15 @@ export default function OwnerSettingsPage() {
     </div>
 
     {/* Security Notice */}
-    <div className="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 text-white">
 
       <div>
 
-        <h3 className="text-xs font-black text-indigo-900">
+        <h3 className="text-xs font-black text-white">
           Keep your account protected
         </h3>
 
-        <p className="mt-2 text-xs font-semibold leading-5 text-indigo-700/80">
+        <p className="mt-2 text-xs font-medium leading-5 text-slate-300">
           Never share your password or verification codes with anyone.
           StudentPG support will never ask for your password.
         </p>

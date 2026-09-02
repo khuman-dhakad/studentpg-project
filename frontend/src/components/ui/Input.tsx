@@ -10,20 +10,20 @@ export function Input({ label, error, className, id, ...props }: InputProps) {
   return (
     <div className="w-full">
       {label ? (
-        <label htmlFor={id} className="mb-2 block text-sm font-semibold text-ink">
+        <label htmlFor={id} className="mb-1.5 block text-xs font-black text-slate-700">
           {label}
         </label>
       ) : null}
       <input
         id={id}
         className={cn(
-          'w-full rounded-2xl border border-line bg-cream px-4 py-3 text-sm text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20',
-          error ? 'border-danger' : '',
+          'w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-semibold text-slate-900 outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10',
+          error ? 'border-rose-500' : '',
           className
         )}
         {...props}
       />
-      {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
+      {error ? <p className="mt-1.5 text-xs font-semibold text-rose-600">{error}</p> : null}
     </div>
   );
 }

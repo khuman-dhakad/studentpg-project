@@ -130,7 +130,7 @@ export function SiteFooter() {
                 {/* Report an Issue Link */}
                 <Link
                   href="/report-issue"
-                  className="group flex items-center gap-2 text-pink-600 transition-all hover:translate-x-1 hover:text-pink-700"
+                  className="group flex items-center gap-2 text-rose-600 transition-all hover:translate-x-1 hover:text-rose-700 cursor-pointer"
                 >
                   <AlertTriangle
                     size={13}

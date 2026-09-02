@@ -579,11 +579,11 @@ export default function EditPgPage() {
 
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <span className="text-xs font-black uppercase tracking-widest text-indigo-600">
-              OWNER DASHBOARD
+            <span className="text-[11px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-3">
+              LISTING MANAGEMENT
             </span>
 
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">
+            <h1 className="text-3xl font-black tracking-tight text-slate-950">
               Edit Your PG
             </h1>
 
@@ -594,7 +594,7 @@ export default function EditPgPage() {
 
           <Link
             href={ROUTES.OWNER.DASHBOARD}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-xs font-black text-slate-700 shadow-xs transition hover:bg-slate-50 cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -603,7 +603,7 @@ export default function EditPgPage() {
 
         {/* PROGRESS TRACKER */}
 
-        <div className="mb-8 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+        <div className="mb-8 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs">
           <div className="hidden items-center justify-between md:flex">
             {STEPS.map((step) => (
               <div
@@ -613,7 +613,7 @@ export default function EditPgPage() {
                 <div
                   className={`flex h-9 w-9 items-center justify-center rounded-full border-2 text-xs font-black ${
                     step.id === currentStep
-                      ? 'border-indigo-600 bg-indigo-600 text-white'
+                      ? 'border-emerald-600 bg-emerald-600 text-white shadow-xs'
                       : step.id < currentStep
                       ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
                       : 'border-slate-200 bg-white text-slate-400'
@@ -627,7 +627,7 @@ export default function EditPgPage() {
                 <span
                   className={`text-xs font-black ${
                     step.id === currentStep
-                      ? 'text-indigo-600'
+                      ? 'text-emerald-700'
                       : 'text-slate-400'
                   }`}
                 >
@@ -639,7 +639,7 @@ export default function EditPgPage() {
 
           <div className="flex items-center justify-between md:hidden">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-black text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-xs font-black text-white">
                 {currentStep}
               </div>
 
@@ -675,7 +675,7 @@ export default function EditPgPage() {
                 </p>
               </div>
 
-              <Save className="h-5 w-5 text-indigo-500" />
+              <Save className="h-5 w-5 text-emerald-600" />
             </div>
 
             {message && (
@@ -716,7 +716,7 @@ export default function EditPgPage() {
                         name="pgName"
                         value={form.pgName}
                         onChange={handleInputChange}
-                        className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold outline-none focus:border-indigo-600 focus:bg-white"
+                        className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                       />
                     </div>
 
@@ -730,7 +730,7 @@ export default function EditPgPage() {
                         name="category"
                         value={form.category}
                         onChange={handleInputChange}
-                        className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold outline-none focus:border-indigo-600 focus:bg-white"
+                        className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 cursor-pointer"
                       >
                         <option value="">
                           Select Category
@@ -839,7 +839,7 @@ export default function EditPgPage() {
                       value={form.description}
                       onChange={handleInputChange}
                       rows={5}
-                      className="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold outline-none focus:border-indigo-600 focus:bg-white"
+                      className="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
                     />
                   </div>
 
@@ -879,12 +879,12 @@ export default function EditPgPage() {
                   ].map((amenity) => (
                     <label
                       key={amenity.id}
-                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 ${
+                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-all ${
                         form[
                           amenity.id as keyof FormState
                         ]
-                          ? 'border-indigo-600 bg-indigo-50'
-                          : 'border-slate-100 bg-slate-50'
+                          ? 'border-emerald-600 bg-emerald-50/40 text-emerald-800'
+                          : 'border-slate-100 bg-slate-50 hover:bg-slate-100/50'
                       }`}
                     >
                       <input
@@ -900,6 +900,7 @@ export default function EditPgPage() {
                             event.target.checked
                           )
                         }
+                        className="h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                       />
 
                       <span className="text-xs font-bold text-slate-800">
@@ -977,7 +978,7 @@ export default function EditPgPage() {
                   <div>
 
                     <div className="mb-3 flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5 text-indigo-600" />
+                      <ImageIcon className="h-5 w-5 text-emerald-600" />
 
                       <h3 className="text-sm font-black text-slate-900">
                         Existing Images
@@ -1042,7 +1043,7 @@ export default function EditPgPage() {
                   <div>
 
                     <div className="mb-3 flex items-center gap-2">
-                      <Upload className="h-5 w-5 text-indigo-600" />
+                      <Upload className="h-5 w-5 text-emerald-600" />
 
                       <h3 className="text-sm font-black text-slate-900">
                         Add New Images
@@ -1051,7 +1052,7 @@ export default function EditPgPage() {
 
                     <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center transition hover:bg-slate-100">
 
-                      <Upload className="mb-3 h-8 w-8 text-indigo-500" />
+                      <Upload className="mb-3 h-8 w-8 text-emerald-600" />
 
                       <p className="text-xs font-black text-slate-700">
                         Click to upload new images
@@ -1185,16 +1186,16 @@ export default function EditPgPage() {
               {currentStep === 6 && (
                 <div className="space-y-5">
 
-                  <div className="flex gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+                  <div className="flex gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
 
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-indigo-600" />
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
 
                     <div>
-                      <p className="text-sm font-black text-indigo-950">
+                      <p className="text-sm font-black text-emerald-950">
                         Ready to update your PG
                       </p>
 
-                      <p className="mt-1 text-xs font-medium text-indigo-700">
+                      <p className="mt-1 text-xs font-medium text-emerald-700">
                         Please verify all information before saving changes.
                       </p>
                     </div>
@@ -1243,7 +1244,7 @@ export default function EditPgPage() {
                       <b className="text-slate-400">
                         Rent:
                       </b>{' '}
-                      ${form.rent}
+                      ₹{form.rent}
                     </p>
 
                     <p>
@@ -1267,7 +1268,7 @@ export default function EditPgPage() {
                   <button
                     type="button"
                     onClick={previousStep}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-5 py-3 text-xs font-black text-slate-700 hover:bg-slate-50"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-5 py-3 text-xs font-black text-slate-700 hover:bg-slate-50 cursor-pointer"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Back
@@ -1275,7 +1276,7 @@ export default function EditPgPage() {
                 ) : (
                   <Link
                     href={ROUTES.OWNER.DASHBOARD}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-5 py-3 text-xs font-black text-slate-700 hover:bg-slate-50"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-5 py-3 text-xs font-black text-slate-700 hover:bg-slate-50 cursor-pointer"
                   >
                     Cancel
                   </Link>
@@ -1285,7 +1286,7 @@ export default function EditPgPage() {
                   <button
                     type="button"
                     onClick={nextStep}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-xs font-black text-white hover:bg-indigo-700"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-xs font-black text-white hover:bg-emerald-700 cursor-pointer shadow-xs"
                   >
                     Continue
                     <ArrowRight className="h-4 w-4" />
@@ -1294,7 +1295,7 @@ export default function EditPgPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 text-xs font-black text-white hover:bg-emerald-700 disabled:opacity-60 cursor-pointer shadow-sm"
                   >
                     {saving ? (
                       <>
@@ -1362,7 +1363,7 @@ export default function EditPgPage() {
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                   <HelpCircle className="h-5 w-5" />
                 </div>
 
@@ -1380,7 +1381,7 @@ export default function EditPgPage() {
 
               <Link
                 href={ROUTES.SUPPORT}
-                className="mt-5 block rounded-xl border-2 border-indigo-600 px-4 py-3 text-center text-xs font-black text-indigo-600 transition hover:bg-indigo-600 hover:text-white"
+                className="mt-5 block rounded-xl border-2 border-emerald-600 px-4 py-3 text-center text-xs font-black text-emerald-700 transition hover:bg-emerald-600 hover:text-white cursor-pointer"
               >
                 Contact Support
               </Link>

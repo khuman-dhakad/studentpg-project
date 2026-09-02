@@ -129,9 +129,9 @@ export function MarketplaceHero() {
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>100% Verified Hosts</span>
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50/70 px-3.5 py-2 text-xs font-bold text-indigo-800">
-              <Zap className="h-4 w-4 text-indigo-600 shrink-0" />
-              <span>Direct WhatsApp Move-in</span>
+            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100/70 px-3.5 py-2 text-xs font-bold text-slate-800">
+              <Zap className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span>Direct WhatsApp Connect</span>
             </div>
           </div>
         </div>
