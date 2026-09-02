@@ -20,28 +20,28 @@ export function PGDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs p-4 antialiased"
       onClick={onClose}
     >
       <div
-        className="mx-auto my-6 max-w-5xl rounded-3xl bg-surface p-6 shadow-2xl"
+        className="mx-auto my-6 max-w-5xl rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-8 shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         {/* =====================================================
             HEADER
         ====================================================== */}
 
-        <div className="flex items-start justify-between gap-4 border-b border-line pb-5">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
-              <h2 className="truncate text-2xl font-bold text-ink">
+              <h2 className="truncate text-xl sm:text-2xl font-black text-slate-900">
                 {pg.pgName}
               </h2>
 
               <StatusBadge status={pg.approvalStatus} />
             </div>
 
-            <p className="mt-2 break-all text-sm text-ink-soft">
+            <p className="mt-1 text-xs font-mono text-slate-400">
               PG ID: {pg.id}
             </p>
           </div>
@@ -50,9 +50,9 @@ export function PGDetailsModal({
             type="button"
             onClick={onClose}
             aria-label="Close details"
-            className="shrink-0 rounded-xl px-3 py-2 text-2xl text-ink-soft transition hover:bg-cream hover:text-ink"
+            className="shrink-0 rounded-xl p-2 text-xl font-bold text-slate-400 transition hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
           >
-            ×
+            ✕
           </button>
         </div>
 
@@ -61,28 +61,28 @@ export function PGDetailsModal({
         ====================================================== */}
 
         <section className="mt-6">
-          <SectionTitle title="PG Images" />
+          <SectionTitle title="Property Photographs" />
 
           {pg.images?.length > 0 ? (
             <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
               {pg.images.map((image, index) => (
                 <div
                   key={image.id ?? image.publicId ?? index}
-                  className="overflow-hidden rounded-xl border border-line bg-cream"
+                  className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-xs"
                 >
                   <Image
                     src={image.url}
                     alt={`${pg.pgName} image ${index + 1}`}
                     width={400}
                     height={240}
-                    className="h-40 w-full object-cover transition duration-300 hover:scale-105"
+                    className="h-36 w-full object-cover transition duration-300 hover:scale-105"
                   />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="mt-3 rounded-xl border border-dashed border-line p-6 text-center text-sm text-ink-soft">
-              No images provided.
+            <div className="mt-3 rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs font-medium text-slate-400">
+              No images uploaded for this listing.
             </div>
           )}
         </section>
@@ -205,11 +205,10 @@ export function PGDetailsModal({
         {/* =====================================================
             DESCRIPTION
         ====================================================== */}
-
         <section className="mt-6">
-          <SectionTitle title="Description" />
+          <SectionTitle title="Property Overview" />
 
-          <p className="mt-3 rounded-xl bg-cream p-4 text-sm leading-7 text-ink-soft">
+          <p className="mt-2.5 rounded-xl border border-slate-200/80 bg-slate-50 p-4 text-xs font-medium leading-relaxed text-slate-700">
             {pg.description?.trim() || 'No description provided.'}
           </p>
         </section>
@@ -219,19 +218,19 @@ export function PGDetailsModal({
         ====================================================== */}
 
         {pg.approvalStatus === 'APPROVED' && (
-          <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-            <h3 className="text-lg font-bold text-emerald-800">
-              Approval Information
+          <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5">
+            <h3 className="text-sm font-black text-emerald-900">
+              Approval Verification Details
             </h3>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <Detail
-                label="Approved By"
+                label="Approved By Admin ID"
                 value={pg.approvedBy}
               />
 
               <Detail
-                label="Approved At"
+                label="Approval Timestamp"
                 value={formatDate(pg.approvedAt)}
               />
             </div>
@@ -243,31 +242,28 @@ export function PGDetailsModal({
         ====================================================== */}
 
         {pg.approvalStatus === 'REJECTED' && (
-          <section className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5">
-            <h3 className="text-lg font-bold text-red-800">
-              Rejection Information
+          <section className="mt-6 rounded-2xl border border-rose-200 bg-rose-50/60 p-5">
+            <h3 className="text-sm font-black text-rose-900">
+              Rejection Notice
             </h3>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <Detail
-                label="Rejected By"
+                label="Rejected By Admin ID"
                 value={pg.rejectedBy}
               />
 
               <Detail
-                label="Rejected At"
+                label="Rejection Timestamp"
                 value={formatDate(pg.rejectedAt)}
               />
             </div>
 
-            <div className="mt-4 rounded-xl border border-red-200 bg-white p-4">
-              <p className="text-xs font-semibold uppercase text-red-600">
-                Rejection Reason
-              </p>
-
-              <p className="mt-2 text-sm leading-6 text-red-800">
-                {pg.rejectionReason || 'No rejection reason provided.'}
-              </p>
+            <div className="mt-3">
+              <Detail
+                label="Official Reason"
+                value={pg.rejectionReason}
+              />
             </div>
           </section>
         )}
@@ -277,16 +273,16 @@ export function PGDetailsModal({
         ====================================================== */}
 
         {isPending && (
-          <div className="mt-8 flex flex-wrap gap-3 border-t border-line pt-6">
+          <div className="mt-8 flex flex-wrap gap-2.5 border-t border-slate-100 pt-5">
             {onApprove && (
               <button
                 type="button"
                 onClick={() => {
                   onApprove(pg.id);
                 }}
-                className="rounded-xl bg-brand px-5 py-3 font-bold text-white transition hover:bg-brand-dark"
+                className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition hover:bg-emerald-700 cursor-pointer"
               >
-                Approve PG
+                Approve Listing
               </button>
             )}
 
@@ -296,9 +292,9 @@ export function PGDetailsModal({
                 onClick={() => {
                   onReject(pg.id);
                 }}
-                className="rounded-xl border border-danger px-5 py-3 font-bold text-danger transition hover:bg-danger-soft/10"
+                className="rounded-xl border border-rose-200 bg-rose-50 px-5 py-2.5 text-xs font-black uppercase tracking-wider text-rose-700 transition hover:bg-rose-100 cursor-pointer"
               >
-                Reject PG
+                Reject Listing
               </button>
             )}
           </div>
@@ -318,7 +314,7 @@ function SectionTitle({
   title: string;
 }) {
   return (
-    <h3 className="text-lg font-bold text-ink">
+    <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
       {title}
     </h3>
   );
@@ -336,12 +332,12 @@ function Detail({
   value?: string | number | null;
 }) {
   return (
-    <div className="rounded-xl bg-cream p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
+    <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5">
+      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
         {label}
       </p>
 
-      <p className="mt-1 break-words font-semibold text-ink">
+      <p className="mt-1 break-words text-xs font-bold text-slate-900">
         {value ?? 'Not provided'}
       </p>
     </div>
@@ -360,12 +356,12 @@ function Amenity({
   value: boolean;
 }) {
   return (
-    <div className="rounded-xl bg-cream p-4">
+    <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3">
       <span
         className={
           value
-            ? 'font-semibold text-emerald-700'
-            : 'font-semibold text-ink-soft'
+            ? 'text-xs font-bold text-emerald-700'
+            : 'text-xs font-medium text-slate-400'
         }
       >
         {value ? '✓' : '✗'} {label}

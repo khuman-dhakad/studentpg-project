@@ -344,7 +344,7 @@ export default function OwnerProfilePage() {
 
             }
 
-            className="mt-6 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white"
+            className="mt-6 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white hover:bg-emerald-700 transition cursor-pointer"
 
           >
 
@@ -367,7 +367,7 @@ export default function OwnerProfilePage() {
 
   return (
 
-    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8 antialiased">
 
       <div className="mx-auto max-w-5xl">
 
@@ -390,7 +390,7 @@ export default function OwnerProfilePage() {
 
             }
 
-            className="mb-5 text-sm font-bold text-indigo-600 transition hover:text-indigo-800"
+            className="mb-5 text-sm font-bold text-emerald-700 transition hover:text-emerald-800 cursor-pointer inline-flex items-center gap-1.5"
 
           >
 
@@ -399,9 +399,9 @@ export default function OwnerProfilePage() {
           </button>
 
 
-          <p className="text-xs font-black uppercase tracking-[0.25em] text-indigo-600">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">
 
-            Owner account
+            Owner Account
 
           </p>
 
@@ -536,7 +536,7 @@ export default function OwnerProfilePage() {
 
                   placeholder="Enter your full name"
 
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
 
                 />
 
@@ -582,7 +582,7 @@ export default function OwnerProfilePage() {
 
                   placeholder="Enter your email"
 
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
 
                 />
 
@@ -630,7 +630,7 @@ export default function OwnerProfilePage() {
 
                     placeholder="Enter phone number"
 
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
 
                   />
 
@@ -674,7 +674,7 @@ export default function OwnerProfilePage() {
 
                     placeholder="Enter WhatsApp number"
 
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
 
                   />
 
@@ -693,7 +693,7 @@ export default function OwnerProfilePage() {
 
                   disabled={isSaving}
 
-                  className="rounded-2xl bg-indigo-600 px-6 py-3.5 text-sm font-black text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer shadow-xs"
 
                 >
 
@@ -720,7 +720,7 @@ export default function OwnerProfilePage() {
 
                   }
 
-                  className="rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                  className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
 
                 >
 
@@ -741,7 +741,7 @@ export default function OwnerProfilePage() {
 
             <div className="flex items-center gap-4">
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-xl font-black text-indigo-700">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-xl font-black text-emerald-800">
 
                 {(form.name || 'O')
 
@@ -761,9 +761,9 @@ export default function OwnerProfilePage() {
                 </h2>
 
 
-                <p className="truncate text-sm text-slate-500">
+                <p className="mt-1 text-xs font-semibold text-slate-500">
 
-                  {form.email || 'No email'}
+                  {form.phone || 'Phone number not added'}
 
                 </p>
 
@@ -772,10 +772,7 @@ export default function OwnerProfilePage() {
             </div>
 
 
-            <div className="my-6 h-px bg-slate-100" />
-
-
-            <div className="space-y-4">
+            <div className="mt-6 space-y-4 border-t border-slate-100 pt-6">
 
               <div>
 
@@ -819,16 +816,16 @@ export default function OwnerProfilePage() {
             </div>
 
 
-            <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+            <div className="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
 
-              <p className="text-sm font-black text-indigo-900">
+              <p className="text-sm font-bold text-emerald-950">
 
-                Owner verification
+                Owner Verification
 
               </p>
 
 
-              <p className="mt-2 text-xs leading-5 text-indigo-700">
+              <p className="mt-2 text-xs leading-5 text-emerald-700">
 
                 Your verification documents will be submitted separately and reviewed securely by the platform.
 

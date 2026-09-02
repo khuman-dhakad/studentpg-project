@@ -21,7 +21,7 @@ const TRUST_METRICS = [
     title: 'Zero Brokerage / Direct',
     description: 'Direct owner contact with ₹0 middleman fees.',
     icon: Wallet,
-    color: 'text-indigo-600 bg-indigo-50 border-indigo-100',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-100',
   },
   {
     title: 'Instant WhatsApp Connect',

@@ -15,16 +15,16 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const base = 'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50';
+  const base = 'inline-flex items-center justify-center gap-2 rounded-xl font-bold transition-all disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer';
   const variants = {
-    primary: 'bg-brand text-cream hover:bg-brand-dark',
-    secondary: 'border border-line bg-surface text-ink hover:bg-cream',
-    ghost: 'bg-transparent text-ink hover:bg-cream',
+    primary: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm active:scale-98',
+    secondary: 'border border-slate-200 bg-white text-slate-800 hover:bg-slate-50 active:scale-98',
+    ghost: 'bg-transparent text-slate-700 hover:bg-slate-100/70',
   };
   const sizes = {
-    sm: 'h-9 px-3 text-sm',
-    md: 'h-10 px-4 text-sm',
-    lg: 'h-12 px-6 text-base',
+    sm: 'h-9 px-3 text-xs',
+    md: 'h-10 px-4 text-xs font-black uppercase tracking-wider',
+    lg: 'h-12 px-6 text-sm',
   };
 
   return (

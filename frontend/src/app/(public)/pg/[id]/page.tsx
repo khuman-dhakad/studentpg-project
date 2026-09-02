@@ -170,7 +170,7 @@ export default async function PgDetailsPage({
   );
 
   return (
-    <main className="min-h-screen bg-cream px-4 py-6 sm:px-6 lg:px-8 pb-28 md:pb-16 text-ink antialiased">
+    <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 pb-28 md:pb-16 text-slate-900 antialiased">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -180,7 +180,7 @@ export default async function PgDetailsPage({
         {/* Breadcrumb / Back Button */}
         <Link
           href={ROUTES.SEARCH}
-          className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-brand"
+          className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-emerald-700 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Search Listings</span>
@@ -190,7 +190,7 @@ export default async function PgDetailsPage({
           {/* ================= LEFT: MEDIA & DESCRIPTION ================= */}
           <div className="space-y-6">
             {/* Gallery Card */}
-            <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-xs p-4">
+            <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xs p-4">
               <Gallery
                 images={(listing.images || []).map((i) => ({
                   url: i.url || image,
@@ -200,27 +200,27 @@ export default async function PgDetailsPage({
             </div>
 
             {/* Description & Overview */}
-            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
-              <h2 className="text-base font-black uppercase tracking-wider text-ink">
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-8">
+              <h2 className="text-base font-black uppercase tracking-wider text-slate-900">
                 About This Property
               </h2>
-              <p className="mt-3 text-xs sm:text-sm leading-relaxed text-ink-soft font-normal">
+              <p className="mt-3 text-xs sm:text-sm leading-relaxed text-slate-600 font-normal">
                 {description}
               </p>
 
               {/* Full Address details */}
-              <div className="mt-6 rounded-2xl bg-cream p-4 border border-border">
+              <div className="mt-6 rounded-2xl bg-slate-50/70 p-4 border border-slate-200/80">
                 <div className="flex items-start gap-2.5">
-                  <MapPin className="h-5 w-5 text-brand shrink-0 mt-0.5" />
+                  <MapPin className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-xs font-black uppercase tracking-wide text-ink">
-                      Location & Landmark
+                    <h3 className="text-xs font-black uppercase tracking-wide text-slate-900">
+                      Location &amp; Landmark
                     </h3>
-                    <p className="mt-1 text-xs text-ink-soft font-medium">
+                    <p className="mt-1 text-xs text-slate-600 font-medium">
                       {location}
                     </p>
                     {listing.pincode && (
-                      <p className="mt-0.5 text-[11px] font-bold text-brand">
+                      <p className="mt-0.5 text-[11px] font-bold text-emerald-700">
                         PIN: {listing.pincode}
                       </p>
                     )}
@@ -230,9 +230,9 @@ export default async function PgDetailsPage({
             </div>
 
             {/* Amenities Matrix */}
-            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
-              <h2 className="text-base font-black uppercase tracking-wider text-ink">
-                Amenities & Facilities
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-8">
+              <h2 className="text-base font-black uppercase tracking-wider text-slate-900">
+                Amenities &amp; Facilities
               </h2>
 
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -245,13 +245,13 @@ export default async function PgDetailsPage({
                       key={amenity.label}
                       className={`flex items-center gap-2.5 rounded-2xl border p-3.5 transition-all ${
                         isAvailable
-                          ? 'border-brand/30 bg-brand/5 text-ink'
-                          : 'border-border bg-cream/40 text-ink-soft opacity-60'
+                          ? 'border-emerald-600/30 bg-emerald-50/60 text-slate-900'
+                          : 'border-slate-200 bg-slate-50/60 text-slate-400 opacity-60'
                       }`}
                     >
                       <Icon
                         className={`h-4 w-4 shrink-0 ${
-                          isAvailable ? 'text-brand' : 'text-ink-soft'
+                          isAvailable ? 'text-emerald-600' : 'text-slate-400'
                         }`}
                       />
                       <span className="text-[11px] font-bold tracking-tight">
@@ -267,7 +267,7 @@ export default async function PgDetailsPage({
           {/* ================= RIGHT: PRICING, SPECS & HOST CARD ================= */}
           <div className="space-y-6 lg:sticky lg:top-24">
             {/* Main Header & Pricing Card */}
-            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-8">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-emerald-700">
                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
@@ -278,65 +278,65 @@ export default async function PgDetailsPage({
                 )}
               </div>
 
-              <h1 className="mt-4 text-2xl sm:text-3xl font-black leading-tight tracking-tight text-ink">
+              <h1 className="mt-4 text-2xl sm:text-3xl font-black leading-tight tracking-tight text-slate-900">
                 {title}
               </h1>
 
-              <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
-                <MapPin className="h-3.5 w-3.5 text-brand" />
+              <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                <MapPin className="h-3.5 w-3.5 text-emerald-600" />
                 <span>{listing.city || 'Bhopal'}, {listing.state || 'Madhya Pradesh'}</span>
               </div>
 
               {/* Price Display */}
-              <div className="mt-6 flex items-baseline gap-2 border-t border-border pt-4">
-                <span className="text-3xl sm:text-4xl font-black tracking-tight text-brand">
+              <div className="mt-6 flex items-baseline gap-2 border-t border-slate-100 pt-4">
+                <span className="text-3xl sm:text-4xl font-black tracking-tight text-emerald-700">
                   {rent}
                 </span>
-                <span className="text-xs font-bold uppercase tracking-wider text-ink-soft">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                   / month
                 </span>
               </div>
 
               {/* Key Specs Matrix */}
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl border border-border bg-cream p-3.5">
-                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
-                    <Users className="h-3.5 w-3.5 text-brand" />
+                <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <Users className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Category</span>
                   </div>
-                  <p className="mt-1 text-xs font-black text-ink">
+                  <p className="mt-1 text-xs font-black text-slate-900">
                     {listing.category || listing.gender || 'Student Accommodation'}
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-border bg-cream p-3.5">
-                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
-                    <BedDouble className="h-3.5 w-3.5 text-brand" />
+                <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <BedDouble className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Room Type</span>
                   </div>
-                  <p className="mt-1 text-xs font-black text-ink">
+                  <p className="mt-1 text-xs font-black text-slate-900">
                     {listing.roomType || 'Standard Room'}
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-border bg-cream p-3.5">
-                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
-                    <Banknote className="h-3.5 w-3.5 text-brand" />
+                <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <Banknote className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Deposit</span>
                   </div>
-                  <p className="mt-1 text-xs font-black text-ink">
+                  <p className="mt-1 text-xs font-black text-slate-900">
                     {typeof listing.securityDeposit === 'number'
                       ? `₹${listing.securityDeposit.toLocaleString('en-IN')}`
                       : 'Zero / Refundable'}
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-border bg-cream p-3.5">
-                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-ink-soft">
-                    <Clock className="h-3.5 w-3.5 text-brand" />
+                <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <Clock className="h-3.5 w-3.5 text-emerald-600" />
                     <span>Notice Period</span>
                   </div>
-                  <p className="mt-1 text-xs font-black text-ink">
+                  <p className="mt-1 text-xs font-black text-slate-900">
                     {listing.noticePeriod ? `${listing.noticePeriod} Days` : '30 Days'}
                   </p>
                 </div>
@@ -344,16 +344,16 @@ export default async function PgDetailsPage({
             </div>
 
             {/* Host Profile & Contact Card */}
-            <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs sm:p-8">
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-8">
               <div className="flex items-center gap-3.5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100">
                   <UserRound className="h-6 w-6" />
                 </div>
                 <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-ink-soft">
+                  <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
                     Property Host
                   </div>
-                  <h3 className="text-base font-black text-ink">
+                  <h3 className="text-base font-black text-slate-900">
                     {ownerName}
                   </h3>
                   {isOwnerVerified && (
@@ -363,16 +363,16 @@ export default async function PgDetailsPage({
               </div>
 
               {/* Verified Contact Details */}
-              <div className="mt-5 space-y-2.5 border-t border-border pt-4 text-xs font-semibold text-ink-soft">
+              <div className="mt-5 space-y-2.5 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
                 {contactNumber && (
                   <div className="flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5 text-brand" />
+                    <Phone className="h-3.5 w-3.5 text-emerald-600" />
                     <span>{contactNumber}</span>
                   </div>
                 )}
                 {ownerEmail && (
                   <div className="flex items-center gap-2 break-all">
-                    <Mail className="h-3.5 w-3.5 text-brand" />
+                    <Mail className="h-3.5 w-3.5 text-emerald-600" />
                     <span>{ownerEmail}</span>
                   </div>
                 )}
@@ -387,7 +387,7 @@ export default async function PgDetailsPage({
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all active:scale-95"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all active:scale-95 cursor-pointer"
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>Chat on WhatsApp</span>
@@ -395,7 +395,7 @@ export default async function PgDetailsPage({
                 ) : (
                   <button
                     disabled
-                    className="flex items-center justify-center gap-2 rounded-xl bg-border px-5 py-3.5 text-xs font-bold text-ink-soft"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-slate-100 px-5 py-3.5 text-xs font-bold text-slate-400"
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>WhatsApp Unavailable</span>
@@ -405,7 +405,7 @@ export default async function PgDetailsPage({
                 {contactNumber && (
                   <a
                     href={`tel:${contactNumber}`}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-brand hover:bg-brand-dark px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all active:scale-95"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-xs transition-all active:scale-95 cursor-pointer"
                   >
                     <Phone className="h-4 w-4" />
                     <span>Call Property Host</span>
@@ -419,13 +419,13 @@ export default async function PgDetailsPage({
       </div>
 
       {/* ================= STICKY MOBILE CONVERSION BAR ================= */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl shadow-2xl md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200/80 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl shadow-2xl md:hidden">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               Monthly Rent
             </div>
-            <div className="text-base font-black text-brand">
+            <div className="text-base font-black text-emerald-700">
               {rent}
             </div>
           </div>
@@ -438,7 +438,7 @@ export default async function PgDetailsPage({
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 rounded-xl bg-[#25D366] px-4 py-2.5 text-xs font-black text-white shadow-xs"
+                className="flex items-center gap-1.5 rounded-xl bg-[#25D366] px-4 py-2.5 text-xs font-black text-white shadow-xs cursor-pointer"
               >
                 <MessageCircle className="h-4 w-4" />
                 <span>WhatsApp</span>
@@ -448,7 +448,7 @@ export default async function PgDetailsPage({
             {contactNumber && (
               <a
                 href={`tel:${contactNumber}`}
-                className="flex items-center gap-1.5 rounded-xl bg-brand px-4 py-2.5 text-xs font-black text-white shadow-xs"
+                className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white shadow-xs cursor-pointer"
               >
                 <Phone className="h-4 w-4" />
                 <span>Call Host</span>

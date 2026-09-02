@@ -124,10 +124,10 @@ if (powerBackup) {
 // ==========================================
 export default function SearchPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   return (
-    <div className="min-h-screen bg-cream text-ink antialiased pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased pb-20">
       
       {/* HERO SECTION */}
-      <section className="relative py-12 md:py-20 text-white overflow-hidden shadow-sm border-b border-border">
+      <section className="relative py-12 md:py-20 text-white overflow-hidden shadow-sm border-b border-slate-200">
         <Image
           src="/findyour pg.jpeg"
           alt="Find student PG and co-living accommodations in Bhopal"
@@ -151,7 +151,7 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<Rec
               Curated student accommodations near coaching hubs, colleges & transit routes in Bhopal. Zero brokerage, 100% verified.
             </p>
 
-            <div className="mt-6 bg-white text-slate-950 rounded-2xl shadow-xl p-1.5 border border-white/20 max-w-xl group transition-all focus-within:ring-4 focus-within:ring-brand/20">
+            <div className="mt-6 bg-white text-slate-950 rounded-2xl shadow-xl p-1.5 border border-white/20 max-w-xl group transition-all focus-within:ring-4 focus-within:ring-emerald-600/20">
               <SearchBar />
             </div>
           </div>
@@ -170,10 +170,10 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<Rec
           
           {/* DESKTOP SIDEBAR PANEL */}
           <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
-            <div className="bg-surface rounded-3xl border border-border p-6 shadow-xs space-y-6">
-              <div className="border-b border-border pb-3">
-                <div className="text-[11px] font-black uppercase text-ink-soft tracking-widest mb-1">Refine Filters</div>
-                <p className="text-[11px] font-medium text-ink-soft">Narrow down verified stay options</p>
+            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+              <div className="border-b border-slate-100 pb-3">
+                <div className="text-[11px] font-black uppercase text-slate-400 tracking-widest mb-1">Refine Filters</div>
+                <p className="text-[11px] font-medium text-slate-500">Narrow down verified stay options</p>
               </div>
               
               <ListingFilters />
@@ -195,7 +195,7 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<Rec
             <Suspense fallback={
               <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="h-64 bg-surface border border-border rounded-3xl animate-pulse w-full" />
+                  <div key={n} className="h-64 bg-white border border-slate-200/80 rounded-3xl animate-pulse w-full" />
                 ))}
               </div>
             }>

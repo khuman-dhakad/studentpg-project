@@ -208,7 +208,7 @@ export default function NotificationBell() {
                     key={notification.id}
                     className={`flex gap-3 border-b border-slate-100 p-4 transition hover:bg-slate-50 ${
                       !notification.read
-                        ? 'bg-indigo-50/40'
+                        ? 'bg-emerald-50/30'
                         : 'bg-white'
                     }`}
                   >
@@ -224,7 +224,7 @@ export default function NotificationBell() {
                                       ) : notification.type === 'PG_REJECTED' || notification.type === 'OWNER_VERIFICATION_REJECTED' ? (
                         <XCircle className="h-5 w-5 text-rose-500" />
                       ) : (
-                        <Bell className="h-5 w-5 text-indigo-500" />
+                        <Bell className="h-5 w-5 text-emerald-600" />
                       )}
                     </div>
 
@@ -237,7 +237,7 @@ export default function NotificationBell() {
                           notification.read
                         )
                       }
-                      className="min-w-0 flex-1 text-left"
+                      className="min-w-0 flex-1 text-left cursor-pointer"
                     >
                       <div className="flex items-start justify-between gap-2">
 
@@ -246,7 +246,7 @@ export default function NotificationBell() {
                         </p>
 
                         {!notification.read && (
-                          <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-indigo-600" />
+                          <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-600" />
                         )}
                       </div>
 

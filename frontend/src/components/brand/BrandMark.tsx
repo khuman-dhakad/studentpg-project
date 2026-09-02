@@ -11,16 +11,16 @@ export function BrandMark({ className, compact = false, href = '/', ...props }: 
   return (
     <Link
       href={href}
-      className={cn('inline-flex items-center gap-3 text-ink transition-colors hover:text-brand', className)}
+      className={cn('inline-flex items-center gap-2.5 text-slate-900 transition-colors hover:text-emerald-700', className)}
       {...props}
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand text-lg font-black text-cream shadow-sm">
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-sm font-black text-white shadow-xs">
         PG
       </span>
       {!compact && (
-        <span className="flex flex-col leading-tight">
-          <span className="font-display text-base font-black tracking-tight">StudentPG</span>
-          <span className="text-xs font-medium text-ink-soft">Premium stays</span>
+        <span className="flex flex-col leading-none">
+          <span className="text-sm font-black tracking-tight text-slate-900">Student<span className="text-emerald-600">PG</span></span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Verified Living</span>
         </span>
       )}
     </Link>

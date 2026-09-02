@@ -268,221 +268,140 @@ export function AdminPGList({
           actionState.id === item.id &&
           actionState.type === 'reject';
 
-        const isProcessing =
-          isApproving ||
-          isRejecting;
+        const isProcessing = isApproving || isRejecting;
 
         return (
-
           <div
             key={item.id}
-            className="rounded-2xl border border-line bg-cream p-5"
+            className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-5"
           >
-
             {/* HEADER */}
-
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
               <div className="space-y-2">
-
                 <div className="flex flex-wrap items-center gap-3">
-
-                  <h3 className="text-lg font-bold text-ink">
+                  <h3 className="text-base font-black text-slate-900">
                     {item.pgName}
                   </h3>
-
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
                       item.approvalStatus === 'APPROVED'
                         ? 'bg-emerald-100 text-emerald-800'
                         : item.approvalStatus === 'REJECTED'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-rose-100 text-rose-800'
+                          : 'bg-amber-100 text-amber-800'
                     }`}
                   >
                     {item.approvalStatus}
                   </span>
-
                 </div>
 
-                <div className="grid gap-1 text-sm text-ink-soft sm:grid-cols-2 lg:grid-cols-4">
-
-                  <p>
-                    <strong>City:</strong>{' '}
-                    {item.city}
-                  </p>
-
-                  <p>
-                    <strong>Rent:</strong>{' '}
-                    ₹{item.rent}
-                  </p>
-
-                  <p>
-                    <strong>Gender:</strong>{' '}
-                    {item.gender}
-                  </p>
-
-                  <p>
-                    <strong>ID:</strong>{' '}
-                    {item.id}
-                  </p>
-
+                <div className="grid gap-2 text-xs text-slate-600 sm:grid-cols-2 lg:grid-cols-4">
+                  <p><strong className="text-slate-900 font-bold">City:</strong> {item.city}</p>
+                  <p><strong className="text-slate-900 font-bold">Rent:</strong> ₹{item.rent}/mo</p>
+                  <p><strong className="text-slate-900 font-bold">Gender:</strong> {item.gender}</p>
+                  <p><strong className="text-slate-900 font-bold">PG ID:</strong> <span className="font-mono text-[11px]">{item.id}</span></p>
                 </div>
 
-                {item.approvalStatus === 'REJECTED' &&
-                  item.rejectionReason && (
-
-                    <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3">
-
-                      <p className="text-xs font-bold text-red-700">
-                        Rejection Reason
-                      </p>
-
-                      <p className="mt-1 text-sm text-red-600">
-                        {item.rejectionReason}
-                      </p>
-
-                    </div>
-
-                  )}
-
+                {item.approvalStatus === 'REJECTED' && item.rejectionReason && (
+                  <div className="mt-2 rounded-xl border border-rose-200 bg-rose-50 p-3">
+                    <p className="text-xs font-bold text-rose-800">Rejection Reason</p>
+                    <p className="mt-0.5 text-xs text-rose-700 font-medium">{item.rejectionReason}</p>
+                  </div>
+                )}
               </div>
 
               {/* ACTIONS */}
-
-              <div className="flex flex-wrap gap-3">
-
+              <div className="flex flex-wrap gap-2.5">
                 <button
                   type="button"
-                  onClick={() =>
-                    setSelectedPG(item)
-                  }
-                  className="rounded-xl border border-line px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-surface"
+                  onClick={() => setSelectedPG(item)}
+                  className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-800 shadow-xs transition hover:bg-slate-50 cursor-pointer"
                 >
                   View Full Details
                 </button>
 
                 {status === 'PENDING' && (
-
                   <>
-
                     <button
                       type="button"
-                      onClick={() =>
-                        approve(item.id)
-                      }
+                      onClick={() => approve(item.id)}
                       disabled={isProcessing}
-                      className="rounded-xl bg-brand px-4 py-2.5 text-sm font-bold text-cream transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                     >
-                      {isApproving
-                        ? 'Approving...'
-                        : 'Approve'}
+                      {isApproving ? 'Approving...' : 'Approve PG'}
                     </button>
 
                     <button
                       type="button"
-                      onClick={() =>
-                        openRejectDialog(
-                          item.id
-                        )
-                      }
+                      onClick={() => openRejectDialog(item.id)}
                       disabled={isProcessing}
-                      className="rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-bold text-danger transition hover:bg-danger-soft/10 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-bold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                     >
                       Reject
                     </button>
-
                   </>
-
                 )}
-
               </div>
-
             </div>
 
             {/* REJECTION PANEL */}
+            {status === 'PENDING' && rejectingId === item.id && (
+              <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50/70 p-4">
+                <label className="mb-1.5 block text-xs font-black text-rose-900 tracking-wide">
+                  Official Rejection Reason <span className="text-rose-600">*</span>
+                </label>
 
-            {status === 'PENDING' &&
-              rejectingId === item.id && (
+                <textarea
+                  value={rejectReason}
+                  onChange={event => setRejectReason(event.target.value)}
+                  placeholder="Explain why this PG listing is being rejected (e.g. missing license, blurred photos)..."
+                  rows={3}
+                  maxLength={1000}
+                  className="w-full rounded-xl border border-rose-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-rose-500 placeholder:text-slate-400"
+                />
 
-                <div className="mt-5 rounded-xl border border-danger/20 bg-danger-soft/10 p-4">
+                <p className="mt-1 text-right text-[10px] font-bold text-rose-600">
+                  {rejectReason.length}/1000 characters
+                </p>
 
-                  <label className="mb-2 block text-sm font-bold text-ink">
-                    Rejection Reason
-                  </label>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={reject}
+                    disabled={isRejecting || !rejectReason.trim()}
+                    className="rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {isRejecting ? 'Rejecting...' : 'Confirm Rejection'}
+                  </button>
 
-                  <textarea
-                    value={rejectReason}
-                    onChange={event =>
-                      setRejectReason(
-                        event.target.value
-                      )
-                    }
-                    placeholder="Explain why this PG listing is being rejected..."
-                    rows={4}
-                    maxLength={1000}
-                    className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-danger"
-                  />
-
-                  <p className="mt-1 text-right text-xs text-ink-soft">
-                    {rejectReason.length}/1000
-                  </p>
-
-                  <div className="mt-3 flex gap-3">
-
-                    <button
-                      type="button"
-                      onClick={reject}
-                      disabled={
-                        isRejecting ||
-                        !rejectReason.trim()
-                      }
-                      className="rounded-xl bg-danger px-4 py-2.5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {isRejecting
-                        ? 'Rejecting...'
-                        : 'Confirm Rejection'}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setRejectingId(null);
-                        setRejectReason('');
-                        setError(null);
-                      }}
-                      disabled={isRejecting}
-                      className="rounded-xl border border-line px-4 py-2.5 text-sm font-bold text-ink"
-                    >
-                      Cancel
-                    </button>
-
-                  </div>
-
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRejectingId(null);
+                      setRejectReason('');
+                      setError(null);
+                    }}
+                    disabled={isRejecting}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
                 </div>
-
-              )}
-
+              </div>
+            )}
           </div>
-
         );
-
       })}
 
       {!items.length && (
-
-        <div className="rounded-2xl border border-dashed border-line p-8 text-center">
-
-          <p className="text-lg font-bold text-ink">
+        <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center">
+          <p className="text-sm font-black text-slate-900">
             No Listings Found
           </p>
-
-          <p className="mt-2 text-sm text-ink-soft">
-            There are no listings in this category.
+          <p className="mt-1 text-xs font-medium text-slate-500">
+            There are currently no listings in this category.
           </p>
-
         </div>
-
       )}
 
       {selectedPG && (

@@ -107,7 +107,7 @@ export default function ContactUsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
+    <div className="min-h-screen bg-slate-50/50 py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 antialiased">
       
       {/* HEADER & FORM CONTAINER */}
       <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -115,45 +115,47 @@ export default function ContactUsPage() {
         {/* LEFT COLUMN: CONTACT DETAILS */}
         <div className="lg:col-span-5 space-y-6">
           <div>
-            <span className="text-xs font-black tracking-wider text-indigo-600 uppercase">Contact Us</span>
+            <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-2">
+              CONTACT SUPPORT
+            </span>
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-1">
-              We're Here to <span className="text-pink-600">Help!</span>
+              We&apos;re Here to <span className="text-emerald-600">Help!</span>
             </h1>
-            <p className="text-xs font-semibold text-slate-500 mt-2 leading-relaxed">
-              Have questions, suggestions, or need support? Our team is always ready to assist you.
+            <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-2 leading-relaxed">
+              Have questions, suggestions, or need verified host support? Our local Bhopal helpline team is always ready to assist you.
             </p>
           </div>
 
           {/* Contact Cards */}
           <div className="space-y-3">
-            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-start gap-4">
+              <div className="p-3 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0">
                 <Phone className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-black text-slate-900 uppercase">Call & WhatsApp Us</h4>
-                <p className="text-sm font-bold text-slate-700 mt-0.5">+91 79701 34063 / +91 86043 25848</p>
-                <p className="text-[10px] font-semibold text-slate-400 mt-1">Mon - Sat, 9:00 AM - 7:00 PM</p>
+                <h4 className="text-xs font-black text-slate-900 uppercase">Call &amp; WhatsApp Helpline</h4>
+                <p className="text-xs font-bold text-slate-700 mt-0.5">+91 79701 34063 / +91 86043 25848</p>
+                <p className="text-[10px] font-semibold text-slate-400 mt-0.5">Mon - Sat, 9:00 AM - 7:00 PM IST</p>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-start gap-4">
+              <div className="p-3 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0">
                 <Mail className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-black text-slate-900 uppercase">Email Us</h4>
-                <p className="text-sm font-bold text-slate-700 mt-0.5">studentpg.support@gmail.com</p>
-                <p className="text-[10px] font-semibold text-slate-400 mt-1">We reply within 24 hours</p>
+                <h4 className="text-xs font-black text-slate-900 uppercase">Official Email Desk</h4>
+                <p className="text-xs font-bold text-slate-700 mt-0.5">studentpg.support@gmail.com</p>
+                <p className="text-[10px] font-semibold text-slate-400 mt-0.5">Responses guaranteed within 24 hours</p>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-start gap-4">
+              <div className="p-3 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-black text-slate-900 uppercase">Office Address</h4>
+                <h4 className="text-xs font-black text-slate-900 uppercase">Operational Hub</h4>
                 <p className="text-xs font-bold text-slate-700 mt-0.5 leading-relaxed">
                   StudentPG HQ, 1st Floor, BDA Road, Bhopal, MP - 462042
                 </p>
@@ -162,11 +164,11 @@ export default function ContactUsPage() {
           </div>
 
           {/* Trust Banner with Local Image */}
-          <div className="bg-indigo-900 rounded-2xl p-4 text-white flex items-center justify-between gap-4 overflow-hidden relative shadow-md">
+          <div className="bg-slate-900 rounded-2xl p-5 text-white flex items-center justify-between gap-4 overflow-hidden relative shadow-md">
             <div className="space-y-1 z-10">
-              <h4 className="text-xs font-black tracking-wide uppercase text-indigo-200">Your Trust, Our Priority</h4>
-              <p className="text-[10px] text-slate-300 max-w-[220px]">
-                We are committed to providing the best experience for students and PG owners.
+              <span className="text-[10px] font-black tracking-widest uppercase text-emerald-400">YOUR TRUST, OUR PRIORITY</span>
+              <p className="text-xs font-medium text-slate-300 max-w-[220px] leading-relaxed">
+                Dedicated verification and support ensuring genuine student accommodations.
               </p>
             </div>
             <div className="shrink-0 w-20 h-20 relative z-10">
@@ -181,10 +183,10 @@ export default function ContactUsPage() {
         </div>
 
         {/* RIGHT COLUMN: CONTACT FORM */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm">
+        <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
           <div className="mb-6">
-            <h3 className="text-lg font-black text-slate-900 tracking-tight">Send Us a Message</h3>
-            <p className="text-xs font-semibold text-slate-400 mt-0.5">Fill out the form below and we'll get back to you.</p>
+            <h3 className="text-lg font-black text-slate-900 tracking-tight">Send Us a Direct Message</h3>
+            <p className="text-xs font-medium text-slate-500 mt-0.5">Fill out the form below and our team will get back to you promptly.</p>
           </div>
 
           {statusMessage && (
@@ -197,36 +199,36 @@ export default function ContactUsPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-black text-slate-700 uppercase mb-1">Your Name</label>
+              <label className="block text-xs font-black text-slate-700 tracking-wide mb-1.5">Your Full Name <span className="text-rose-500">*</span></label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter your full name"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600 transition-all"
+                className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 transition-all placeholder:text-slate-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-700 uppercase mb-1">Email Address</label>
+              <label className="block text-xs font-black text-slate-700 tracking-wide mb-1.5">Email Address <span className="text-rose-500">*</span></label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="Enter your email"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600 transition-all"
+                className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 transition-all placeholder:text-slate-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-700 uppercase mb-1">Subject</label>
+              <label className="block text-xs font-black text-slate-700 tracking-wide mb-1.5">Subject <span className="text-rose-500">*</span></label>
               <select
                 required
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600 transition-all cursor-pointer"
+                className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 transition-all cursor-pointer"
               >
                 <option value="">What is your message about?</option>
                 <option value="General Inquiry">General Inquiry</option>
@@ -237,68 +239,71 @@ export default function ContactUsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-700 uppercase mb-1">Message</label>
+              <label className="block text-xs font-black text-slate-700 tracking-wide mb-1.5">Message <span className="text-rose-500">*</span></label>
               <textarea
                 required
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Type your message here..."
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600 transition-all resize-none"
+                className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 transition-all resize-none placeholder:text-slate-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-700 uppercase mb-1">Verification</label>
+              <label className="block text-xs font-black text-slate-700 tracking-wide mb-1.5">Human Verification <span className="text-rose-500">*</span></label>
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-slate-100 px-3 py-2 text-sm font-bold">{captchaQuestion}</div>
+                <div className="rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2 text-xs font-bold text-slate-800">{captchaQuestion}</div>
                 <input
                   type="text"
                   required
                   value={userCaptcha}
                   onChange={(e) => setUserCaptcha(e.target.value)}
                   placeholder="Answer"
-                  className="w-32 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none"
+                  className="w-32 px-3 py-2 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:bg-white"
                   aria-label="captcha-answer"
                 />
               </div>
-              <p className="mt-1 text-[10px] text-slate-400">Solve the math question to verify you're human. Refresh page for a new question.</p>
+              <p className="mt-1 text-[10px] text-slate-400 font-medium">Solve the simple question to verify you&apos;re human.</p>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white font-black text-xs uppercase tracking-wider py-3.5 rounded-xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 active:scale-[0.99] disabled:opacity-50"
+              className="w-full bg-emerald-600 text-white font-black text-xs uppercase tracking-wider py-3.5 rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
             >
-              {loading ? 'Sending...' : <>Send Message <Send className="w-3.5 h-3.5" /></>}
+              {loading ? 'Sending Message...' : <><span>Send Message</span> <Send className="w-3.5 h-3.5" /></>}
             </button>
           </form>
 
-          <div className="mt-4 text-center flex items-center justify-center gap-1 text-[10px] font-bold text-slate-400">
-            <Lock className="w-3 h-3" /> Your information is safe with us.
+          <div className="mt-4 text-center flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-400">
+            <Lock className="w-3 h-3 text-slate-400" /> Your personal information remains strictly confidential.
           </div>
         </div>
       </div>
 
       {/* FREQUENTLY ASKED QUESTIONS SECTION */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm space-y-6">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
         <div>
-          <h3 className="text-lg font-black text-slate-900 tracking-tight">Frequently Asked Questions</h3>
-          <p className="text-xs font-semibold text-slate-400 mt-0.5">Find quick answers to common queries.</p>
+          <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-2">
+            HELP RESOURCES
+          </span>
+          <h3 className="text-xl font-black text-slate-900 tracking-tight">Frequently Asked Questions</h3>
+          <p className="text-xs font-medium text-slate-500 mt-0.5">Find quick answers to common marketplace questions.</p>
         </div>
 
         <div className="space-y-3">
           {faqs.map((faq, idx) => (
-            <div key={idx} className="border border-slate-100 rounded-2xl overflow-hidden">
+            <div key={idx} className="border border-slate-200/80 rounded-2xl overflow-hidden">
               <button
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full p-4 text-left text-xs font-black text-slate-800 flex justify-between items-center hover:bg-slate-50 transition-colors"
+                className="w-full p-4 text-left text-xs font-black text-slate-800 flex justify-between items-center hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <span>{faq.q}</span>
-                {openFaq === idx ? <ChevronUp className="w-4 h-4 text-indigo-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                {openFaq === idx ? <ChevronUp className="w-4 h-4 text-emerald-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
               </button>
               {openFaq === idx && (
-                <div className="px-4 pb-4 text-xs font-medium text-slate-500 leading-relaxed border-t border-slate-50 bg-slate-50/50">
+                <div className="px-4 pb-4 text-xs font-medium text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
                   {faq.a}
                 </div>
               )}

@@ -1,171 +1,171 @@
 import Link from 'next/link';
 import { ROUTES } from '@/constants/routes';
+import { Home, KeyRound, Building2, ArrowRight, ShieldCheck, CheckCircle2, Zap, MessageSquare } from 'lucide-react';
 
 const supportTopics = [
   {
-    icon: '🏠',
+    icon: Home,
     title: 'Finding a PG',
-    description: 'Browse verified rooms, compare amenities, and find a stay that fits your needs.',
+    description: 'Browse verified rooms, compare amenities, and find a student stay that matches your budget and requirements in Bhopal.',
     href: ROUTES.SEARCH,
     action: 'Explore PGs',
   },
   {
-    icon: '🔐',
-    title: 'Account & Login',
-    description: 'Need help with login, password reset, or your StudentPG account?',
+    icon: KeyRound,
+    title: 'Account & Security',
+    description: 'Need assistance with host login, password reset, or managing your verified owner profile credentials?',
     href: ROUTES.OWNER.LOGIN,
     action: 'Manage account',
   },
   {
-    icon: '🏢',
+    icon: Building2,
     title: 'Owner Support',
-    description: 'Manage your listings, update property details, and track approval status.',
+    description: 'Manage your listings, upload room photos, update rental pricing, and track your property verification status.',
     href: ROUTES.OWNER.LOGIN,
-    action: 'Open owner portal',
+    action: 'Open host portal',
   },
 ];
 
 export default function SupportPage() {
   return (
-    <main className="mx-auto max-w-6xl px-3 py-5 sm:px-6 sm:py-10 lg:px-8">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 space-y-10 antialiased">
 
       {/* HERO */}
-      <section className="relative overflow-hidden rounded-[32px] bg-brand px-6 py-12 text-cream shadow-xl sm:px-12 sm:py-16">
+      <section className="relative overflow-hidden rounded-3xl bg-slate-900 px-6 py-10 text-white shadow-lg sm:px-12 sm:py-14">
         <div className="relative z-10 max-w-2xl">
-          <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-cream/70">
-            StudentPG Support
-          </p>
+          <span className="text-[11px] font-black tracking-widest text-emerald-400 uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-400/20 inline-block">
+            StudentPG Support Center
+          </span>
 
-          <h1 className="mt-4 font-display text-3xl font-black leading-tight sm:text-5xl">
+          <h1 className="mt-4 text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
             How can we help you today?
           </h1>
 
-          <p className="mt-5 max-w-xl text-sm leading-7 text-cream/80 sm:text-base">
-            Whether you are looking for a room, managing a property, or having
-            trouble with your account, we are here to help.
+          <p className="mt-3 max-w-xl text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+            Whether you are looking for student accommodation in Bhopal, managing property listings, or require direct assistance, our team is ready to support you.
           </p>
 
           <Link
             href="/contact"
-            className="mt-8 inline-flex h-12 items-center rounded-full bg-cream px-6 text-sm font-bold text-brand transition-transform hover:scale-[1.03]"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 px-6 py-3 text-xs font-black uppercase tracking-wider text-slate-950 shadow-md transition-all cursor-pointer"
           >
-            Contact Support
-            <span className="ml-2">→</span>
+            <span>Contact Support Helpline</span>
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
         {/* Decorative background */}
-        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-cream/10 blur-3xl" />
-        <div className="absolute -bottom-32 right-20 h-80 w-80 rounded-full bg-brand-dark/30 blur-3xl" />
+        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
       </section>
 
       {/* QUICK HELP */}
-      <section className="mt-8 sm:mt-12">
-        <div className="mb-5">
-          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-brand">
-            Quick help
-          </p>
+      <section className="space-y-6">
+        <div>
+          <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+            Quick Help Topics
+          </span>
 
-          <h2 className="mt-2 font-display text-2xl font-black text-ink sm:text-3xl">
-            What do you need help with?
+          <h2 className="mt-2 text-2xl font-black text-slate-900 tracking-tight">
+            What do you need assistance with?
           </h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          {supportTopics.map((topic) => (
-            <div
-              key={topic.title}
-              className="group rounded-[24px] border border-line bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-2xl">
-                {topic.icon}
-              </div>
-
-              <h3 className="mt-5 font-display text-xl font-bold text-ink">
-                {topic.title}
-              </h3>
-
-              <p className="mt-3 text-sm leading-7 text-ink-soft">
-                {topic.description}
-              </p>
-
-              <Link
-                href={topic.href}
-                className="mt-5 inline-flex text-sm font-bold text-brand transition-colors hover:text-brand-dark"
+          {supportTopics.map((topic) => {
+            const Icon = topic.icon;
+            return (
+              <div
+                key={topic.title}
+                className="group rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md"
               >
-                {topic.action}
-                <span className="ml-2 transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </Link>
-            </div>
-          ))}
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  <Icon className="h-6 w-6" />
+                </div>
+
+                <h3 className="mt-4 text-base font-black text-slate-900 tracking-tight">
+                  {topic.title}
+                </h3>
+
+                <p className="mt-2 text-xs text-slate-500 font-medium leading-relaxed">
+                  {topic.description}
+                </p>
+
+                <Link
+                  href={topic.href}
+                  className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 transition-colors hover:text-emerald-700 cursor-pointer"
+                >
+                  <span>{topic.action}</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </section>
 
       {/* CONTACT CTA */}
-      <section className="mt-8 overflow-hidden rounded-[28px] border border-line bg-surface p-6 shadow-sm sm:mt-12 sm:p-8">
+      <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/70 p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-xl">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10 text-green-600">
-                ✓
-              </span>
-
-              <p className="text-sm font-bold text-green-600">
-                Support is available
-              </p>
+          <div className="max-w-xl space-y-2">
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <span>Live Bhopal Helpdesk Active</span>
             </div>
 
-            <h2 className="mt-4 font-display text-2xl font-black text-ink sm:text-3xl">
-              Still need a hand?
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              Still need personalized assistance?
             </h2>
 
-            <p className="mt-3 text-sm leading-7 text-ink-soft">
-              Send us your question and our team will get back to you as soon
-              as possible.
+            <p className="text-xs text-slate-500 font-medium leading-relaxed">
+              Send us your query or report an issue and our local Bhopal support team will assist you within 24 hours.
             </p>
           </div>
 
           <Link
             href="/contact"
-            className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand px-6 text-sm font-bold text-cream transition-all hover:bg-brand-dark"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-sm transition-all cursor-pointer"
           >
-            Send us a message
-            <span className="ml-2">→</span>
+            <span>Send Us a Message</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </section>
 
       {/* TRUST FOOTER */}
-      <section className="mt-8 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-line bg-surface p-5 text-center">
-          <p className="text-2xl">🔒</p>
-          <h3 className="mt-3 text-sm font-bold text-ink">
-            Secure platform
+      <section className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 text-center shadow-xs">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 mb-3">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          <h3 className="text-xs font-black text-slate-900 uppercase">
+            Secure Platform
           </h3>
-          <p className="mt-1 text-xs text-ink-soft">
-            Your account and data stay protected.
+          <p className="mt-1 text-[11px] text-slate-500 font-medium">
+            Your account and personal data remain protected.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-line bg-surface p-5 text-center">
-          <p className="text-2xl">✓</p>
-          <h3 className="mt-3 text-sm font-bold text-ink">
-            Verified listings
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 text-center shadow-xs">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 mb-3">
+            <CheckCircle2 className="h-5 w-5" />
+          </div>
+          <h3 className="text-xs font-black text-slate-900 uppercase">
+            100% Verified Listings
           </h3>
-          <p className="mt-1 text-xs text-ink-soft">
-            Discover quality stays with confidence.
+          <p className="mt-1 text-[11px] text-slate-500 font-medium">
+            Discover audited stays with confidence.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-line bg-surface p-5 text-center">
-          <p className="text-2xl">⚡</p>
-          <h3 className="mt-3 text-sm font-bold text-ink">
-            Quick assistance
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 text-center shadow-xs">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 mb-3">
+            <Zap className="h-5 w-5" />
+          </div>
+          <h3 className="text-xs font-black text-slate-900 uppercase">
+            Quick Assistance
           </h3>
-          <p className="mt-1 text-xs text-ink-soft">
-            We are here when you need us.
+          <p className="mt-1 text-[11px] text-slate-500 font-medium">
+            Same-day owner contacts and direct move-in support.
           </p>
         </div>
       </section>

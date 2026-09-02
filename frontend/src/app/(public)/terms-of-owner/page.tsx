@@ -54,19 +54,19 @@ export default function TermsOfOwnerPage() {
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* HERO BANNER SECTION */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-xs grid lg:grid-cols-12 gap-6 items-center">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs grid lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-8 space-y-3">
-            <span className="text-[11px] font-black tracking-widest text-indigo-600 uppercase">
-              TERMS OF OWNER
+            <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-1">
+              HOST GUIDELINES
             </span>
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              Terms of <span className="text-pink-600">Owner</span>
+              Terms of <span className="text-emerald-600">Owner</span>
             </h1>
             <p className="text-xs sm:text-sm font-semibold text-slate-500 leading-relaxed max-w-2xl">
-              These terms and conditions outline the rules and responsibilities for PG Owners using the StudentPG platform.
+              These terms and conditions outline the standards, responsibilities, and operational guidelines for PG Owners hosting on the StudentPG platform.
             </p>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 pt-2">
-              <Calendar className="w-4 h-4 text-indigo-600" />
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 pt-1">
+              <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Last Updated: 16 May 2025</span>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function TermsOfOwnerPage() {
 
           {/* LEFT NAVIGATION - DESKTOP SIDEBAR */}
           <aside className="hidden lg:block lg:col-span-4 sticky top-6 space-y-4">
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-3">
+            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
               <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
                 On this page
               </h3>
@@ -100,13 +100,13 @@ export default function TermsOfOwnerPage() {
                     <button
                       key={item.id}
                       onClick={() => scrollToSection(item.id)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         activeSection === item.id
-                          ? 'bg-purple-50 text-purple-700 shadow-xs'
+                          ? 'bg-emerald-50 text-emerald-800 border-l-2 border-emerald-600 font-black'
                           : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                       }`}
                     >
-                      <Icon className={`w-4 h-4 shrink-0 ${activeSection === item.id ? 'text-purple-700' : 'text-slate-400'}`} />
+                      <Icon className={`w-4 h-4 shrink-0 ${activeSection === item.id ? 'text-emerald-700' : 'text-slate-400'}`} />
                       <span>{item.label}</span>
                     </button>
                   );
@@ -115,40 +115,44 @@ export default function TermsOfOwnerPage() {
             </div>
 
             {/* TRUST BADGE */}
-            <div className="bg-purple-50/60 border border-purple-100 p-4 rounded-2xl flex items-center gap-3">
-              <div className="p-2.5 bg-purple-100 text-purple-700 rounded-xl shrink-0">
+            <div className="bg-emerald-50/70 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3">
+              <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <p className="text-[11px] font-bold text-purple-900 leading-snug">
-                By using StudentPG as an owner, you agree to these Terms and Conditions.
+              <p className="text-[11px] font-bold text-emerald-900 leading-snug">
+                By listing properties on StudentPG, hosts commit to truthful information and tenant security.
               </p>
             </div>
           </aside>
 
           {/* MOBILE NAVIGATION DROPDOWN */}
           <div className="lg:hidden col-span-12">
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="w-full p-4 flex items-center justify-between text-xs font-black text-slate-900"
+                className="w-full p-4 flex items-center justify-between text-xs font-black text-slate-900 cursor-pointer"
               >
                 <span>On this page</span>
-                {isMobileMenuOpen ? <ChevronUp className="w-4 h-4 text-purple-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                {isMobileMenuOpen ? <ChevronUp className="w-4 h-4 text-emerald-600" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
               </button>
 
               {isMobileMenuOpen && (
-                <div className="px-3 pb-3 pt-1 border-t border-slate-50 space-y-1">
-                  {navItems.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => scrollToSection(item.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold ${
-                        activeSection === item.id ? 'bg-purple-50 text-purple-700' : 'text-slate-600'
-                      }`}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+                <div className="px-3 pb-3 pt-1 border-t border-slate-100 space-y-1">
+                  {navItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => scrollToSection(item.id)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold cursor-pointer ${
+                          activeSection === item.id ? 'bg-emerald-50 text-emerald-800' : 'text-slate-600'
+                        }`}
+                      >
+                        <Icon className={`w-3.5 h-3.5 ${activeSection === item.id ? 'text-emerald-700' : 'text-slate-400'}`} />
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -159,7 +163,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 1 */}
             <section id="section-1" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <FileText className="w-4 h-4" />
               </div>
               <div>
@@ -172,7 +176,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 2 */}
             <section id="section-2" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <UserCheck className="w-4 h-4" />
               </div>
               <div>
@@ -185,7 +189,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 3 */}
             <section id="section-3" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <CheckCircle className="w-4 h-4" />
               </div>
               <div>
@@ -201,7 +205,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 4 */}
             <section id="section-4" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <ListChecks className="w-4 h-4" />
               </div>
               <div>
@@ -216,7 +220,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 5 */}
             <section id="section-5" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <BadgeCheck className="w-4 h-4" />
               </div>
               <div>
@@ -229,7 +233,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 6 */}
             <section id="section-6" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <CreditCard className="w-4 h-4" />
               </div>
               <div>
@@ -242,7 +246,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 7 */}
             <section id="section-7" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <Ban className="w-4 h-4" />
               </div>
               <div>
@@ -255,7 +259,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 8 */}
             <section id="section-8" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <FileSpreadsheet className="w-4 h-4" />
               </div>
               <div>
@@ -268,7 +272,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 9 */}
             <section id="section-9" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <AlertTriangle className="w-4 h-4" />
               </div>
               <div>
@@ -281,7 +285,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 10 */}
             <section id="section-10" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <XCircle className="w-4 h-4" />
               </div>
               <div>
@@ -294,7 +298,7 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 11 */}
             <section id="section-11" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <RefreshCw className="w-4 h-4" />
               </div>
               <div>
@@ -307,14 +311,14 @@ export default function TermsOfOwnerPage() {
 
             {/* SECTION 12 */}
             <section id="section-12" className="space-y-2 scroll-mt-6 flex items-start gap-3">
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shrink-0 mt-1">
+              <div className="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shrink-0 mt-1">
                 <Mail className="w-4 h-4" />
               </div>
               <div>
                 <h2 className="text-base sm:text-lg font-black text-slate-900">12. Contact Us</h2>
                 <p className="mt-1">For any queries regarding host guidelines, contact our support team:</p>
                 <p className="font-bold text-slate-900 mt-1">
-                  Email: <a href="mailto:studentpg.support@gmail.com" className="text-indigo-600 hover:underline">studentpg.support@gmail.com</a>
+                  Email: <a href="mailto:studentpg.support@gmail.com" className="text-emerald-700 hover:underline">studentpg.support@gmail.com</a>
                 </p>
               </div>
             </section>
