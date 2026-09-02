@@ -10,10 +10,10 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, action, className }: EmptyStateProps) {
   return (
-    <div className={cn('rounded-3xl border border-dashed border-line bg-surface px-6 py-10 text-center shadow-sm', className)}>
-      <h3 className="text-lg font-semibold text-ink">{title}</h3>
-      <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">{description}</p>
-      {action ? <div className="mt-6 flex justify-center">{action}</div> : null}
+    <div className={cn('rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-10 text-center shadow-xs', className)}>
+      <h3 className="text-base font-black text-slate-900">{title}</h3>
+      <p className="mx-auto mt-1.5 max-w-md text-xs font-medium text-slate-500 leading-relaxed">{description}</p>
+      {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
     </div>
   );
 }

@@ -66,15 +66,15 @@ export default function OwnerDashboardPage() {
           <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">Welcome back! 👋</h1>
           <p className="text-xs font-semibold text-slate-400 mt-0.5">Here's what's happening with your PG listings.</p>
         </div>
-        <Link href={ROUTES.OWNER.ADD_PG} className="inline-flex items-center justify-center gap-1.5 bg-indigo-600 text-white text-xs font-black tracking-wider uppercase px-5 py-3 rounded-xl hover:bg-indigo-700 shadow-md transition-all shrink-0">
+        <Link href={ROUTES.OWNER.ADD_PG} className="inline-flex items-center justify-center gap-1.5 bg-emerald-600 text-white text-xs font-black tracking-wider uppercase px-5 py-3 rounded-xl hover:bg-emerald-700 shadow-sm transition-all shrink-0 cursor-pointer">
           <Plus className="w-4 h-4" /> Add New PG
         </Link>
       </div>
 
       {/* METRIC INFRASTRUCTURE GRID */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 cursor-pointer">
-        <div onClick={() => {setFilter('ALL'); setShowAll(false);}} className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center gap-3.5 shadow-sm hover:border-indigo-200 transition-all">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"><Building2 className="w-5 h-5" /></div>
+        <div onClick={() => {setFilter('ALL'); setShowAll(false);}} className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center gap-3.5 shadow-sm hover:border-emerald-200 transition-all">
+          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><Building2 className="w-5 h-5" /></div>
           <div><div className="text-xl font-black text-slate-900 leading-none">{stats.total}</div><p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Total</p></div>
         </div>
         <div onClick={() => {setFilter('APPROVED'); setShowAll(false);}} className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center gap-3.5 shadow-sm hover:border-emerald-200 transition-all">
@@ -104,11 +104,11 @@ export default function OwnerDashboardPage() {
           <h3 className="text-sm font-black text-slate-900 tracking-tight">Quick Actions</h3>
           <div className="space-y-2.5">
             <Link href={ROUTES.OWNER.ADD_PG} className="flex items-center gap-3 p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all">
-              <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black text-xs">+</div>
+              <div className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center font-black text-xs">+</div>
               <div><h5 className="text-xs font-black text-slate-800 leading-none">Add New PG</h5><p className="text-[10px] font-medium text-slate-400 mt-0.5">List a new property</p></div>
             </Link>
             <Link href={ROUTES.OWNER.PROFILE} className="flex items-center gap-3 p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all">
-              <div className="w-8 h-8 bg-teal-50 text-teal-600 rounded-lg flex items-center justify-center font-black text-xs">⚙</div>
+              <div className="w-8 h-8 bg-slate-100 text-slate-700 rounded-lg flex items-center justify-center font-black text-xs">⚙</div>
               <div><h5 className="text-xs font-black text-slate-800 leading-none">Profile Settings</h5><p className="text-[10px] font-medium text-slate-400 mt-0.5">Update your profile</p></div>
             </Link>
           </div>
@@ -119,7 +119,7 @@ export default function OwnerDashboardPage() {
       <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-slate-50 pb-3">
           <h3 className="text-sm font-black text-slate-900 tracking-tight uppercase">{filter} PGs</h3>
-          <button onClick={() => setShowAll(!showAll)} className="text-xs font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-wide">
+          <button onClick={() => setShowAll(!showAll)} className="text-xs font-black text-emerald-700 hover:text-emerald-800 uppercase tracking-wide cursor-pointer">
             {showAll ? 'Show Less' : 'View All'}
           </button>
         </div>

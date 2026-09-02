@@ -124,34 +124,34 @@ if (powerBackup) {
 // ==========================================
 export default function SearchPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 antialiased pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased pb-20">
       
       {/* HERO SECTION */}
-      <section className="relative py-14 md:py-24 text-white overflow-hidden shadow-lg border-b border-slate-100">
+      <section className="relative py-12 md:py-20 text-white overflow-hidden shadow-sm border-b border-slate-200">
         <Image
           src="/findyour pg.jpeg"
-          alt="Find student PG and co-living accommodations"
+          alt="Find student PG and co-living accommodations in Bhopal"
           fill
           priority
           sizes="100vw"
           quality={85}
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-slate-900/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-slate-900/50" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md">
-              <Sparkles className="w-3 h-3" /> Verified Student Living
+            <span className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md">
+              <Sparkles className="w-3 h-3" /> Verified Student Accommodations
             </span>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight mt-4 leading-none">
-              Find PGs that feel like <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">Home</span>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight mt-4 leading-tight">
+              Find PGs That Feel Like <span className="text-emerald-400">Home</span>
             </h1>
-            <p className="text-slate-300 text-sm md:text-base mt-4 font-medium max-w-xl leading-relaxed opacity-90">
-              Curated premium accommodations near elite campuses, enterprise tech parks, and transit hubs. Zero brokerage, absolute transparency.
+            <p className="text-slate-200 text-xs sm:text-sm md:text-base mt-3 font-medium max-w-xl leading-relaxed opacity-90">
+              Curated student accommodations near coaching hubs, colleges & transit routes in Bhopal. Zero brokerage, 100% verified.
             </p>
 
-            <div className="mt-8 bg-white text-slate-950 rounded-[24px] shadow-2xl p-1.5 border border-white/20 max-w-xl group transition-all focus-within:ring-4 focus-within:ring-emerald-500/20">
+            <div className="mt-6 bg-white text-slate-950 rounded-2xl shadow-xl p-1.5 border border-white/20 max-w-xl group transition-all focus-within:ring-4 focus-within:ring-emerald-600/20">
               <SearchBar />
             </div>
           </div>
@@ -159,32 +159,32 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<Rec
       </section>
 
       {/* MAIN CONTAINER */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         
         {/* MOBILE FILTERS */}
-<div className="block lg:hidden">
-  <ListingFilters />
-</div>
+        <div className="block lg:hidden">
+          <ListingFilters />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* DESKTOP SIDEBAR PANEL */}
           <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
-            <div className="bg-white rounded-[28px] border border-slate-200/60 p-6 shadow-sm space-y-6">
-              <div className="border-b border-slate-100 pb-2">
-                <div className="text-[11px] font-black uppercase text-slate-400 tracking-widest mb-1">Filters</div>
-                <p className="text-[11px] font-medium text-slate-400">Narrow down your custom stay options</p>
+            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+              <div className="border-b border-slate-100 pb-3">
+                <div className="text-[11px] font-black uppercase text-slate-400 tracking-widest mb-1">Refine Filters</div>
+                <p className="text-[11px] font-medium text-slate-500">Narrow down verified stay options</p>
               </div>
               
               <ListingFilters />
 
-              <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-[20px] p-5 shadow-inner space-y-3 relative overflow-hidden">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-5 shadow-inner space-y-3 relative overflow-hidden">
                 <div className="flex gap-2.5 items-center">
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <h5 className="text-xs font-black tracking-tight">100% Secure Auditing</h5>
+                  <h5 className="text-xs font-black tracking-tight">100% Verified Stays</h5>
                 </div>
-                <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
-                  Every listed stay undergoes strict biometric infrastructure checks and pricing validation routines.
+                <p className="text-[10px] text-slate-300 leading-relaxed font-medium">
+                  Every listed stay undergoes physical infrastructure audits and price transparency verification.
                 </p>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<Rec
             <Suspense fallback={
               <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="h-64 bg-slate-200/50 border border-slate-100 rounded-[28px] animate-pulse w-full" />
+                  <div key={n} className="h-64 bg-white border border-slate-200/80 rounded-3xl animate-pulse w-full" />
                 ))}
               </div>
             }>

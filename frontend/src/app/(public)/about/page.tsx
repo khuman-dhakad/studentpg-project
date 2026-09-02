@@ -20,14 +20,14 @@ export const metadata: Metadata = {
 export default function AboutUsPage() {
   const stats = [
     {
-      icon: <Users className="w-5 h-5 text-indigo-600" />,
-      bg: 'bg-indigo-50',
+      icon: <Users className="w-5 h-5 text-emerald-600" />,
+      bg: 'bg-emerald-50',
       value: '50K+',
       label: 'Happy Students',
     },
     {
-      icon: <Building className="w-5 h-5 text-pink-600" />,
-      bg: 'bg-pink-50',
+      icon: <Building className="w-5 h-5 text-emerald-600" />,
+      bg: 'bg-emerald-50',
       value: '10K+',
       label: 'Verified PGs',
     },
@@ -35,45 +35,45 @@ export default function AboutUsPage() {
       icon: <MapPin className="w-5 h-5 text-emerald-600" />,
       bg: 'bg-emerald-50',
       value: '100+',
-      label: 'Cities Covered',
+      label: 'Local Areas',
     },
   ];
 
   const features = [
     {
-      icon: <ShieldCheck className="w-5 h-5 text-indigo-600" />,
-      bg: 'bg-indigo-50',
+      icon: <ShieldCheck className="w-5 h-5 text-emerald-600" />,
+      bg: 'bg-emerald-50',
       title: 'Verified Listings',
-      desc: 'All PGs are verified by our team for authenticity and quality.',
+      desc: 'All PGs are verified by our team for physical security and quality amenities.',
     },
     {
-      icon: <Tag className="w-5 h-5 text-pink-600" />,
-      bg: 'bg-pink-50',
-      title: 'No Brokerage',
-      desc: "We don't charge any hidden fees. Connect directly with PG owners.",
+      icon: <Tag className="w-5 h-5 text-emerald-600" />,
+      bg: 'bg-emerald-50',
+      title: 'Zero Brokerage',
+      desc: 'We do not charge broker fees. Connect directly with authentic PG owners.',
     },
     {
       icon: <Search className="w-5 h-5 text-emerald-600" />,
       bg: 'bg-emerald-50',
-      title: 'Advanced Search',
-      desc: 'Find PGs based on location, rent, amenities and other preferences.',
+      title: 'Locality Search',
+      desc: 'Filter PGs by MP Nagar, Indrapuri, Kolar Road, budget, and sharing type.',
     },
     {
-      icon: <Lock className="w-5 h-5 text-amber-600" />,
-      bg: 'bg-amber-50',
+      icon: <Lock className="w-5 h-5 text-emerald-600" />,
+      bg: 'bg-emerald-50',
       title: 'Safe & Secure',
-      desc: 'Your safety is our priority. We ensure a secure platform for everyone.',
+      desc: 'Student safety is top priority. We verify CCTV, wardens, and curfew policies.',
     },
     {
-      icon: <Headphones className="w-5 h-5 text-purple-600" />,
-      bg: 'bg-purple-50',
+      icon: <Headphones className="w-5 h-5 text-emerald-600" />,
+      bg: 'bg-emerald-50',
       title: 'Dedicated Support',
-      desc: 'Our support team is always ready to help you with your queries.',
+      desc: 'Our local team in Bhopal is always ready to assist students and hosts.',
     },
   ];
 
   return (
-    <main className="min-h-screen bg-white py-8 sm:py-14 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-white py-8 sm:py-14 px-4 sm:px-6 lg:px-8 antialiased">
       <div className="max-w-7xl mx-auto space-y-12 sm:space-y-20">
         
         {/* HERO SECTION */}
@@ -82,15 +82,15 @@ export default function AboutUsPage() {
           {/* Left Text & Stats */}
           <div className="lg:col-span-7 space-y-6">
             <div>
-              <span className="text-[11px] font-black tracking-widest text-indigo-600 uppercase">
-                ABOUT US
+              <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-2">
+                ABOUT STUDENTPG
               </span>
               <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mt-1 leading-[1.15]">
-                Making PG Search <br className="hidden sm:inline" />
-                <span className="text-pink-600">Simple, Safe & Reliable</span>
+                Making Student Living <br className="hidden sm:inline" />
+                <span className="text-emerald-600">Simple, Safe &amp; Verified</span>
               </h1>
               <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-4 leading-relaxed max-w-xl">
-                StudentPG is India's trusted platform that helps students find verified and comfortable PG accommodations with ease. We connect students with genuine PG owners and provide a transparent experience.
+                StudentPG is Bhopal&apos;s dedicated student accommodation discovery network. We bridge students directly with authentic PG owners, eliminating middlemen and hidden brokerage fees.
               </p>
             </div>
 
@@ -99,9 +99,9 @@ export default function AboutUsPage() {
               {stats.map((stat, idx) => (
                 <div 
                   key={idx} 
-                  className="flex items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 border border-slate-100 shadow-sm"
+                  className="flex items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 shadow-xs"
                 >
-                  <div className={`p-2.5 rounded-xl ${stat.bg} shrink-0`}>
+                  <div className={`p-2.5 rounded-xl ${stat.bg} shrink-0 border border-emerald-100`}>
                     {stat.icon}
                   </div>
                   <div>
@@ -119,7 +119,7 @@ export default function AboutUsPage() {
 
           {/* Right Image Container */}
           <div className="lg:col-span-5 relative">
-            <div className="relative w-full h-[260px] sm:h-[360px] rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+            <div className="relative w-full h-[260px] sm:h-[360px] rounded-3xl overflow-hidden shadow-sm border border-slate-200/80">
               <Image
                 src="/AboutUs.jpeg"
                 alt="Comfortable Room Stay"
@@ -133,11 +133,14 @@ export default function AboutUsPage() {
 
         {/* OUR MISSION SECTION */}
         <div className="text-center max-w-2xl mx-auto space-y-2">
+          <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-1">
+            OUR PURPOSE
+          </span>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
             Our Mission
           </h2>
           <p className="text-xs sm:text-sm font-semibold text-slate-500 leading-relaxed">
-            To make PG search hassle-free for students by providing verified listings, accurate information, and a seamless experience.
+            To provide every student in Bhopal with transparent, verified, and safe residential accommodations with direct host contact and zero brokerage.
           </p>
         </div>
 

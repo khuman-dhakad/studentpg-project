@@ -1,658 +1,171 @@
 'use client';
+
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import {
-  loginSchema,
-  LoginInput,
-} from '../schemas/authSchemas';
-
-import {
-  useLoginMutation,
-} from '../api/authApi';
-
+import { loginSchema, LoginInput } from '../schemas/authSchemas';
+import { useLoginMutation } from '../api/authApi';
 import { ROUTES } from '@/constants/routes';
-
-import {
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  ArrowRight,
-} from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 
 export function OwnerLoginForm() {
   const router = useRouter();
-
-  const [
-    login,
-    {
-      isLoading,
-    },
-  ] = useLoginMutation();
-
-  const [
-    globalError,
-    setGlobalError,
-  ] = useState<string | null>(null);
-
-  const [
-    showPassword,
-    setShowPassword,
-  ] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: {
-      errors,
-    },
+    formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = async (
-    data: LoginInput
-  ) => {
-
+  const onSubmit = async (data: LoginInput) => {
     setGlobalError(null);
-
     try {
+      const normalizedEmail = data.email.trim().toLowerCase();
+      const result = await login({
+        email: normalizedEmail,
+        password: data.password,
+      }).unwrap();
 
-      const normalizedEmail =
-        data.email
-          .trim()
-          .toLowerCase();
-
-      const result =
-  await login({
-    email: normalizedEmail,
-    password: data.password,
-  }).unwrap();
-
-
-
-if (
-  !result ||
-  !result.role
-) {
-
-  setGlobalError(
-    'Invalid login response from server.'
-  );
-
-  return;
-}
-
-const role =
-  result.role
-    .trim()
-    .toUpperCase();
-      /*
-       * Redirect according to role
-       */
-
-      if (role === 'ADMIN') {
-
-        router.replace(ROUTES.ADMIN.DASHBOARD);
-
-      } else if (role === 'OWNER') {
-
-        router.replace(
-          ROUTES.OWNER.DASHBOARD
-        );
-
-      } else {
-
-        setGlobalError(
-          'Invalid user role received from server.'
-        );
-
+      if (!result || !result.role) {
+        setGlobalError('Invalid login response from server.');
         return;
       }
 
-      router.refresh();
-
+      const role = result.role.trim().toUpperCase();
+      if (role === 'ADMIN') {
+        router.replace('/admin');
+      } else if (role === 'OWNER') {
+        router.replace(ROUTES.OWNER.DASHBOARD || '/owner/dashboard');
+      } else {
+        router.replace('/');
+      }
     } catch (error: unknown) {
-      const err = error as { data?: { message?: string }; message?: string };
-      setGlobalError(
-        err?.data?.message ??
-        err?.message ??
-        'Invalid email or password.'
-      );
+      console.error('Login error:', error);
+      if (error && typeof error === 'object' && 'data' in error) {
+        const errorData = (error as { data?: { message?: string; error?: string } }).data;
+        setGlobalError(errorData?.message || errorData?.error || 'Invalid credentials or login failed.');
+      } else {
+        setGlobalError('Unable to log in. Please check your credentials and try again.');
+      }
     }
   };
 
   return (
-
-    <div
-      className="
-        w-full
-        max-w-md
-        rounded-2xl
-        border
-        border-line
-        bg-surface
-        p-6
-        shadow-xl
-        shadow-slate-100/50
-        backdrop-blur-sm
-        md:p-8
-      "
-    >
-
-      {/* HEADER */}
-
-      <div
-        className="
-          text-center
-        "
-      >
-
-        <h2
-          className="
-            text-2xl
-            font-extrabold
-            tracking-tight
-            text-ink
-            md:text-3xl
-          "
-        >
-
-          Owner Gateway
-
-        </h2>
-
-        <p
-          className="
-            mt-2
-            text-xs
-            text-ink-soft
-            md:text-sm
-          "
-        >
-
-          Sign in to manage listed accommodations
-
-        </p>
-
-      </div>
-
+    <div className="w-full space-y-6">
+      {/* GLOBAL ERROR */}
+      {globalError && (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-700">
+          {globalError}
+        </div>
+      )}
 
       {/* FORM */}
-
-      <form
-        onSubmit={
-          handleSubmit(
-            onSubmit
-          )
-        }
-
-        className="
-          mt-8
-          space-y-5
-        "
-      >
-
-        {/* GLOBAL ERROR */}
-
-        {globalError && (
-
-          <div
-            className="
-              animate-shake
-              rounded-xl
-              border
-              border-danger/20
-              bg-danger-soft/10
-              p-3.5
-              text-xs
-              font-medium
-              text-danger
-              md:text-sm
-            "
-          >
-
-            {globalError}
-
-          </div>
-
-        )}
-
-
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* EMAIL */}
-
         <div>
-
-          <label
-            className="
-              mb-1.5
-              block
-              text-[11px]
-              font-bold
-              uppercase
-              tracking-wider
-              text-ink-soft
-            "
-          >
-
-            Email Address
-
+          <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+            Email Address <span className="text-rose-500">*</span>
           </label>
-
-
-          <div
-            className="
-              relative
-            "
-          >
-
-            <span
-              className="
-                pointer-events-none
-                absolute
-                inset-y-0
-                left-0
-                flex
-                items-center
-                pl-3.5
-                text-ink-soft
-              "
-            >
-
-              <Mail
-                className="
-                  h-4
-                  w-4
-                "
-              />
-
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+              <Mail className="h-4 w-4" />
             </span>
-
-
             <input
               type="email"
-
               autoComplete="email"
-
-              {...register(
-                'email'
-              )}
-
+              {...register('email')}
               placeholder="owner@example.com"
-
-              className="
-                w-full
-                rounded-xl
-                border
-                border-line
-                bg-cream
-                px-4
-                py-3
-                pl-10
-                text-sm
-                text-ink
-                outline-none
-                transition-all
-                duration-200
-                placeholder:text-ink-soft/50
-                focus:border-brand
-                focus:ring-2
-                focus:ring-brand/10
-              "
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 text-xs font-semibold text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
             />
-
           </div>
-
-
           {errors.email && (
-
-            <p
-              className="
-                mt-1.5
-                text-xs
-                font-semibold
-                text-danger
-              "
-            >
-
+            <p className="mt-1.5 text-xs font-semibold text-rose-600">
               {errors.email.message}
-
             </p>
-
           )}
-
         </div>
-
 
         {/* PASSWORD */}
-
         <div>
-
-          <div
-            className="
-              mb-1.5
-              flex
-              items-center
-              justify-between
-            "
-          >
-
-            <label
-              className="
-                block
-                text-[11px]
-                font-bold
-                uppercase
-                tracking-wider
-                text-ink-soft
-              "
-            >
-
-              Security Password
-
+          <div className="mb-1.5 flex items-center justify-between">
+            <label className="block text-xs font-black text-slate-700 tracking-wide">
+              Password <span className="text-rose-500">*</span>
             </label>
-
-
             <Link
-                href={ROUTES.OWNER.FORGOT_PASSWORD}
-                className="
-                  text-[11px]
-                  font-bold
-                  text-brand
-                  transition-colors
-                  hover:text-brand-dark
-                "
-              >
-                Forgot?
-              </Link>
-
-          </div>
-
-
-          <div
-            className="
-              relative
-            "
-          >
-
-            <span
-              className="
-                pointer-events-none
-                absolute
-                inset-y-0
-                left-0
-                flex
-                items-center
-                pl-3.5
-                text-ink-soft
-              "
+              href={ROUTES.OWNER.FORGOT_PASSWORD}
+              className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
             >
-
-              <Lock
-                className="
-                  h-4
-                  w-4
-                "
-              />
-
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+              <Lock className="h-4 w-4" />
             </span>
-
-
             <input
-              type={
-                showPassword
-                  ? 'text'
-                  : 'password'
-              }
-
+              type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
-
-              {...register(
-                'password'
-              )}
-
+              {...register('password')}
               placeholder="••••••••"
-
-              className="
-                w-full
-                rounded-xl
-                border
-                border-line
-                bg-cream
-                px-4
-                py-3
-                pl-10
-                pr-10
-                text-sm
-                text-ink
-                outline-none
-                transition-all
-                duration-200
-                placeholder:text-ink-soft/50
-                focus:border-brand
-                focus:ring-2
-                focus:ring-brand/10
-              "
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 pr-10 text-xs font-semibold text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10"
             />
-
-
             <button
               type="button"
-
-              onClick={() =>
-                setShowPassword(
-                  (
-                    value
-                  ) =>
-                    !value
-                )
-              }
-
-              className="
-                absolute
-                inset-y-0
-                right-0
-                flex
-                items-center
-                pr-3.5
-                text-ink-soft
-                transition-colors
-                hover:text-ink
-              "
-
-              aria-label={
-                showPassword
-                  ? 'Hide password'
-                  : 'Show password'
-              }
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-
-              {showPassword ? (
-
-                <EyeOff
-                  className="
-                    h-4
-                    w-4
-                  "
-                />
-
-              ) : (
-
-                <Eye
-                  className="
-                    h-4
-                    w-4
-                  "
-                />
-
-              )}
-
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
-
           </div>
-
-
           {errors.password && (
-
-            <p
-              className="
-                mt-1.5
-                text-xs
-                font-semibold
-                text-danger
-              "
-            >
-
+            <p className="mt-1.5 text-xs font-semibold text-rose-600">
               {errors.password.message}
-
             </p>
-
           )}
-
         </div>
 
-
-        {/* SUBMIT */}
-
+        {/* SUBMIT BUTTON */}
         <button
           type="submit"
-
-          disabled={
-            isLoading
-          }
-
-          className="
-            group
-            relative
-            flex
-            w-full
-            items-center
-            justify-center
-            gap-2
-            rounded-xl
-            bg-brand
-            py-3.5
-            text-sm
-            font-bold
-            text-cream
-            shadow-md
-            shadow-brand/10
-            transition-all
-            duration-200
-            hover:bg-brand-dark
-            active:scale-[0.98]
-            disabled:pointer-events-none
-            disabled:opacity-50
-          "
+          disabled={isLoading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 px-4 text-xs font-black uppercase tracking-wider text-white shadow-md shadow-emerald-900/10 transition-all hover:bg-emerald-700 active:scale-98 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
         >
-
           {isLoading ? (
-
-            <span
-              className="
-                flex
-                items-center
-                gap-2
-              "
-            >
-
-              <svg
-                className="
-                  h-4
-                  w-4
-                  animate-spin
-                  text-cream
-                "
-
-                fill="none"
-
-                viewBox="0 0 24 24"
-              >
-
-                <circle
-                  className="
-                    opacity-25
-                  "
-
-                  cx="12"
-                  cy="12"
-                  r="10"
-
-                  stroke="currentColor"
-
-                  strokeWidth="4"
-                />
-
-                <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l-2.647-2.647z"
-                  />
-
-              </svg>
-
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-white" />
               Verifying Credentials...
-
             </span>
-
           ) : (
-
             <>
-
-              Authenticate Account
-
-              <ArrowRight
-                className="
-                  h-4
-                  w-4
-                  transition-transform
-                  group-hover:translate-x-0.5
-                "
-              />
-
+              <span>Sign In to Dashboard</span>
+              <ArrowRight className="h-4 w-4" />
             </>
-
           )}
-
         </button>
-
       </form>
 
-
       {/* REGISTER LINK */}
-
-      <div
-        className="
-          mt-6
-          text-center
-          text-xs
-          text-ink-soft
-          md:text-sm
-        "
-      >
-
+      <div className="text-center text-xs font-medium text-slate-500 pt-2 border-t border-slate-100">
         Don&apos;t have a host account?{' '}
-<Link href={ROUTES.OWNER.REGISTER}  className="
-            font-bold
-            text-brand
-            transition-colors
-            hover:text-brand-dark
-          ">
-  Create an account
-</Link>
-
+        <Link
+          href={ROUTES.OWNER.REGISTER}
+          className="font-bold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer"
+        >
+          Create an account
+        </Link>
       </div>
-
     </div>
-
   );
 }

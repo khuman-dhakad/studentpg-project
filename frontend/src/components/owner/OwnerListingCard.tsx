@@ -71,8 +71,8 @@ export function OwnerListingCard({ pg, onDelete }: OwnerListingCardProps) {
             <span>{pg.gender || 'Any Sharing'}</span>
             {(pg.wifiAvailable || pg.foodAvailable) && <span className="w-1 h-1 bg-slate-200 rounded-full" />}
             <div className="flex gap-1 items-center">
-              {pg.wifiAvailable && <Wifi className="w-3 h-3 text-indigo-500" aria-label="Wifi Available" />}
-              {pg.foodAvailable && <Utensils className="w-3 h-3 text-indigo-500" aria-label="Food Available" />}
+              {pg.wifiAvailable && <Wifi className="w-3 h-3 text-emerald-600" aria-label="Wifi Available" />}
+              {pg.foodAvailable && <Utensils className="w-3 h-3 text-emerald-600" aria-label="Food Available" />}
             </div>
           </div>
 

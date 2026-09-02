@@ -36,33 +36,33 @@ export default function ReportIssuePage() {
   const reportCategories = [
     {
       icon: Pencil,
-      iconBg: 'bg-purple-100 text-purple-600',
+      iconBg: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
       title: 'Incorrect Information',
-      desc: 'Wrong details in PG listing like price, address, amenities, etc.',
+      desc: 'Wrong details in PG listing like price, address, amenities, or sharing type.',
     },
     {
       icon: FileText,
-      iconBg: 'bg-pink-100 text-pink-600',
+      iconBg: 'bg-rose-50 text-rose-700 border border-rose-100',
       title: 'Fake or Duplicate Listing',
-      desc: 'Suspicious, fake or duplicate PG listings.',
+      desc: 'Suspicious, unauthorized, or duplicate PG property entries.',
     },
     {
       icon: AlertTriangle,
-      iconBg: 'bg-amber-100 text-amber-600',
+      iconBg: 'bg-amber-50 text-amber-700 border border-amber-100',
       title: 'Inappropriate Content',
-      desc: 'Offensive images, abusive content or misleading information.',
+      desc: 'Misleading photos, offensive text, or false amenity claims.',
     },
     {
       icon: UserCheck,
-      iconBg: 'bg-emerald-100 text-emerald-600',
-      title: 'Owner Misconduct',
-      desc: 'Unprofessional behavior or any inappropriate activity.',
+      iconBg: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+      title: 'Host Misconduct',
+      desc: 'Unprofessional behavior, refusal of visit, or fraudulent deposit demands.',
     },
     {
       icon: MoreHorizontal,
-      iconBg: 'bg-blue-100 text-blue-600',
-      title: 'Other Issues',
-      desc: 'Any other problem you want to report.',
+      iconBg: 'bg-slate-100 text-slate-700 border border-slate-200',
+      title: 'Other Grievances',
+      desc: 'Any other safety or listing problem you would like our team to investigate.',
     },
   ];
 
@@ -148,21 +148,21 @@ export default function ReportIssuePage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-50/50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50/50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 antialiased">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* HERO BANNER SECTION */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-xs grid lg:grid-cols-12 gap-6 items-center">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-xs grid lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-8 space-y-3">
-            <span className="text-[11px] font-black tracking-widest text-indigo-600 uppercase">
+            <span className="text-[11px] font-black tracking-widest text-emerald-700 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 inline-block mb-1">
               REPORT AN ISSUE
             </span>
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Help Us Keep <br className="hidden sm:inline" />
-              StudentPG <span className="text-pink-600">Safe & Reliable</span>
+              StudentPG <span className="text-emerald-600">Safe &amp; Verified</span>
             </h1>
             <p className="text-xs sm:text-sm font-semibold text-slate-500 leading-relaxed max-w-xl">
-              Found incorrect information, a suspicious listing, or facing a problem? Let us know. We'll look into it quickly.
+              Found incorrect information, a suspicious listing, or facing an issue? Let us know. Our safety desk investigates reports promptly.
             </p>
           </div>
 
@@ -184,18 +184,18 @@ export default function ReportIssuePage() {
 
           {/* LEFT SIDE: WHAT CAN YOU REPORT */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-xs space-y-6">
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
               <h3 className="text-base font-black text-slate-900">
                 What can you report?
               </h3>
 
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {reportCategories.map((cat, idx) => {
                   const Icon = cat.icon;
                   return (
-                    <div key={idx} className="flex items-start gap-4">
-                      <div className={`p-2.5 rounded-2xl shrink-0 ${cat.iconBg}`}>
-                        <Icon className="w-5 h-5" />
+                    <div key={idx} className="flex items-start gap-3.5">
+                      <div className={`p-2.5 rounded-xl shrink-0 ${cat.iconBg}`}>
+                        <Icon className="w-4 h-4" />
                       </div>
                       <div className="space-y-0.5">
                         <h4 className="text-xs font-black text-slate-900">{cat.title}</h4>
@@ -209,14 +209,14 @@ export default function ReportIssuePage() {
               </div>
 
               {/* IMPORTANT NOTE BADGE */}
-              <div className="bg-purple-50/60 border border-purple-100 p-4 rounded-2xl flex items-center justify-between gap-3 pt-4">
-                <div className="space-y-1">
-                  <h5 className="text-xs font-black text-purple-950">Your report is important to us</h5>
-                  <p className="text-[11px] font-semibold text-purple-700/80 leading-snug">
-                    We review every report carefully and take necessary action to maintain trust.
+              <div className="bg-emerald-50/70 border border-emerald-100 p-4 rounded-2xl flex items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <h5 className="text-xs font-black text-emerald-950">Your report is confidential</h5>
+                  <p className="text-[11px] font-semibold text-emerald-800 leading-snug">
+                    We review every submission carefully and protect your personal identity.
                   </p>
                 </div>
-                <div className="p-3 bg-purple-100 text-purple-700 rounded-2xl shrink-0">
+                <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
               </div>
@@ -224,7 +224,7 @@ export default function ReportIssuePage() {
           </div>
 
           {/* RIGHT SIDE: REPORT FORM */}
-          <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-xs">
+          <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs">
             {isSubmitted ? (
               <div className="py-12 text-center space-y-4">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
@@ -246,49 +246,49 @@ export default function ReportIssuePage() {
                     setFile(null);
                     setErrorMessage('');
                   }}
-                  className="mt-4 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+                  className="mt-4 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-emerald-900/10 cursor-pointer"
                 >
                   Submit Another Report
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <h3 className="text-lg font-black text-slate-900">Report an Issue</h3>
-                  <p className="text-xs font-semibold text-slate-400 mt-0.5">
+                  <p className="text-xs font-medium text-slate-500 mt-0.5">
                     Please provide accurate details so we can investigate and resolve the issue.
                   </p>
                 </div>
 
                 {errorMessage && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-semibold">
+                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-semibold">
                     {errorMessage}
                   </div>
                 )}
 
                 {/* What do you want to report */}
                 <div>
-                  <label className="block text-xs font-black text-slate-700 mb-1.5">
-                    What do you want to report? <span className="text-pink-600">*</span>
+                  <label className="block text-xs font-black text-slate-700 mb-1.5 tracking-wide">
+                    What do you want to report? <span className="text-rose-500">*</span>
                   </label>
                   <select
                     value={issueType}
                     onChange={(e) => setIssueType(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-xs font-semibold text-slate-800 outline-none transition-all focus:border-indigo-600 focus:bg-white"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 cursor-pointer"
                   >
                     <option value="">Select an option</option>
                     <option value="Incorrect Information">Incorrect Information</option>
                     <option value="Fake or Duplicate Listing">Fake or Duplicate Listing</option>
                     <option value="Inappropriate Content">Inappropriate Content</option>
-                    <option value="Owner Misconduct">Owner Misconduct</option>
+                    <option value="Owner Misconduct">Host Misconduct</option>
                     <option value="Other Issues">Other Issues</option>
                   </select>
                 </div>
 
                 {/* PG Listing (If related) */}
                 <div>
-                  <label className="block text-xs font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-black text-slate-700 mb-1.5 tracking-wide">
                     PG Listing <span className="text-slate-400 font-normal">(if related)</span>
                   </label>
                   <div className="relative">
@@ -300,7 +300,7 @@ export default function ReportIssuePage() {
                       value={pgListing}
                       onChange={(e) => setPgListing(e.target.value)}
                       placeholder="Search for PG by name or location (optional)"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-800 outline-none transition-all focus:border-indigo-600 focus:bg-white placeholder:text-slate-400"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
                     />
                   </div>
                   <p className="text-[10px] text-slate-400 font-medium mt-1">Start typing to search a PG (optional)</p>
@@ -308,8 +308,8 @@ export default function ReportIssuePage() {
 
                 {/* Location of the issue */}
                 <div>
-                  <label className="block text-xs font-black text-slate-700 mb-1.5">
-                    Location of the issue <span className="text-pink-600">*</span>
+                  <label className="block text-xs font-black text-slate-700 mb-1.5 tracking-wide">
+                    Location of the issue <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
@@ -320,16 +320,16 @@ export default function ReportIssuePage() {
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       required
-                      placeholder="City / Area / Locality"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-800 outline-none transition-all focus:border-indigo-600 focus:bg-white placeholder:text-slate-400"
+                      placeholder="City / Area / Locality in Bhopal"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
                     />
                   </div>
                 </div>
 
                 {/* Description of the issue */}
                 <div>
-                  <label className="block text-xs font-black text-slate-700 mb-1.5">
-                    Description of the issue <span className="text-pink-600">*</span>
+                  <label className="block text-xs font-black text-slate-700 mb-1.5 tracking-wide">
+                    Description of the issue <span className="text-rose-500">*</span>
                   </label>
                   <textarea
                     rows={4}
@@ -338,7 +338,7 @@ export default function ReportIssuePage() {
                     required
                     minLength={10}
                     placeholder="Please describe the issue in detail..."
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-xs font-semibold text-slate-800 outline-none transition-all focus:border-indigo-600 focus:bg-white placeholder:text-slate-400"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400 resize-none"
                   />
                   <p className="text-[10px] text-slate-400 font-medium mt-1">Minimum 10 characters</p>
                 </div>
@@ -356,12 +356,12 @@ export default function ReportIssuePage() {
 
                 {/* Upload Evidence (Optional) */}
                 <div>
-                  <label className="block text-xs font-black text-slate-700 mb-1.5">
+                  <label className="block text-xs font-black text-slate-700 mb-1.5 tracking-wide">
                     Upload Evidence <span className="text-slate-400 font-normal">(Optional)</span>
                   </label>
                   
                   <label htmlFor="file-upload" className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer bg-slate-50/50 hover:bg-slate-100/50 transition-colors group">
-                    <UploadCloud className="w-8 h-8 text-indigo-500 group-hover:scale-110 transition-transform mb-2" />
+                    <UploadCloud className="w-8 h-8 text-emerald-600 group-hover:scale-110 transition-transform mb-2" />
                     <span className="text-xs font-extrabold text-slate-700">
                       {file ? file.name : 'Click to upload or drag and drop'}
                     </span>
@@ -376,34 +376,34 @@ export default function ReportIssuePage() {
                       className="hidden" 
                     />
                   </label>
-                  <p className="text-[10px] text-slate-400 font-medium mt-1">Screenshots or photos help us understand the issue better.</p>
+                  <p className="text-[10px] text-slate-400 font-medium mt-1">Screenshots or photos help us investigate faster.</p>
                 </div>
 
                 {/* CAPTCHA VERIFICATION */}
                 <div>
-                  <label className="block text-xs font-black text-slate-700 mb-1.5">Verification</label>
+                  <label className="block text-xs font-black text-slate-700 mb-1.5 tracking-wide">Verification</label>
                   <div className="flex items-center gap-3">
-                    <div className="rounded-md bg-slate-100 px-3 py-2 text-sm font-bold">{captchaQuestion}</div>
-                    <input type="text" value={userCaptcha} onChange={(e) => setUserCaptcha(e.target.value)} placeholder="Answer" className="w-32 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none" required />
+                    <div className="rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2 text-xs font-bold text-slate-800">{captchaQuestion}</div>
+                    <input type="text" value={userCaptcha} onChange={(e) => setUserCaptcha(e.target.value)} placeholder="Answer" className="w-32 px-3 py-2 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:bg-white" required />
                   </div>
-                  <p className="mt-1 text-[10px] text-slate-400">Solve the math question to verify you're human.</p>
+                  <p className="mt-1 text-[10px] text-slate-400 font-medium">Solve the question to verify you&apos;re human.</p>
                 </div>
 
                 {/* SUBMIT BUTTON */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl py-3 text-xs font-extrabold transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-indigo-200 cursor-pointer active:scale-[0.99]"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl py-3 px-4 text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 cursor-pointer active:scale-98"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Sending Email...</span>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Submitting Report...</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Submit Report</span>
+                      <span>Submit Grievance Report</span>
                     </>
                   )}
                 </button>

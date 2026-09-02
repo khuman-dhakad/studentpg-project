@@ -215,29 +215,29 @@ export function OwnerRegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-6 shadow-xl shadow-slate-100/50 backdrop-blur-sm md:p-8">
+    <div className="w-full max-w-2xl rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
       {/* HEADER */}
       <div className="text-center">
-        <h2 className="text-2xl font-extrabold tracking-tight text-ink md:text-3xl">
+        <h2 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
           Create Host Account
         </h2>
-        <p className="mt-2 text-xs text-ink-soft md:text-sm">
-          Onboard your premium Paying Guest properties
+        <p className="mt-1.5 text-xs font-medium text-slate-500 md:text-sm">
+          Onboard your premium Paying Guest properties on StudentPG
         </p>
       </div>
 
       {/* FORM */}
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
         {/* GLOBAL ERROR */}
         {globalError && (
-          <div className="rounded-xl border border-danger/20 bg-danger-soft/10 p-3.5 text-xs font-medium text-danger md:text-sm">
+          <div className="rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-700">
             {globalError}
           </div>
         )}
 
         {showOtpStep && (
-          <div className="rounded-xl border border-brand/20 bg-brand/5 p-3.5 text-xs text-brand md:text-sm">
-            Verification code sent to <span className="font-bold">{registeredEmail}</span>. Enter the 6-digit OTP to activate your host account.
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-800">
+            Verification code sent to <span className="font-black">{registeredEmail}</span>. Enter the 6-digit OTP to activate your host account.
           </div>
         )}
 
@@ -247,11 +247,11 @@ export function OwnerRegisterForm() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* NAME */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
-              Full Name
+            <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+              Full Name <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-soft">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <User className="h-4 w-4" />
               </span>
               <input
@@ -259,11 +259,11 @@ export function OwnerRegisterForm() {
                 autoComplete="name"
                 {...register('name')}
                 placeholder="John Doe"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 pl-10 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
             </div>
             {errors.name && (
-              <p className="mt-1.5 text-xs font-semibold text-danger">
+              <p className="mt-1.5 text-xs font-semibold text-rose-600">
                 {errors.name.message}
               </p>
             )}
@@ -271,11 +271,11 @@ export function OwnerRegisterForm() {
 
           {/* EMAIL */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
-              Email Address
+            <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+              Email Address <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-soft">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <Mail className="h-4 w-4" />
               </span>
               <input
@@ -283,11 +283,11 @@ export function OwnerRegisterForm() {
                 autoComplete="email"
                 {...register('email')}
                 placeholder="johndoe@example.com"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 pl-10 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
             </div>
             {errors.email && (
-              <p className="mt-1.5 text-xs font-semibold text-danger">
+              <p className="mt-1.5 text-xs font-semibold text-rose-600">
                 {errors.email.message}
               </p>
             )}
@@ -298,11 +298,11 @@ export function OwnerRegisterForm() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* PHONE */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
-              Primary Phone
+            <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+              Primary Phone <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-soft">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <Phone className="h-4 w-4" />
               </span>
               <input
@@ -310,11 +310,11 @@ export function OwnerRegisterForm() {
                 autoComplete="tel"
                 {...register('phone')}
                 placeholder="9876543210"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 pl-10 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
             </div>
             {errors.phone && (
-              <p className="mt-1.5 text-xs font-semibold text-danger">
+              <p className="mt-1.5 text-xs font-semibold text-rose-600">
                 {errors.phone.message}
               </p>
             )}
@@ -322,14 +322,14 @@ export function OwnerRegisterForm() {
 
           {/* WHATSAPP */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
+            <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
               WhatsApp Number
-              <span className="ml-1 text-[10px] font-normal lowercase text-ink-soft/60">
+              <span className="ml-1 text-[10px] font-normal text-slate-400">
                 (optional)
               </span>
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-soft">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <Building className="h-4 w-4" />
               </span>
               <input
@@ -337,7 +337,7 @@ export function OwnerRegisterForm() {
                 autoComplete="tel"
                 {...register('whatsappNumber')}
                 placeholder="9876543210"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 pl-10 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -347,11 +347,11 @@ export function OwnerRegisterForm() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* PASSWORD */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
-              Password
+            <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+              Password <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-soft">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <Lock className="h-4 w-4" />
               </span>
               <input
@@ -359,19 +359,19 @@ export function OwnerRegisterForm() {
                 autoComplete="new-password"
                 {...register('password')}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 pl-10 pr-10 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 pr-10 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
               <button
                 type="button"
                 onClick={() => setShowPass((value) => !value)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-ink-soft hover:text-ink"
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 cursor-pointer"
                 aria-label={showPass ? 'Hide password' : 'Show password'}
               >
                 {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1.5 text-xs font-semibold text-danger">
+              <p className="mt-1.5 text-xs font-semibold text-rose-600">
                 {errors.password.message}
               </p>
             )}
@@ -379,11 +379,11 @@ export function OwnerRegisterForm() {
 
           {/* CONFIRM PASSWORD */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
-              Confirm Password
+            <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+              Confirm Password <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-soft">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <Lock className="h-4 w-4" />
               </span>
               <input
@@ -391,11 +391,11 @@ export function OwnerRegisterForm() {
                 autoComplete="new-password"
                 {...register('confirmPassword')}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 pl-10 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pl-10 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
             </div>
             {errors.confirmPassword && (
-              <p className="mt-1.5 text-xs font-semibold text-danger">
+              <p className="mt-1.5 text-xs font-semibold text-rose-600">
                 {errors.confirmPassword.message}
               </p>
             )}
@@ -414,17 +414,17 @@ export function OwnerRegisterForm() {
                 setAgreed(checked);
                 if (checked) setCheckboxError(false);
               }}
-              className="mt-0.5 h-4 w-4 cursor-pointer rounded border-line accent-brand"
+              className="mt-0.5 h-4 w-4 cursor-pointer rounded border-slate-300 text-emerald-600 accent-emerald-600 focus:ring-emerald-500"
             />
             <label
               htmlFor="privacy-check"
-              className="cursor-pointer select-none text-xs font-semibold leading-snug text-ink-soft"
+              className="cursor-pointer select-none text-xs font-semibold leading-snug text-slate-600"
             >
               I agree to the{' '}
               <button
                 type="button"
                 onClick={() => setModalType('privacy')}
-                className="font-bold text-brand hover:underline"
+                className="font-bold text-emerald-700 hover:underline cursor-pointer"
               >
                 Privacy Policy
               </button>{' '}
@@ -432,7 +432,7 @@ export function OwnerRegisterForm() {
               <button
                 type="button"
                 onClick={() => setModalType('terms')}
-                className="font-bold text-brand hover:underline"
+                className="font-bold text-emerald-700 hover:underline cursor-pointer"
               >
                 Terms of Owner
               </button>
@@ -441,8 +441,8 @@ export function OwnerRegisterForm() {
           </div>
 
           {checkboxError && (
-            <p className="mt-1.5 animate-pulse text-xs font-semibold text-danger">
-              ⚠️ Please accept the Terms & Privacy Policy before submitting.
+            <p className="mt-1.5 text-xs font-semibold text-rose-600">
+              ⚠️ Please accept the Terms &amp; Privacy Policy before submitting.
             </p>
           )}
         </div>
@@ -453,8 +453,8 @@ export function OwnerRegisterForm() {
         {showOtpStep && (
           <div className="space-y-4 pt-2">
             <div>
-              <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink-soft">
-                Email Verification OTP
+              <label className="mb-1.5 block text-xs font-black text-slate-700 tracking-wide">
+                Email Verification OTP (6 digits)
               </label>
               <input
                 type="text"
@@ -463,7 +463,7 @@ export function OwnerRegisterForm() {
                 value={otp}
                 onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="123456"
-                className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 text-sm text-ink outline-none transition-all focus:border-brand focus:ring-2 focus:ring-brand/10 placeholder:text-ink-soft/50"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-semibold text-slate-900 outline-none transition-all focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-600/10 placeholder:text-slate-400"
               />
             </div>
 
@@ -471,8 +471,8 @@ export function OwnerRegisterForm() {
               type="button"
               onClick={handleVerifyOtp}
               disabled={isVerifying}
-              className={`w-full rounded-xl py-3.5 text-sm font-bold shadow-md transition-all duration-200 ${
-                isVerifying ? 'cursor-not-allowed bg-slate-200 text-slate-400 shadow-none' : 'cursor-pointer bg-brand text-cream hover:bg-brand-dark active:scale-[0.98]'
+              className={`w-full rounded-xl py-3 px-4 text-xs font-black uppercase tracking-wider text-white shadow-md shadow-emerald-900/10 transition-all ${
+                isVerifying ? 'cursor-not-allowed bg-slate-300 text-slate-500 shadow-none' : 'cursor-pointer bg-emerald-600 hover:bg-emerald-700 active:scale-98'
               }`}
             >
               {isVerifying ? 'Verifying Email...' : 'Verify & Complete Registration'}
@@ -511,7 +511,7 @@ export function OwnerRegisterForm() {
                   setGlobalError(extractErrorMessage(error));
                 }
               }}
-              className="w-full text-center text-xs font-bold text-brand underline underline-offset-2"
+              className="w-full text-center text-xs font-bold text-emerald-700 hover:text-emerald-800 underline underline-offset-2 cursor-pointer"
             >
               Resend OTP
             </button>
@@ -524,16 +524,16 @@ export function OwnerRegisterForm() {
             <button
               type="submit"
               disabled={isRegistering || !agreed}
-              className={`mt-2 w-full rounded-xl py-3.5 text-sm font-bold shadow-md transition-all duration-200 ${
+              className={`mt-2 w-full rounded-xl py-3 px-4 text-xs font-black uppercase tracking-wider shadow-md transition-all ${
                 agreed && !isRegistering
-                  ? 'cursor-pointer bg-brand text-cream hover:bg-brand-dark active:scale-[0.98]'
+                  ? 'cursor-pointer bg-emerald-600 text-white shadow-emerald-900/10 hover:bg-emerald-700 active:scale-98'
                   : 'cursor-not-allowed bg-slate-200 text-slate-400 shadow-none'
               }`}
             >
               {isRegistering ? (
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-2 text-white">
                   <svg
-                    className="h-4 w-4 animate-spin text-cream"
+                    className="h-4 w-4 animate-spin text-white"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -561,9 +561,9 @@ export function OwnerRegisterForm() {
         )}
 
         {/* FOOTER LINK */}
-        <div className="mt-4 text-center text-xs text-ink-soft">
+        <div className="mt-4 text-center text-xs font-medium text-slate-500 pt-3 border-t border-slate-100">
           Already have a host account?{' '}
-          <Link href={ROUTES.OWNER.LOGIN} className="font-bold text-brand hover:underline">
+          <Link href={ROUTES.OWNER.LOGIN} className="font-bold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer">
             Sign In
           </Link>
         </div>
@@ -572,24 +572,24 @@ export function OwnerRegisterForm() {
       {/* MODALS */}
       {modalType && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg rounded-2xl bg-surface p-6 shadow-2xl">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl">
             <button
               onClick={() => setModalType(null)}
-              className="absolute right-4 top-4 rounded-lg p-1 text-ink-soft hover:bg-cream hover:text-ink"
+              className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="flex items-center gap-2 text-brand">
+            <div className="flex items-center gap-2 text-emerald-600">
               {modalType === 'privacy' ? (
-                <ShieldCheck className="h-6 w-6" />
+                <ShieldCheck className="h-5 w-5" />
               ) : (
-                <FileText className="h-6 w-6" />
+                <FileText className="h-5 w-5" />
               )}
-              <h3 className="text-lg font-bold text-ink">
+              <h3 className="text-base font-black text-slate-900">
                 {modalType === 'privacy' ? 'Privacy Policy' : 'Terms of Owner'}
               </h3>
             </div>
-            <div className="mt-4 max-h-60 overflow-y-auto text-xs text-ink-soft space-y-2 leading-relaxed">
+            <div className="mt-4 max-h-60 overflow-y-auto text-xs text-slate-600 space-y-2 leading-relaxed">
               {modalType === 'privacy' ? (
                 <>
                   <p>We respect your privacy and protect all personal and property data.</p>
@@ -608,9 +608,9 @@ export function OwnerRegisterForm() {
                 setCheckboxError(false);
                 setModalType(null);
               }}
-              className="mt-6 w-full rounded-xl bg-brand py-2.5 text-xs font-bold text-cream hover:bg-brand-dark"
+              className="mt-6 w-full rounded-xl bg-emerald-600 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-emerald-700 shadow-md shadow-emerald-900/10 cursor-pointer"
             >
-              I Accept & Close
+              I Accept &amp; Close
             </button>
           </div>
         </div>

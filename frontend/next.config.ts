@@ -6,7 +6,6 @@ const scriptSources = process.env.NODE_ENV === "development"
   : "'self' 'unsafe-inline'";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   compress: true,
   experimental: {
     optimizePackageImports: ["lucide-react", "@reduxjs/toolkit", "react-redux"],
