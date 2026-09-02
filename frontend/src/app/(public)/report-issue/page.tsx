@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
+import { BACKEND_API_URL } from '@/constants/config';
 // import Link from 'next/link';
 import { 
   Pencil, 
@@ -25,6 +26,7 @@ export default function ReportIssuePage() {
   const [pgListing, setPgListing] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [website, setWebsite] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,6 +85,7 @@ export default function ReportIssuePage() {
       formData.append('pgListing', pgListing);
       formData.append('location', location);
       formData.append('detail', description);
+      formData.append('website', website);
       if (file) {
         // client-side validation
         if (!file.type.startsWith('image/')) {
@@ -98,19 +101,7 @@ export default function ReportIssuePage() {
         formData.append('images', file);
       }
 
-      // localStorage rate limit: max 5 per 24h per browser
-      const key = 'report_submissions';
-      const now = Date.now();
-      const raw = localStorage.getItem(key);
-      const arr = raw ? JSON.parse(raw) as number[] : [];
-      const recent = arr.filter((ts) => now - ts < 24 * 60 * 60 * 1000);
-      if (recent.length >= 5) {
-        setErrorMessage('You have reached the maximum report submissions for today from this browser.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // include captcha token and user answer
+      // server-side rate limiting handles anonymous abuse protection; no browser-only per-student cap is used.
       formData.append('captchaToken', captchaToken);
       formData.append('captchaAnswer', userCaptcha);
 
@@ -123,8 +114,6 @@ export default function ReportIssuePage() {
 
       if (res.ok && data.success) {
         setIsSubmitted(true);
-        recent.push(now);
-        localStorage.setItem(key, JSON.stringify(recent));
       } else {
         setErrorMessage(data.message || 'Failed to send report. Please try again.');
       }
@@ -143,7 +132,8 @@ export default function ReportIssuePage() {
 
   const fetchCaptcha = async () => {
     try {
-      const res = await fetch(BACKEND_ENDPOINTS.APP_API.CAPTCHA);
+      const captchaUrl = `${BACKEND_API_URL.replace(/\/+$/, '')}${BACKEND_ENDPOINTS.APP_API.CAPTCHA}`;
+      const res = await fetch(captchaUrl);
       if (!res.ok) return;
       const data = await res.json();
       setCaptchaQuestion(data.question_ || data.question || '');
@@ -252,6 +242,7 @@ export default function ReportIssuePage() {
                     setPgListing('');
                     setLocation('');
                     setDescription('');
+                    setWebsite('');
                     setFile(null);
                     setErrorMessage('');
                   }}
@@ -351,6 +342,17 @@ export default function ReportIssuePage() {
                   />
                   <p className="text-[10px] text-slate-400 font-medium mt-1">Minimum 10 characters</p>
                 </div>
+
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  className="hidden"
+                  aria-hidden="true"
+                />
 
                 {/* Upload Evidence (Optional) */}
                 <div>

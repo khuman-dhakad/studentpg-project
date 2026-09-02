@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Phone, Mail, MapPin, Send, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
+import { BACKEND_API_URL } from '@/constants/config';
 import { useEffect } from 'react';
 
 export default function ContactUsPage() {
@@ -12,6 +13,7 @@ export default function ContactUsPage() {
     email: '',
     subject: '',
     message: '',
+    website: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -43,22 +45,11 @@ export default function ContactUsPage() {
     setStatusMessage(null);
 
     try {
-      // localStorage rate limit: max 5 submissions per 24h
-      const key = 'contact_submissions';
-      const now = Date.now();
-      const raw = localStorage.getItem(key);
-      const arr = raw ? JSON.parse(raw) as number[] : [];
-      const recent = arr.filter((ts) => now - ts < 24 * 60 * 60 * 1000);
-      if (recent.length >= 5) {
-        setStatusMessage({ type: 'error', text: 'You have reached the maximum submissions for today.' });
-        setLoading(false);
-        return;
-      }
-
-      // include captcha info (send server token + user-provided answer)
+      // server-side rate limiting is enforced by the backend; we intentionally avoid a browser-only per-student counter.
       const payload = { ...formData, captchaToken, captchaAnswer: userCaptcha };
 
-      const res = await fetch(BACKEND_ENDPOINTS.APP_API.CONTACT, {
+      const contactUrl = `${BACKEND_API_URL.replace(/\/+$/, '')}${BACKEND_ENDPOINTS.APP_API.CONTACT}`;
+      const res = await fetch(contactUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -68,10 +59,7 @@ export default function ContactUsPage() {
 
       if (res.ok) {
         setStatusMessage({ type: 'success', text: data.message });
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        // update localStorage
-        recent.push(now);
-        localStorage.setItem(key, JSON.stringify(recent));
+        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
         // reset captcha (fetch a new server challenge)
         await fetchCaptcha();
         setUserCaptcha('');
@@ -92,7 +80,8 @@ export default function ContactUsPage() {
 
   const fetchCaptcha = async () => {
     try {
-      const res = await fetch(BACKEND_ENDPOINTS.APP_API.CAPTCHA);
+      const captchaUrl = `${BACKEND_API_URL.replace(/\/+$/, '')}${BACKEND_ENDPOINTS.APP_API.CAPTCHA}`;
+      const res = await fetch(captchaUrl);
       if (!res.ok) return;
       const data = await res.json();
       setCaptchaQuestion(data.question_ || data.question || '');
@@ -247,6 +236,17 @@ export default function ContactUsPage() {
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600 transition-all resize-none"
               />
             </div>
+
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={formData.website}
+              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+              className="hidden"
+              aria-hidden="true"
+            />
 
             <div>
               <label className="block text-xs font-black text-slate-700 uppercase mb-1">Verification</label>
