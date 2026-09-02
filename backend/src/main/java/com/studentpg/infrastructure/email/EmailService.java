@@ -73,6 +73,43 @@ private String brevoUrl;
                 "<p>Hello,</p><p>Your email verification code is: <strong>" + otp + "</strong></p><p>This code will expire in 10 minutes.</p><p>If you did not request this, please ignore this email.</p>");
     }
 
+    public void sendSupportEmail(String toEmail, String subject, String textBody, String htmlBody) {
+        if (toEmail == null || toEmail.isBlank()) {
+            throw new IllegalArgumentException("Support email recipient is required");
+        }
+
+        String effectiveFrom = (fromEmail != null && !fromEmail.isBlank()) ? fromEmail : "studentpg.support@gmail.com";
+        String effectiveSenderName = (senderName != null && !senderName.isBlank()) ? senderName : "StudentPG";
+        String effectiveSender = effectiveSenderName + " <" + effectiveFrom + ">";
+
+        if (mailSender != null) {
+            try {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom(effectiveSender);
+                message.setTo(toEmail);
+                message.setSubject(subject);
+                message.setText(textBody);
+                mailSender.send(message);
+                logger.info("Support email sent successfully to {} with subject {}", toEmail, subject);
+                return;
+            } catch (MailException ex) {
+                logger.warn("SMTP delivery failed for support email to {}. Falling back to Brevo if configured. Error: {}", toEmail, ex.getMessage());
+                if (brevoApiKey == null || brevoApiKey.isBlank()) {
+                    throw new MailSendException("No SMTP or Brevo provider is configured for support email", ex);
+                }
+            }
+        }
+
+        if (brevoApiKey != null && !brevoApiKey.isBlank()) {
+            String senderEmail = (brevoSenderEmail != null && !brevoSenderEmail.isBlank()) ? brevoSenderEmail : effectiveFrom;
+            String senderDisplayName = (brevoSenderName != null && !brevoSenderName.isBlank()) ? brevoSenderName : effectiveSenderName;
+            sendOtpEmailViaBrevo(toEmail, "support", subject, htmlBody, textBody, senderEmail, senderDisplayName);
+            return;
+        }
+
+        throw new MailSendException("No SMTP or Brevo provider is configured for support email");
+    }
+
     private void validateOtpRequest(String toEmail, String otp) {
         if (toEmail == null || toEmail.isBlank()) {
             throw new IllegalArgumentException("Recipient email is required");
