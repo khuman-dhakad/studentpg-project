@@ -124,14 +124,14 @@ export function MarketplaceHero() {
           </div>
 
           {/* Quick Platform Quality Badges */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
-            <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-xs font-bold text-emerald-800">
+          <div suppressHydrationWarning className="hidden lg:flex items-center gap-3 shrink-0">
+            <div suppressHydrationWarning className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-xs font-bold text-emerald-800">
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>100% Verified Hosts</span>
+              <span suppressHydrationWarning>100% Verified Hosts</span>
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100/70 px-3.5 py-2 text-xs font-bold text-slate-800">
+            <div suppressHydrationWarning className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100/70 px-3.5 py-2 text-xs font-bold text-slate-800">
               <Zap className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>Direct WhatsApp Connect</span>
+              <span suppressHydrationWarning>Direct WhatsApp Connect</span>
             </div>
           </div>
         </div>
