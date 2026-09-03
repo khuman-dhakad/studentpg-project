@@ -33,7 +33,7 @@ EXPOSE 8080
 
 # Environment variables with sensible defaults
 ENV SPRING_PROFILES_ACTIVE=prod \
-    JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Djava.security.egd=file:/dev/./urandom"
+  JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=60.0 -XX:InitialRAMPercentage=15.0 -XX:MaxMetaspaceSize=128m -Djava.security.egd=file:/dev/./urandom"
 
 # Healthcheck against Spring Boot Actuator
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \

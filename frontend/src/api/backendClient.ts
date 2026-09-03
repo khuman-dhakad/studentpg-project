@@ -38,6 +38,7 @@ interface RequestOptions extends RequestInit {
   token?: string;
   isMultipart?: boolean;
   onSetCookie?: (value: string | null) => void;
+  next?: { revalidate?: number; tags?: string[] };
 }
 
 
@@ -262,7 +263,7 @@ export const backendClient = {
      ...fetchOptions,
     headers,
 
-    cache:"no-store",
+    cache: options.cache ?? (options.next ? "force-cache" : "no-store"),
     credentials: "include",
 })
 
