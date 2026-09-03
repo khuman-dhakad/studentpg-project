@@ -10,16 +10,38 @@ import { useSessionQuery, useLogoutMutation } from '@/features/auth/api/authApi'
 import { baseApi } from '@/api/baseApi';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { OwnerVerificationBadge } from '@/components/owner/OwnerVerificationBadge';
+import { OwnerVerificationModal } from '@/components/owner/OwnerVerificationModal';
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVerificationPromptOpen, setIsVerificationPromptOpen] = useState(false);
 
   // RTK Query Hooks
   const { data: session, isLoading } = useSessionQuery();
-  const [logout] = useLogoutMutation();
+  const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
+
+  useEffect(() => {
+    const email = session?.user?.email;
+    if (!email || session?.user?.role !== 'OWNER' || session.profile?.verificationStatus !== 'NOT_VERIFIED') {
+      return;
+    }
+
+    const promptKey = `owner-verification-prompt:${email}`;
+    if (localStorage.getItem(promptKey) !== 'dismissed') {
+      setIsVerificationPromptOpen(true);
+    }
+  }, [session?.profile?.verificationStatus, session?.user?.email, session?.user?.role]);
+
+  const dismissVerificationPrompt = () => {
+    const email = session?.user?.email;
+    if (email) {
+      localStorage.setItem(`owner-verification-prompt:${email}`, 'dismissed');
+    }
+    setIsVerificationPromptOpen(false);
+  };
 
   useEffect(() => {
     if (!isLoading && !session?.isAuthenticated) {
@@ -28,6 +50,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }, [isLoading, router, session?.isAuthenticated]);
 
   const handleLogout = async () => {
+    setIsMobileMenuOpen(false);
     try {
       await logout().unwrap();
       dispatch(baseApi.util.resetApiState());
@@ -84,7 +107,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
           </nav>
         </div>
 
-        <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black tracking-wide uppercase text-rose-500 hover:bg-rose-50 transition-all w-full text-left cursor-pointer">
+        <button type="button" onClick={handleLogout} disabled={isLoggingOut} aria-busy={isLoggingOut} className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black tracking-wide uppercase text-rose-500 hover:bg-rose-50 transition-all w-full text-left cursor-pointer disabled:cursor-wait disabled:opacity-60">
           <LogOut className="w-4 h-4" /> Logout
         </button>
       </aside>
@@ -108,6 +131,13 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
         </header>
         <main className="flex-1 p-4 sm:p-8">{children}</main>
       </div>
+      {isVerificationPromptOpen && session?.profile && (
+        <OwnerVerificationModal
+          status={session.profile.verificationStatus ?? 'NOT_VERIFIED'}
+          rejectionReason={session.profile.verificationRejectionReason}
+          onClose={dismissVerificationPrompt}
+        />
+      )}
     </div>
   );
 }

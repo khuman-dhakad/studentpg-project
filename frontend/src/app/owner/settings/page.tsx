@@ -454,7 +454,7 @@ export default function OwnerSettingsPage() {
                     disabled
                     className="mt-5 cursor-not-allowed rounded-xl bg-emerald-200 px-5 py-2.5 text-xs font-black text-emerald-800 shadow-sm opacity-90"
                   >
-                    Processing...
+                    Pending
                   </button>
                 ) : canSubmitVerification ? (
                   <button

@@ -105,7 +105,8 @@ export default function ReportIssuePage() {
       formData.append('captchaToken', captchaToken);
       formData.append('captchaAnswer', userCaptcha);
 
-      const res = await fetch(BACKEND_ENDPOINTS.APP_API.REPORT_ISSUE, {
+      const reportUrl = `${BACKEND_API_URL.replace(/\/+$/, '')}${BACKEND_ENDPOINTS.APP_API.REPORT_ISSUE}`;
+      const res = await fetch(reportUrl, {
         method: 'POST',
         body: formData,
       });

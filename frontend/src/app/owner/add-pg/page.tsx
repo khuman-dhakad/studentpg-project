@@ -39,7 +39,11 @@ interface ImageObject {
 
 export default function AddPgPage() {
   const router = useRouter();
-  const { data: session, isLoading: isSessionLoading } = useSessionQuery();
+  const { data: session, isLoading: isSessionLoading } = useSessionQuery(undefined, {
+    pollingInterval: 15000,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [message, setMessage] = useState('');
