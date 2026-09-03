@@ -9,6 +9,7 @@ import com.studentpg.modules.auth.dto.response.AuthLoginResult;
 
 import com.studentpg.modules.owner.entity.Owner;
 import com.studentpg.modules.owner.repository.OwnerRepository;
+import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
 
 import com.studentpg.security.jwt.JwtService;
 
@@ -111,5 +112,27 @@ public class AuthService {
         String accessToken = jwtService.generateToken(normalizedEmail, owner.getTokenVersion());
         logger.info("Owner login successful: {}", normalizedEmail);
         return new AuthLoginResult(accessToken, normalizedEmail, "OWNER");
+    }
+
+    public OwnerProfileResponse getOwnerProfile(String email) {
+        if (email == null || email.isBlank()) {
+            return null;
+        }
+
+        Owner owner = ownerRepository.findByEmailIgnoreCase(email.trim()).orElse(null);
+        if (owner == null) {
+            return null;
+        }
+
+        return new OwnerProfileResponse(
+                owner.getId(),
+                owner.getName(),
+                owner.getEmail(),
+                owner.getPhone(),
+                owner.getRole(),
+                owner.getWhatsappNumber(),
+                owner.getVerificationStatus(),
+                owner.getVerificationRejectionReason()
+        );
     }
 }
