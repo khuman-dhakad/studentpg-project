@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://studentpg.example.com',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.studentpg.in',
   generateRobotsTxt: true,
   changefreq: 'weekly',
   priority: 0.7,

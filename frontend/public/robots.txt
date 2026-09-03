@@ -4,4 +4,4 @@ Disallow: /owner/
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://studentpg.example.com/sitemap.xml
+Sitemap: https://www.studentpg.in/sitemap.xml
