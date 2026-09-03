@@ -462,7 +462,7 @@ export default function OwnerSettingsPage() {
                     onClick={() => setIsVerificationModalOpen(true)}
                     className="mt-5 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white shadow-md shadow-emerald-100 transition-all hover:bg-emerald-700"
                   >
-                    {verificationStatus === 'REJECTED' ? 'Reverification' : 'Start Verification'}
+                    {verificationStatus === 'REJECTED' ? 'Restart Verification' : 'Start Verification'}
                   </button>
                 ) : null}
               </div>

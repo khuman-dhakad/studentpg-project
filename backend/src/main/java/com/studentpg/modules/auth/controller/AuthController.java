@@ -4,6 +4,7 @@ import com.studentpg.modules.auth.dto.request.LoginRequest;
 import com.studentpg.modules.auth.dto.response.AuthLoginResult;
 import com.studentpg.modules.auth.dto.response.LoginResponse;
 import com.studentpg.modules.auth.service.AuthService;
+import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
 
 import jakarta.validation.Valid;
 
@@ -270,10 +271,11 @@ ResponseCookie accessCookie =
         );
 
 
-        response.put(
-                "profile",
-                null
-        );
+        OwnerProfileResponse profile = "OWNER".equals(role)
+                ? authService.getOwnerProfile(email)
+                : null;
+
+        response.put("profile", profile);
 
 
         return ResponseEntity.ok(response);
