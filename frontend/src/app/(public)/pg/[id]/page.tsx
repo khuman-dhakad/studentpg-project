@@ -367,13 +367,19 @@ export default async function PgDetailsPage({
                 {contactNumber && (
                   <div className="flex items-center gap-2">
                     <Phone className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>{contactNumber}</span>
+                    <span><span className="font-bold text-slate-900">Phone:</span> {contactNumber}</span>
+                  </div>
+                )}
+                {whatsappContact && (
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
+                    <span><span className="font-bold text-slate-900">WhatsApp:</span> {whatsappContact}</span>
                   </div>
                 )}
                 {ownerEmail && (
                   <div className="flex items-center gap-2 break-all">
                     <Mail className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>{ownerEmail}</span>
+                    <span><span className="font-bold text-slate-900">Email:</span> {ownerEmail}</span>
                   </div>
                 )}
               </div>

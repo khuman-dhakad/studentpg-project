@@ -43,12 +43,18 @@ public class PGPublicResponseMapper {
         response.setImages(pg.getImages());
 
         if (owner != null) {
+            String phone = owner.getPhone();
+            String whatsappNumber = owner.getWhatsappNumber();
+            if (whatsappNumber == null || whatsappNumber.isBlank()) {
+                whatsappNumber = phone;
+            }
+
             response.setOwner(new OwnerSummaryResponse(
                     owner.getId(),
                     owner.getName(),
                     owner.getEmail(),
-                    owner.getPhone(),
-                        owner.getWhatsappNumber(),
+                    phone,
+                    whatsappNumber,
                         owner.getVerificationStatus() == VerificationStatus.VERIFIED
             ));
         }
