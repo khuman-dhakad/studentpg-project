@@ -31,7 +31,8 @@ import { OwnerVerificationBadge } from '@/components/owner/OwnerVerificationBadg
 async function getListing(id: string) {
   try {
     return await backendClient.get<PG>(
-      BACKEND_ENDPOINTS.STUDENT.BY_ID(id)
+      BACKEND_ENDPOINTS.STUDENT.BY_ID(id),
+      { next: { revalidate: 60, tags: [`public-pg-${id}`] } }
     );
   } catch {
     return null;

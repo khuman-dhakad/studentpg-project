@@ -80,7 +80,9 @@ if (powerBackup) {
         ? `${BACKEND_ENDPOINTS.STUDENT.FILTER}?${queryParams.toString()}`
         : `${BACKEND_ENDPOINTS.STUDENT.PGS}?${queryParams.toString()}`;
 
-    const data = await backendClient.get<PagedResponse<PG> | PG[]>(endpoint);
+    const data = await backendClient.get<PagedResponse<PG> | PG[]>(endpoint, {
+      next: { revalidate: 30, tags: ['public-pgs'] },
+    });
     const items = Array.isArray(data) ? data : data.content || [];
 
     return (
