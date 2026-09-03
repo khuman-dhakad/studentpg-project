@@ -46,7 +46,7 @@ export function OwnerLoginForm() {
       if (role === 'ADMIN') {
         router.replace('/admin');
       } else if (role === 'OWNER') {
-        router.replace(ROUTES.OWNER.DASHBOARD || '/owner/dashboard');
+        router.replace(ROUTES.OWNER.PROFILE);
       } else {
         router.replace('/');
       }
