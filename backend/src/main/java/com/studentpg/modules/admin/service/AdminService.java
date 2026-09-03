@@ -80,8 +80,7 @@ public class AdminService {
                         throw new IllegalArgumentException("Invalid verification status.");
                 }
 
-                return ownerRepository.findAll().stream()
-                                .filter(owner -> owner.getVerificationStatus() == requestedStatus)
+                return ownerRepository.findByVerificationStatus(requestedStatus).stream()
                                 .map(this::toOwnerVerificationResponse)
                                 .toList();
         }
