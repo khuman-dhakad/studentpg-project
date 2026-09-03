@@ -83,7 +83,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
       )}
 
-      <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 p-6 flex flex-col justify-between z-50 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 shrink-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 p-6 pb-24 lg:pb-6 flex flex-col justify-between z-50 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 shrink-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="space-y-8">
           <div className="flex items-center justify-between px-2">
             <Link href={ROUTES.OWNER.DASHBOARD || '/owner/dashboard'} className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
