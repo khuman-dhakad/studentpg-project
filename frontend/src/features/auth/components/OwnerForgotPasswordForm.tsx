@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 import { Mail, KeyRound, Lock, ArrowRight, Loader2 } from 'lucide-react';
 
 export function OwnerForgotPasswordForm() {
@@ -20,7 +19,7 @@ export function OwnerForgotPasswordForm() {
 
     try {
       const normalizedEmail = email.trim().toLowerCase();
-      const response = await fetch(BACKEND_ENDPOINTS.OWNERS.FORGOT_PASSWORD, {
+      const response = await fetch('/api/auth/owner/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: normalizedEmail }),
@@ -48,7 +47,7 @@ export function OwnerForgotPasswordForm() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
       const trimmedOtp = otp.trim();
-      const response = await fetch(BACKEND_ENDPOINTS.OWNERS.RESET_PASSWORD, {
+      const response = await fetch('/api/auth/owner/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: normalizedEmail, otp: trimmedOtp, newPassword }),

@@ -96,7 +96,7 @@ export default function OwnerSettingsPage() {
     setStatusMessage(null);
 
     try {
-      const res = await fetch(BACKEND_ENDPOINTS.OWNERS.FORGOT_PASSWORD, {
+      const res = await fetch('/api/auth/owner/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),
@@ -127,7 +127,7 @@ export default function OwnerSettingsPage() {
     setStatusMessage(null);
 
     try {
-      const res = await fetch(BACKEND_ENDPOINTS.OWNERS.RESET_PASSWORD, {
+      const res = await fetch('/api/auth/owner/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, otp: otp.trim(), newPassword }),
