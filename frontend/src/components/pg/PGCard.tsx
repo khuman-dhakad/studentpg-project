@@ -1,19 +1,22 @@
 'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
 import { ROUTES } from '@/constants/routes';
 import {
   MapPin,
-  ShieldCheck,
-  HelpCircle,
+  Check,
+  Heart,
+  Star,
+  Wifi,
+  Utensils,
+  Snowflake,
+  Car,
   ChevronLeft,
   ChevronRight,
   X,
-  Images,
 } from 'lucide-react';
-
 import type { PG } from '@/types/pg.types';
 
 interface PGCardProps {
@@ -27,14 +30,9 @@ export function PGCard({ pg }: PGCardProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   const isVerified = pg.approvalStatus === 'APPROVED';
-
-  /*
-   * ============================================================
-   * ALL PG IMAGES
-   * ============================================================
-   */
 
   const images =
     pg.images && pg.images.length > 0
@@ -48,394 +46,215 @@ export function PGCard({ pg }: PGCardProps) {
 
   const image = imageLoadFailed ? fallbackImage : images[0].url;
 
-  /*
-   * ============================================================
-   * AMENITIES
-   * ============================================================
-   */
-
-  const amenities = [
-    pg.foodAvailable ? 'Meals' : null,
-    pg.wifiAvailable ? 'Wi-Fi' : null,
-    pg.parkingAvailable ? 'Parking' : null,
-    pg.laundryAvailable ? 'Laundry' : null,
-    pg.acAvailable ? 'AC' : null,
-    pg.powerBackup ? 'Power Backup' : null,
-  ].filter(Boolean) as string[];
-
-  /*
-   * ============================================================
-   * OPEN IMAGE GALLERY
-   * ============================================================
-   */
-
-  const openGallery = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const openGallery = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-
     setActiveImageIndex(0);
     setIsGalleryOpen(true);
   };
 
-  /*
-   * ============================================================
-   * CLOSE IMAGE GALLERY
-   * ============================================================
-   */
-
-  const closeGallery = (
-    event?: React.MouseEvent
-  ) => {
+  const closeGallery = (event?: React.MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();
-
     setIsGalleryOpen(false);
   };
 
-  /*
-   * ============================================================
-   * PREVIOUS IMAGE
-   * ============================================================
-   */
-
-  const showPreviousImage = (
-    event: React.MouseEvent
-  ) => {
+  const nextImage = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-
-    setActiveImageIndex((previousIndex) =>
-      previousIndex === 0
-        ? images.length - 1
-        : previousIndex - 1
-    );
+    setActiveImageIndex((prev) => (prev + 1) % images.length);
   };
 
-  /*
-   * ============================================================
-   * NEXT IMAGE
-   * ============================================================
-   */
-
-  const showNextImage = (
-    event: React.MouseEvent
-  ) => {
+  const previousImage = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-
-    setActiveImageIndex((previousIndex) =>
-      previousIndex === images.length - 1
-        ? 0
-        : previousIndex + 1
-    );
+    setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
   return (
     <>
-      {/* ========================================================
-          PG CARD
-      ========================================================= */}
-
       <Link
         href={ROUTES.PG_DETAILS(pg.id)}
-        className="group flex h-full w-full flex-col overflow-hidden rounded-[24px] border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:border-slate-200/80 hover:shadow-xl"
+        className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2.5 sm:p-3 shadow-2xs transition-all duration-300 hover:border-slate-300 hover:shadow-md cursor-pointer"
       >
-
-        {/* ======================================================
-            IMAGE CONTAINER
-        ====================================================== */}
-
-        <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-slate-50">
-
-          <button
-            type="button"
-            onClick={openGallery}
-            className="absolute inset-0 z-[5] cursor-zoom-in"
-            aria-label={`View all images of ${pg.pgName}`}
+        {/* ================= IMAGE CONTAINER ================= */}
+        <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-xl bg-slate-100">
+          <Image
+            src={image}
+            alt={pg.pgName}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImageLoadFailed(true)}
           />
 
-          <Image
-  src={image}
-  alt={pg.pgName}
-  fill
-  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-  onError={() => setImageLoadFailed(true)}
-/>
-
-          {/* IMAGE COUNT */}
-
-          {images.length > 1 && (
-            <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1.5 text-[10px] font-black text-white backdrop-blur-md">
-              <Images className="h-3.5 w-3.5" />
-              {images.length} Photos
+          {/* TOP-LEFT: Verified Badge */}
+          {isVerified && (
+            <div className="absolute left-2.5 top-2.5 z-10 flex items-center gap-1 rounded-full bg-[#059669] px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
+              <Check className="h-3 w-3 stroke-[3px]" />
+              <span>Verified</span>
             </div>
           )}
 
-          {/* BADGES */}
-
-          <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
-
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-sm backdrop-blur-md ${
-                isVerified
-                  ? 'bg-emerald-600/90'
-                  : 'bg-amber-600/90'
+          {/* TOP-RIGHT: Wishlist / Heart Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsLiked(!isLiked);
+            }}
+            className="absolute right-2.5 top-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/35 backdrop-blur-xs text-white hover:bg-black/50 transition-colors"
+            aria-label="Save to Wishlist"
+          >
+            <Heart
+              className={`h-3.5 w-3.5 transition-colors ${
+                isLiked ? 'fill-rose-500 text-rose-500' : 'text-white'
               }`}
-            >
-              {isVerified ? (
-                <ShieldCheck className="h-3 w-3" />
-              ) : (
-                <HelpCircle className="h-3 w-3" />
-              )}
+            />
+          </button>
 
-              {isVerified ? 'Verified' : 'Pending'}
-            </span>
-
-            {pg.gender && (
-              <span className="rounded-full bg-slate-900/75 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-sm backdrop-blur-sm">
-                {pg.gender} Only
-              </span>
-            )}
-
-          </div>
-
+          {/* BOTTOM-RIGHT: Image Count Button (also opens gallery) */}
+          <button
+            type="button"
+            onClick={openGallery}
+            className="absolute bottom-2 right-2 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-xs hover:bg-black/80 transition-colors"
+            aria-label={`View ${images.length} photos of ${pg.pgName}`}
+          >
+            1/{images.length}
+          </button>
         </div>
 
-        {/* ======================================================
-            DETAILS
-        ====================================================== */}
+        {/* ================= CARD BODY ================= */}
+        <div className="flex flex-1 flex-col justify-between pt-2.5 sm:pt-3">
+          <div>
+            {/* PG Name */}
+            <h3 className="line-clamp-1 text-sm sm:text-base font-extrabold tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors">
+              {pg.pgName}
+            </h3>
 
-        <div className="flex flex-1 flex-col justify-between bg-white p-5">
-
-          <div className="space-y-3">
-
-            {/* TITLE + PRICE */}
-
-            <div className="flex items-start justify-between gap-3">
-
-              <div className="min-w-0 flex-1">
-
-                <h2 className="line-clamp-1 font-sans text-base font-black tracking-tight text-slate-950 transition-colors group-hover:text-emerald-700">
-                  {pg.pgName}
-                </h2>
-
-                <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-
-                  <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
-
-                  <span className="truncate">
-                    {pg.city}, {pg.state}
-                  </span>
-
-                </div>
-
+            {/* Location & Rating Row */}
+            <div className="mt-1 flex items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-1 min-w-0 text-slate-500 font-medium">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                <span className="truncate">
+                  {pg.city ? `${pg.city}, Bhopal` : 'Bhopal'}
+                </span>
               </div>
 
-              {/* PRICE */}
-
-              <div className="min-w-[75px] shrink-0 rounded-xl border border-slate-100 bg-slate-50 px-2.5 py-1.5 text-right">
-
-                <span className="block text-[8px] font-black uppercase leading-none tracking-wider text-slate-400">
-                  Starts from
-                </span>
-
-                <span className="mt-0.5 block text-sm font-black tracking-tight text-emerald-600">
-                  ₹{pg.rent}
-                </span>
-
+              {/* Rating */}
+              <div className="flex items-center gap-1 shrink-0 font-bold text-slate-700 text-xs">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span>4.5</span>
+                <span className="text-slate-400 font-normal">(120)</span>
               </div>
-
             </div>
 
-            {/* ROOM TYPE */}
-
-            <div className="inline-flex rounded-lg bg-emerald-50/80 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-emerald-700 border border-emerald-100/60">
-              {pg.roomType || 'Premium Stay'}
-            </div>
-
-            {/* DESCRIPTION */}
-
-            {pg.description && (
-              <p className="line-clamp-2 pt-0.5 text-xs font-medium leading-relaxed text-slate-400">
-                {pg.description}
-              </p>
-            )}
-
-          </div>
-
-          {/* ====================================================
-              AMENITIES
-          ==================================================== */}
-
-          <div className="mt-4 flex flex-wrap items-center gap-1.5 border-t border-slate-50 pt-3.5">
-
-            {amenities.length > 0 ? (
-
-              amenities.map((amenity) => (
-
-                <span
-                  key={amenity}
-                  className="inline-flex items-center rounded-xl border border-slate-100 bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-600 transition-colors group-hover:bg-slate-100/70"
-                >
-                  {amenity}
-                </span>
-
-              ))
-
-            ) : (
-
-              <span className="text-[10px] font-medium italic text-slate-400">
-                Standard Utilities Active
+            {/* Price Row */}
+            <div className="mt-2 flex items-baseline gap-1">
+              <span className="text-sm sm:text-base font-black text-[#059669] tracking-tight">
+                â‚¹{pg.rent.toLocaleString('en-IN')}
               </span>
-
-            )}
-
+              <span className="text-xs font-semibold text-slate-400">
+                / month
+              </span>
+            </div>
           </div>
 
+          {/* Amenities Pills Row matching reference */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5 overflow-hidden">
+            {pg.wifiAvailable && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-200/70 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                <Wifi className="h-3 w-3 text-slate-500" />
+                <span>Wi-Fi</span>
+              </span>
+            )}
+            {pg.foodAvailable && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-200/70 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                <Utensils className="h-3 w-3 text-slate-500" />
+                <span>Meals</span>
+              </span>
+            )}
+            {pg.acAvailable ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-200/70 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                <Snowflake className="h-3 w-3 text-slate-500" />
+                <span>AC</span>
+              </span>
+            ) : pg.parkingAvailable ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-200/70 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                <Car className="h-3 w-3 text-slate-500" />
+                <span>Parking</span>
+              </span>
+            ) : null}
+          </div>
         </div>
-
       </Link>
 
-      {/* ========================================================
-          IMAGE GALLERY MODAL
-      ========================================================= */}
-
+      {/* ================= IMAGE GALLERY MODAL ================= */}
       {isGalleryOpen && (
-
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
           onClick={closeGallery}
         >
-
-          {/* MODAL */}
-
           <div
             className="relative flex h-[85vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-slate-950 shadow-2xl"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
             }}
           >
-
-            {/* HEADER */}
-
+            {/* Header */}
             <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between bg-gradient-to-b from-black/70 to-transparent px-5 py-4">
-
               <div>
-
-                <h2 className="text-sm font-black text-white">
-                  {pg.pgName}
-                </h2>
-
+                <h4 className="text-sm font-black text-white">{pg.pgName}</h4>
                 <p className="mt-0.5 text-xs font-medium text-white/70">
                   Image {activeImageIndex + 1} of {images.length}
                 </p>
-
               </div>
-
               <button
                 type="button"
                 onClick={closeGallery}
-                className="rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm hover:bg-white/30 transition-colors"
                 aria-label="Close image gallery"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
-
             </div>
 
-            {/* MAIN IMAGE */}
-
-            <div className="relative flex min-h-0 flex-1 items-center justify-center p-4">
-
+            {/* Main Image */}
+            <div className="relative flex flex-1 items-center justify-center bg-black">
               <Image
-                src={images[activeImageIndex].url}
-                alt={`${pg.pgName} image ${activeImageIndex + 1}`}
-                width={1200}
-                height={800}
-                className="max-h-full max-w-full rounded-xl object-contain"
+                src={images[activeImageIndex]?.url || fallbackImage}
+                alt={`${pg.pgName} - Photo ${activeImageIndex + 1}`}
+                fill
+                sizes="100vw"
+                className="object-contain"
+                priority
               />
-
-              {/* PREVIOUS */}
-
               {images.length > 1 && (
-
-                <button
-                  type="button"
-                  onClick={showPreviousImage}
-                  className="absolute left-4 rounded-full bg-black/60 p-3 text-white transition hover:bg-black/80"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-
-              )}
-
-              {/* NEXT */}
-
-              {images.length > 1 && (
-
-                <button
-                  type="button"
-                  onClick={showNextImage}
-                  className="absolute right-4 rounded-full bg-black/60 p-3 text-white transition hover:bg-black/80"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
-
-              )}
-
-            </div>
-
-            {/* THUMBNAIL SCROLLER */}
-
-            {images.length > 1 && (
-
-              <div className="flex shrink-0 gap-2 overflow-x-auto border-t border-white/10 bg-slate-950 p-3">
-
-                {images.map((galleryImage, index) => (
-
+                <>
                   <button
-                    key={galleryImage.publicId}
                     type="button"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      setActiveImageIndex(index);
-                    }}
-                    className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ${
-                      activeImageIndex === index
-                        ? 'border-white'
-                        : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
+                    onClick={previousImage}
+                    className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-all"
+                    aria-label="Previous photo"
                   >
-
-                    <Image
-                        src={galleryImage.url}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        sizes="80px"
-                        className="object-cover"
-                      />
-
+                    <ChevronLeft className="h-5 w-5" />
                   </button>
-
-                ))}
-
-              </div>
-
-            )}
-
+                  <button
+                    type="button"
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-all"
+                    aria-label="Next photo"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-
         </div>
-
       )}
-
     </>
   );
 }

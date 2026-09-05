@@ -2,42 +2,26 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import {
   MapPin,
   Search,
-  ChevronDown,
   Building2,
+  SlidersHorizontal,
   Loader2,
   X,
-  ShieldCheck,
-  Zap,
+  Users,
 } from 'lucide-react';
 import { useGetSearchSuggestionsQuery } from '@/features/pg-listing/api/pgApi';
 import type { PGSuggestion } from '@/types/pg.types';
 
-const BHOPAL_LOCALITIES = [
-  'All Bhopal Areas',
-  'MP Nagar Zone 1 & 2',
-  'Indrapuri (LNCT Belt)',
-  'Kolar Road (Univ Belt)',
-  'Near MANIT Campus',
-  'Anand Nagar',
-  'Piplani (BHEL)',
-  'Ayodhya Bypass (SIRT)',
-  'Arera Colony',
-  'Hoshangabad Road',
-];
-
 export function MarketplaceHero() {
   const router = useRouter();
-  const [selectedLocality, setSelectedLocality] = useState('Bhopal');
-  const [isLocalityDropdownOpen, setIsLocalityDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  const localityDropdownRef = useRef<HTMLDivElement>(null);
 
   // Debounce search query
   useEffect(() => {
@@ -47,7 +31,7 @@ export function MarketplaceHero() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Click outside listener for suggestions & locality dropdown
+  // Click outside listener for suggestions
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -55,12 +39,6 @@ export function MarketplaceHero() {
         !searchContainerRef.current.contains(event.target as Node)
       ) {
         setShowSuggestions(false);
-      }
-      if (
-        localityDropdownRef.current &&
-        !localityDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsLocalityDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -81,12 +59,6 @@ export function MarketplaceHero() {
     if (q) {
       params.set('q', q);
     }
-    if (selectedLocality && selectedLocality !== 'Bhopal' && selectedLocality !== 'All Bhopal Areas') {
-      const cleanLocality = selectedLocality.split('(')[0].trim();
-      if (!q) {
-        params.set('q', cleanLocality);
-      }
-    }
 
     setShowSuggestions(false);
     const queryString = params.toString();
@@ -99,90 +71,133 @@ export function MarketplaceHero() {
     handleSearchSubmit(suggestion.pgName);
   };
 
-  const handleLocalitySelect = (loc: string) => {
-    setSelectedLocality(loc);
-    setIsLocalityDropdownOpen(false);
-    if (loc !== 'All Bhopal Areas' && loc !== 'Bhopal') {
-      const cleanLoc = loc.split('(')[0].trim();
-      router.push(`/search?q=${encodeURIComponent(cleanLoc)}`);
-    }
-  };
-
   return (
-    <section className="w-full bg-white pt-6 pb-6 sm:pb-8 border-b border-slate-100">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Top Headline & Trust Badge Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 sm:mb-6">
-          <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight">
-              Search across <span className="text-emerald-600">50,000+</span> Verified Student PGs & Hostels
-            </h1>
-            <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1">
-              Zero Brokerage Stays near Coaching Hubs, Universities & Tech Campuses in Bhopal
-            </p>
-          </div>
+    <section className="relative w-full bg-gradient-to-b from-[#F0FDF4]/70 via-[#F8FAFC]/50 to-white pt-4 sm:pt-6 pb-6 sm:pb-8 border-b border-slate-100/80 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
 
-          {/* Quick Platform Quality Badges */}
-          <div suppressHydrationWarning className="hidden lg:flex items-center gap-3 shrink-0">
-            <div suppressHydrationWarning className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-xs font-bold text-emerald-800">
-              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span suppressHydrationWarning>100% Verified Hosts</span>
-            </div>
-            <div suppressHydrationWarning className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100/70 px-3.5 py-2 text-xs font-bold text-slate-800">
-              <Zap className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span suppressHydrationWarning>Direct WhatsApp Connect</span>
-            </div>
-          </div>
+        {/* Mobile Upper-Right Student Visual (integrated seamlessly into background) */}
+        <div className="absolute top-0 right-0 w-[46%] max-w-[210px] aspect-[1024/682] pointer-events-none lg:hidden z-0 overflow-hidden">
+          <Image
+            src="/hero-student.png"
+            alt="StudentPG Accommodation in Bhopal"
+            width={1024}
+            height={682}
+            priority
+            className="w-full h-auto object-contain object-right-top"
+          />
         </div>
 
-        {/* Two-Part Marketplace Search Bar */}
-        <div
-          ref={searchContainerRef}
-          className="relative w-full rounded-2xl border-2 border-slate-200 bg-white p-1.5 shadow-sm transition-all focus-within:border-emerald-600 focus-within:ring-4 focus-within:ring-emerald-500/10"
-        >
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
-            
-            {/* 1. Location / Locality Selector */}
-            <div ref={localityDropdownRef} className="relative shrink-0 sm:w-56 md:w-64">
-              <button
-                type="button"
-                onClick={() => setIsLocalityDropdownOpen(!isLocalityDropdownOpen)}
-                className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 sm:py-3 text-left hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
-                aria-haspopup="listbox"
-                aria-expanded={isLocalityDropdownOpen}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <MapPin className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span className="truncate text-xs sm:text-sm font-bold text-slate-800">
-                    {selectedLocality}
-                  </span>
-                </div>
-                <ChevronDown className={`h-4 w-4 text-slate-400 shrink-0 transition-transform duration-200 ${isLocalityDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+        {/* Main Hero Layout */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8 relative z-10">
 
-              {/* Locality Dropdown Menu */}
-              {isLocalityDropdownOpen && (
-                <div className="absolute left-0 top-full mt-2 z-50 w-64 sm:w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl">
+          {/* Left Column: Trust Badge, Headline, Subtitle, Search, Quick Filters */}
+          <div className="w-full lg:max-w-xl xl:max-w-2xl">
+
+            {/* 1. Trust Badge */}
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50/90 border border-indigo-100/80 px-3 py-1 text-xs font-semibold text-indigo-900 shadow-2xs mb-3">
+              <Users className="h-3.5 w-3.5 text-indigo-600 shrink-0" />
+              <span>Trusted by 50,000+ Students</span>
+            </div>
+
+            {/* 2. Headline */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-black text-slate-900 tracking-tight leading-[1.18] max-w-[65%] min-[480px]:max-w-[75%] lg:max-w-none">
+              Find Your Perfect <br />
+              <span className="text-[#059669]">Student Accommodation</span>
+            </h1>
+
+            {/* 3. Subtitle */}
+            <p className="mt-2 text-xs sm:text-sm font-medium text-slate-600 leading-relaxed max-w-[70%] min-[480px]:max-w-[80%] lg:max-w-lg">
+              Verified PGs. Real Photos. No Brokerage. <br />
+              A Safe, Comfortable &amp; Hassle-Free Stay.
+            </p>
+
+            {/* 4. Search Bar (Full Width across bottom of hero) */}
+            <div
+              ref={searchContainerRef}
+              className="relative mt-5 w-full rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm transition-all focus-within:border-emerald-600 focus-within:ring-4 focus-within:ring-emerald-500/10"
+            >
+              <div className="flex items-center gap-2 px-2">
+                <Search className="h-5 w-5 text-slate-400 shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSuggestions(e.target.value.trim().length >= 2);
+                  }}
+                  onFocus={() => {
+                    if (searchQuery.trim().length >= 2) setShowSuggestions(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSearchSubmit();
+                    }
+                    if (e.key === 'Escape') {
+                      setShowSuggestions(false);
+                    }
+                  }}
+                  placeholder="Search locality, area or landmark..."
+                  className="w-full bg-transparent py-2.5 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none"
+                  aria-label="Search locality, area or landmark in Bhopal"
+                />
+
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setShowSuggestions(false);
+                    }}
+                    className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 mr-1 cursor-pointer"
+                    aria-label="Clear search query"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+
+                {isFetching && (
+                  <Loader2 className="h-4 w-4 animate-spin text-emerald-600 shrink-0 mr-1" />
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleSearchSubmit()}
+                  className="rounded-xl bg-[#047857] hover:bg-emerald-800 active:scale-98 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-all shrink-0 cursor-pointer"
+                >
+                  Search
+                </button>
+              </div>
+
+              {/* Autocomplete Suggestions Dropdown */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl overflow-hidden">
                   <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    Select Bhopal Student Area
+                    Matching PGs &amp; Localities
                   </div>
-                  <div className="max-h-60 overflow-y-auto space-y-0.5">
-                    {BHOPAL_LOCALITIES.map((loc) => (
+                  <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
+                    {suggestions.map((item) => (
                       <button
-                        key={loc}
+                        key={item._id}
                         type="button"
-                        onClick={() => handleLocalitySelect(loc)}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
-                          selectedLocality === loc
-                            ? 'bg-emerald-50 text-emerald-700 font-bold'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
+                        onClick={() => handleSuggestionClick(item)}
+                        className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
                       >
-                        <span className="truncate">{loc}</span>
-                        {selectedLocality === loc && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0" />
-                        )}
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 group-hover:scale-105 transition-transform">
+                          {item.pgName.toLowerCase().includes(searchQuery.toLowerCase()) ? (
+                            <Building2 className="h-4 w-4" />
+                          ) : (
+                            <MapPin className="h-4 w-4" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                            {item.pgName}
+                          </div>
+                          <div className="text-[11px] text-slate-500 truncate">
+                            {[item.address, item.city, item.state].filter(Boolean).join(', ')}
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -190,117 +205,56 @@ export function MarketplaceHero() {
               )}
             </div>
 
-            {/* 2. Main Search Input */}
-            <div className="relative flex-1 flex items-center px-3.5 py-1">
-              <Search className="h-4 w-4 text-slate-400 shrink-0 mr-2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowSuggestions(e.target.value.trim().length >= 2);
-                }}
-                onFocus={() => {
-                  if (searchQuery.trim().length >= 2) setShowSuggestions(true);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSearchSubmit();
-                  }
-                  if (e.key === 'Escape') {
-                    setShowSuggestions(false);
-                  }
-                }}
-                placeholder="Search for PG name, locality (MP Nagar, Indrapuri), or college (MANIT, LNCT)..."
-                className="w-full bg-transparent py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none"
-              />
-
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setShowSuggestions(false);
-                  }}
-                  className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 mr-2 cursor-pointer"
-                  aria-label="Clear search query"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-
-              {isFetching && (
-                <Loader2 className="h-4 w-4 animate-spin text-emerald-600 shrink-0 mr-2" />
-              )}
-            </div>
-
-            {/* 3. High-Contrast Search Action Button */}
-            <div className="p-1 sm:p-0 shrink-0">
+            {/* 5. Quick Action Filter Pills */}
+            <div className="mt-3 flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
               <button
                 type="button"
-                onClick={() => handleSearchSubmit()}
-                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 px-6 sm:px-8 py-3 text-xs sm:text-sm font-black uppercase tracking-wider text-white shadow-md shadow-emerald-900/10 transition-all cursor-pointer"
+                onClick={() => router.push('/search')}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-emerald-300 hover:bg-emerald-50/50 hover:text-emerald-800 transition-all shrink-0 cursor-pointer"
               >
-                <Search className="h-4 w-4" />
-                <span>Search</span>
+                <MapPin className="h-3.5 w-3.5 text-emerald-600" />
+                <span>Near Me</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('popular-areas');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  else router.push('/search');
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-emerald-300 hover:bg-emerald-50/50 hover:text-emerald-800 transition-all shrink-0 cursor-pointer"
+              >
+                <Building2 className="h-3.5 w-3.5 text-slate-500" />
+                <span>Popular Areas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => router.push('/search')}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-emerald-300 hover:bg-emerald-50/50 hover:text-emerald-800 transition-all shrink-0 cursor-pointer"
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" />
+                <span>Filters</span>
               </button>
             </div>
 
           </div>
 
-          {/* Autocomplete Suggestions Dropdown */}
-          {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl overflow-hidden">
-              <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Matching PGs & Localities
-              </div>
-              <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
-                {suggestions.map((item) => (
-                  <button
-                    key={item._id}
-                    type="button"
-                    onClick={() => handleSuggestionClick(item)}
-                    className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 group-hover:scale-105 transition-transform">
-                      {item.pgName.toLowerCase().includes(searchQuery.toLowerCase()) ? (
-                        <Building2 className="h-4 w-4" />
-                      ) : (
-                        <MapPin className="h-4 w-4" />
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-                        {item.pgName}
-                      </div>
-                      <div className="text-[11px] text-slate-500 truncate">
-                        {[item.address, item.city, item.state].filter(Boolean).join(', ')}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
+          {/* Right Column (Desktop): Student Visual */}
+          <div className="hidden lg:flex lg:w-[46%] xl:w-[48%] items-center justify-end shrink-0 relative">
+            <div className="relative w-full max-w-[540px] aspect-[1024/682]">
+              <Image
+                src="/hero-student.png"
+                alt="StudentPG Accommodation in Bhopal - Better Stay Brighter Tomorrow"
+                fill
+                sizes="(max-width: 1280px) 480px, 540px"
+                priority
+                className="object-contain object-right"
+              />
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Quick Locality Shortcut Chips */}
-        <div className="mt-3.5 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
-          <span className="font-bold text-slate-500 mr-1">Popular in Bhopal:</span>
-          {['MP Nagar', 'Indrapuri', 'Kolar Road', 'Near MANIT', 'Anand Nagar', 'Ayodhya Bypass'].map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => {
-                setSearchQuery(tag);
-                handleSearchSubmit(tag);
-              }}
-              className="rounded-lg border border-slate-200 bg-slate-50/80 hover:bg-slate-100 hover:border-slate-300 px-2.5 py-1 font-semibold text-slate-700 transition-all cursor-pointer active:scale-95"
-            >
-              {tag}
-            </button>
-          ))}
         </div>
 
       </div>
