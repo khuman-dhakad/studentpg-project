@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   ChevronRight,
   Bed,
@@ -9,37 +8,8 @@ import {
   BedDouble,
   Users2,
 } from 'lucide-react';
-
-/* ==========================================================================
-   POPULAR AREAS IN BHOPAL (Section 4 in Approved Reference)
-   ========================================================================== */
-
-const POPULAR_AREAS = [
-  {
-    name: 'MP Nagar Zone 1 & 2',
-    href: '/search?q=MP+Nagar',
-    image:
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    name: 'Kolar Road',
-    href: '/search?q=Kolar+Road',
-    image:
-      'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    name: 'Indrapuri',
-    href: '/search?q=Indrapuri',
-    image:
-      'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    name: 'Arera Colony',
-    href: '/search?q=Arera+Colony',
-    image:
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
-  },
-] as const;
+import { AreaCard } from '@/components/home/AreaCard';
+import { HOMEPAGE_POPULAR_AREAS } from '@/data/popularAreas';
 
 /* ==========================================================================
    FIND BY STAY TYPE (Section 5 in Approved Reference)
@@ -89,7 +59,7 @@ export function LocalityIconGrid() {
             </h2>
 
             <Link
-              href="/search"
+              href="/areas"
               className="inline-flex items-center gap-1 text-xs font-bold text-[#059669] hover:text-emerald-800 transition-colors"
             >
               <span>View All Areas</span>
@@ -97,36 +67,12 @@ export function LocalityIconGrid() {
             </Link>
           </div>
 
-          {/* Locality Cards Carousel / Grid: 4 items */}
+          {/* Locality Cards Carousel / Grid: 4 items matching reference */}
           <div className="flex sm:grid sm:grid-cols-4 gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-            {POPULAR_AREAS.map((area) => (
-              <Link
-                key={area.name}
-                href={area.href}
-                className="group relative h-28 sm:h-36 w-36 sm:w-auto shrink-0 rounded-2xl overflow-hidden shadow-xs border border-slate-100 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer"
-              >
-                {/* Locality Photo */}
-                <Image
-                  src={area.image}
-                  alt={area.name}
-                  fill
-                  sizes="(max-width: 640px) 144px, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-
-                {/* Dark Gradient Overlay for Strong Legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-                {/* Bottom Content: Name & Right Chevron Pill */}
-                <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3 flex items-end justify-between gap-1.5">
-                  <span className="text-xs sm:text-sm font-black text-white leading-tight tracking-tight line-clamp-2">
-                    {area.name}
-                  </span>
-                  <div className="flex h-5 w-5 sm:h-6 sm:w-6 shrink-0 items-center justify-center rounded-full bg-white/25 backdrop-blur-xs text-white group-hover:bg-white group-hover:text-slate-900 transition-colors">
-                    <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                  </div>
-                </div>
-              </Link>
+            {HOMEPAGE_POPULAR_AREAS.map((area, index) => (
+              <div key={area.id} className="w-36 sm:w-auto shrink-0">
+                <AreaCard area={area} priority={index === 0} />
+              </div>
             ))}
           </div>
 

@@ -29,7 +29,7 @@ const footerSections: FooterSection[] = [
     title: 'Explore StudentPG',
     links: [
       { label: 'Find a PG', href: ROUTES.SEARCH },
-      { label: 'Popular Areas', href: '/search' },
+      { label: 'Popular Areas', href: ROUTES.AREAS },
       { label: 'Browse All PGs', href: '/search' },
       { label: 'Boys PGs & Hostels', href: '/search?category=BOYS' },
       { label: 'Girls PGs & Hostels', href: '/search?category=GIRLS' },
