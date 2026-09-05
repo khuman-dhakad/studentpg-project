@@ -4,6 +4,7 @@
 export const ROUTES = {
   HOME: '/',
   SEARCH: '/search',
+  AREAS: '/areas',
   PG_DETAILS: (id: string) => `/pg/${id}`,
   SUPPORT: '/support',
   ABOUT: '/about',

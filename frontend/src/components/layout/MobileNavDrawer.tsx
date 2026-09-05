@@ -84,7 +84,7 @@ export function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProps) {
     },
     {
       label: 'Popular Areas',
-      href: '/search',
+      href: ROUTES.AREAS,
       icon: MapPin,
       iconColor: 'text-slate-700',
     },
