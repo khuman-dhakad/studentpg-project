@@ -3,8 +3,12 @@ package com.studentpg.modules.pg.entity;
 import com.studentpg.modules.owner.entity.Owner;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 // import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -73,6 +77,18 @@ public class PG {
     @Size(max=80)
     @NotBlank
     private String state;
+
+    @GeoSpatialIndexed(
+            type = GeoSpatialIndexType.GEO_2DSPHERE,
+            name = "pg_location_2dsphere_idx"
+    )
+    private GeoJsonPoint location;
+
+    @Transient
+    private Double latitude;
+
+    @Transient
+    private Double longitude;
 
     @NotBlank
     @Pattern(regexp="^[0-9]{6}$")
@@ -293,6 +309,58 @@ public void setApprovedAt(java.time.Instant approvedAt) {
         this.state = state;
     }
 
+    public GeoJsonPoint getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoJsonPoint location) {
+        this.location = location;
+        if (location == null) {
+            this.latitude = null;
+            this.longitude = null;
+            return;
+        }
+        this.longitude = location.getX();
+        this.latitude = location.getY();
+    }
+
+    public Double getLatitude() {
+        if (latitude != null) {
+            return latitude;
+        }
+        if (location != null) {
+            return location.getY();
+        }
+        return null;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+        if (this.latitude != null && this.longitude != null) {
+            this.location = new GeoJsonPoint(this.longitude, this.latitude);
+        } else if (this.latitude == null && this.longitude == null) {
+            this.location = null;
+        }
+    }
+
+    public Double getLongitude() {
+        if (longitude != null) {
+            return longitude;
+        }
+        if (location != null) {
+            return location.getX();
+        }
+        return null;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+        if (this.latitude != null && this.longitude != null) {
+            this.location = new GeoJsonPoint(this.longitude, this.latitude);
+        } else if (this.latitude == null && this.longitude == null) {
+            this.location = null;
+        }
+    }
 
     public String getPincode() {
         return pincode;

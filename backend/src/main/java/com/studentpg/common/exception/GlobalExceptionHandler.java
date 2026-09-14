@@ -10,8 +10,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import jakarta.validation.ConstraintViolationException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -126,6 +129,17 @@ handleIllegalArgumentException(
     return ResponseEntity
             .badRequest()
             .body(response);
+}
+
+@ExceptionHandler({ConstraintViolationException.class, MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class})
+public ResponseEntity<Map<String,Object>> handleBadRequestValidation(
+        Exception ex
+) {
+    Map<String, Object> response = new LinkedHashMap<>();
+    response.put("success", false);
+    response.put("status", 400);
+    response.put("message", ex.getMessage());
+    return ResponseEntity.badRequest().body(response);
 }
 
 @ExceptionHandler(BadCredentialsException.class)

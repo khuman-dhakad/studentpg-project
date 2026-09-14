@@ -12,13 +12,16 @@ import com.studentpg.modules.student.dto.response.PGSuggestionResponse;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,6 +29,9 @@ import java.util.regex.Pattern;
 
 @Service
 public class StudentService {
+
+    public static final double MAX_NEARBY_RADIUS_KM = 10.0;
+    public static final int MAX_NEARBY_RESULTS = 20;
 
     private final PGRepository pgRepository;
     private final MongoTemplate mongoTemplate;
@@ -58,6 +64,84 @@ public class StudentService {
                 ApprovalStatus.APPROVED,
                 pageable
         );
+    }
+
+    public List<com.studentpg.modules.student.dto.response.NearbyPGResponse> searchNearbyPGs(
+            Double latitude,
+            Double longitude,
+            Double radiusKm
+    ) {
+        if (latitude == null || longitude == null || radiusKm == null) {
+            throw new IllegalArgumentException("Latitude, longitude, and radiusKm are required.");
+        }
+
+        validateCoordinates(latitude, longitude);
+        validateRadius(radiusKm);
+
+        Point point = new Point(longitude, latitude);
+        Query baseQuery = new Query();
+        baseQuery.addCriteria(Criteria.where("approvalStatus").is(ApprovalStatus.APPROVED));
+
+        NearQuery nearQuery = NearQuery.near(point)
+                .spherical(true)
+                .inKilometers()
+                .maxDistance(radiusKm)
+                .query(baseQuery)
+                .limit(MAX_NEARBY_RESULTS);
+
+        var geoResults = mongoTemplate.geoNear(nearQuery, PG.class);
+        List<com.studentpg.modules.student.dto.response.NearbyPGResponse> results = new ArrayList<>();
+
+        for (var geoResult : geoResults) {
+            PG pg = geoResult.getContent();
+            if (pg == null) {
+                continue;
+            }
+
+            com.studentpg.modules.student.dto.response.NearbyPGResponse response =
+                    new com.studentpg.modules.student.dto.response.NearbyPGResponse();
+            response.setId(pg.getId());
+            response.setPgName(pg.getPgName());
+            response.setAddress(pg.getAddress());
+            response.setCity(pg.getCity());
+            response.setState(pg.getState());
+            response.setCategory(pg.getCategory());
+            response.setRent(pg.getRent());
+            response.setGender(pg.getGender());
+            response.setRoomType(pg.getRoomType());
+            response.setImages(pg.getImages());
+            response.setLatitude(pg.getLatitude());
+            response.setLongitude(pg.getLongitude());
+            response.setDistanceKm(BigDecimal.valueOf(geoResult.getDistance().getValue()));
+            results.add(response);
+        }
+
+        return results;
+    }
+
+    private void validateCoordinates(double latitude, double longitude) {
+        if (Double.isNaN(latitude) || Double.isInfinite(latitude)
+                || Double.isNaN(longitude) || Double.isInfinite(longitude)) {
+            throw new IllegalArgumentException("Latitude and longitude must be valid numbers.");
+        }
+
+        if (latitude < -90 || latitude > 90) {
+            throw new IllegalArgumentException("Latitude must be between -90 and 90.");
+        }
+
+        if (longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("Longitude must be between -180 and 180.");
+        }
+    }
+
+    private void validateRadius(double radiusKm) {
+        if (Double.isNaN(radiusKm) || Double.isInfinite(radiusKm) || radiusKm <= 0) {
+            throw new IllegalArgumentException("Radius must be a positive number.");
+        }
+
+        if (radiusKm > MAX_NEARBY_RADIUS_KM) {
+            throw new IllegalArgumentException("Radius must be less than or equal to 10 km.");
+        }
     }
 
     /**
