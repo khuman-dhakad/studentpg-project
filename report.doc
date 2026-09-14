@@ -1,0 +1,825 @@
+STUDENTPG ENGINEERING ONBOARDING REPORT
+========================================
+
+Audit date: 2026-09-03
+Audit type: Read-only repository and limited live-production audit
+Repository: StudentPG
+
+IMPORTANT SCOPE
+---------------
+This report is based on repository source code, configuration files, documentation, tests, and a limited live check of studentpg.in. No code was modified while preparing this report. Anything that could not be verified is marked NOT VERIFIED. Secret values are intentionally omitted.
+
+1. PROJECT OVERVIEW
+-------------------
+StudentPG is a student accommodation marketplace focused on PGs and hostels in Bhopal. It connects students searching for accommodation, owners listing PG properties, and administrators reviewing listings and owner verification requests.
+
+Main use cases:
+- Public visitors browse approved PGs.
+- Users search by text, city, gender, rent, category, room type, and amenities.
+- Users open PG details and use phone, WhatsApp, or email contact fields when available.
+- Owners register, verify email, submit identity verification, and manage PG listings.
+- Administrators approve/reject owner verification and PG listings.
+- Public forms submit contact and issue reports with CAPTCHA and rate limiting.
+
+The project is not verified as a payment, booking, tenancy-agreement, real-time-chat, or rental-payment platform.
+
+One-paragraph introduction:
+StudentPG is a Next.js and Spring Boot marketplace. Next.js provides public search/detail pages and authenticated dashboards. Spring Boot provides REST APIs, validation, authentication, authorization, business logic, MongoDB access, email integration, Cloudinary integration, CAPTCHA, and rate limiting. Owners must be active and verified before creating PG listings, and listings remain private until an administrator approves them.
+
+30-second explanation:
+StudentPG is a Next.js + Spring Boot + MongoDB accommodation marketplace using JWT HttpOnly-cookie authentication, Cloudinary image storage, SMTP/Brevo email, Caffeine caching, MongoDB indexes, and public approved-listing discovery.
+
+Current maturity verified:
+- Public PG discovery and detail pages
+- Owner registration/login/profile/password workflows
+- Owner PG CRUD and image operations
+- Admin PG moderation
+- Owner identity verification
+- Notifications
+- CAPTCHA/rate limiting for public forms
+- Backend/frontend tests and CI configuration
+
+NOT VERIFIED:
+- Production capacity or concurrent-user guarantee
+- Production backup policy
+- Production alerting
+- Full production deployment settings
+- Complete live owner/contact-data consistency
+
+2. TECHNOLOGY STACK
+-------------------
+Frontend: Next.js, React, TypeScript, Tailwind CSS, Redux Toolkit, RTK Query, React Hook Form, Zod, Lucide React, Next Image.
+Backend: Spring Boot 3.5.14, Java compiler target 17, Spring Web, Spring Security, Spring Data MongoDB, Jakarta Validation, Spring Cache, Caffeine, Actuator, Lombok, SpringDoc, JJWT 0.12.6, Spring Dotenv.
+Database: MongoDB through Spring Data MongoDB.
+Authentication: JWT signed with HMAC and stored in an HttpOnly access_token cookie; Bearer fallback is also supported.
+Password security: BCrypt strength 12.
+Image/document storage: Cloudinary.
+Email: SMTP with Brevo REST API fallback.
+CAPTCHA: Custom HMAC-signed arithmetic CAPTCHA.
+State: Redux Toolkit and RTK Query.
+Testing: JUnit/Spring Boot tests and Vitest frontend tests.
+Deployment files: Dockerfiles, docker-compose.yml, backend/nginx.conf, GitHub Actions workflow.
+Monitoring: Spring Actuator health endpoint and application/request logging.
+Domain observed live: studentpg.in redirects to www.studentpg.in.
+Actual Vercel/Render deployment settings: NOT VERIFIED.
+
+3. SYSTEM ARCHITECTURE
+----------------------
+Browser
+  |
+  v
+Next.js Frontend
+  | HTTPS/REST and frontend API routes
+  v
+Spring Boot Backend
+  |
+  +--> Spring Security and JWT filter
+  +--> Controllers
+  +--> Services
+  +--> Repositories/MongoTemplate
+  +--> Caffeine cache
+  |
+  +--> MongoDB
+  +--> Cloudinary
+  +--> SMTP/Brevo
+
+Frontend boundary:
+- Renders public, owner, and admin screens.
+- Calls APIs using backendClient or RTK Query.
+- Contains Next.js API proxy routes.
+- Uses server components for public search/detail data fetching.
+
+Backend boundary:
+- Authenticates and authorizes requests.
+- Applies validation and business rules.
+- Performs ownership checks.
+- Reads and writes MongoDB.
+- Integrates Cloudinary and email services.
+
+Public flow:
+Browser -> Next.js public page -> backend public/student endpoint -> approved PG query -> response -> UI.
+Owner flow:
+Owner -> login -> JWT cookie -> protected owner controller -> ownership check -> service -> MongoDB/Cloudinary.
+Admin flow:
+Admin -> login -> ADMIN JWT -> admin controller -> admin service -> moderation update -> notification where applicable.
+
+4. REPOSITORY STRUCTURE
+-----------------------
+studentpg-project/
+|-- backend/
+|   |-- src/main/java/com/studentpg/
+|   |   |-- common/
+|   |   |-- infrastructure/
+|   |   |-- modules/admin/
+|   |   |-- modules/app/
+|   |   |-- modules/auth/
+|   |   |-- modules/notification/
+|   |   |-- modules/owner/
+|   |   |-- modules/pg/
+|   |   |-- modules/publicapi/
+|   |   |-- modules/search/
+|   |   |-- modules/student/
+|   |   |-- security/
+|   |-- src/main/resources/
+|   |-- src/test/java/
+|   |-- Dockerfile
+|   |-- nginx.conf
+|   |-- pom.xml
+|   |-- .env.example
+|-- frontend/
+|   |-- src/app/
+|   |-- src/api/
+|   |-- src/auth/
+|   |-- src/components/
+|   |-- src/constants/
+|   |-- src/context/
+|   |-- src/errors/
+|   |-- src/features/
+|   |-- src/hooks/
+|   |-- src/lib/
+|   |-- src/store/
+|   |-- src/types/
+|   |-- src/validations/
+|   |-- tests/
+|   |-- public/
+|   |-- Dockerfile
+|   |-- next.config.ts
+|   |-- next-sitemap.config.js
+|   |-- package.json
+|-- .github/workflows/ci.yml
+|-- docker-compose.yml
+|-- README.md
+|-- ROADMAP.md
+|-- CONTRIBUTING.md
+|-- SECURITY_FIXES_REPORT.md
+
+Controllers contain HTTP entry points. Services contain business rules. Repositories contain Mongo contracts. DTOs define request/response boundaries. Entities represent Mongo documents. Infrastructure contains cache, Mongo, Cloudinary, and email integrations. Frontend features contain feature-specific UI/API/schema code.
+
+5. FRONTEND DEEP DIVE
+---------------------
+Important routes:
+/, /search, /pg/[id], /about, /contact, /report-issue, /privacy-policy, /terms-of-owner, /support, /how-it-works, /owner/login, /owner/register, /owner/forgot-password, /owner/dashboard, /owner/add-pg, /owner/edit-pg/[id], /owner/profile, /owner/settings, /admin/login, /admin, /test.
+
+Important layouts:
+- frontend/src/app/layout.tsx: root layout
+- frontend/src/app/(public)/layout.tsx: public layout
+- frontend/src/app/(auth)/layout.tsx: auth layout
+- frontend/src/app/owner/layout.tsx: owner authentication guard and navigation
+- frontend/src/app/admin/layout.tsx: admin authentication guard and navigation
+
+Rendering verified:
+- Public search is a server component with server-side fetching.
+- Public PG detail is a server component with server-side fetching.
+- Interactive forms/dashboards use client components.
+- Search page uses Next revalidation of 30 seconds.
+- PG detail page uses Next revalidation of 60 seconds.
+- Next.js Image is configured for AVIF and WebP.
+
+Frontend request path:
+User action -> page/component -> backendClient or RTK Query -> endpoint -> response -> state/rendered UI.
+
+backendClient.ts:
+- Resolves server-side auth cookies.
+- Adds Bearer authorization if token exists.
+- Sends credentials include.
+- Adds Accept application/json.
+- Parses JSON/text responses.
+- Converts 401/403/errors to ApiError.
+- Defaults to no-store unless revalidation is supplied.
+
+Performance features verified:
+- Pagination; search page requests size 12.
+- Backend maximum page size 50.
+- Next Image and AVIF/WebP.
+- Gallery lazy loading.
+- Debounced search suggestions.
+- RTK Query tags.
+- Package import optimization for selected libraries.
+- Public search/detail revalidation.
+
+NOT VERIFIED:
+- Production bundle transfer size.
+- Production Lighthouse score.
+- Complete network waterfall.
+- Production CDN cache hit ratio.
+
+6. BACKEND DEEP DIVE
+--------------------
+Layered path:
+HTTP request -> Controller -> Service -> Repository/MongoTemplate -> MongoDB.
+
+Major modules:
+- auth: login, logout, current session
+- owner: owner account, profile, password, verification
+- pg: owner PG CRUD and images
+- student: approved public listing/details/search
+- search: full-text search
+- admin: PG and owner verification moderation
+- notification: owner notifications
+- app: CAPTCHA, contact, issue reports
+- security: JWT, user details, filters, authorization
+- infrastructure: Mongo, cache, Cloudinary, email
+
+GlobalExceptionHandler centralizes exception responses. RequestLoggingFilter logs request activity and correlation IDs. SecurityConfig enables stateless security, CORS, method security, BCrypt, and route authorization.
+
+7. COMPLETE API MAP
+-------------------
+AUTH:
+POST /api/auth/login - public owner/admin login; returns login response and HttpOnly access cookie.
+GET /api/auth/session - public route; returns unauthenticated response or authenticated user and sanitized owner profile.
+POST /api/auth/logout - clears access cookie.
+
+OWNER ACCOUNT:
+POST /api/owners/register - starts owner registration and OTP process.
+POST /api/owners/verify-registration - verifies registration OTP.
+GET /api/owners/profile - OWNER profile.
+PUT /api/owners/profile - OWNER profile update.
+PUT /api/owners/change-password - OWNER password change.
+POST /api/owners/forgot-password - password reset request.
+POST /api/owners/send-otp - OTP operation.
+POST /api/owners/request-otp - OTP operation.
+POST /api/owners/reset-password - password reset.
+POST /api/owners/profile-image - OWNER profile image upload.
+DELETE /api/owners/profile-image - OWNER profile image delete.
+POST /api/owners/verification - OWNER multipart identity verification.
+
+OWNER PG:
+GET /api/owner/pgs - list owner PGs.
+POST /api/owner/pgs - create PG.
+GET /api/owner/pgs/{id} - get owned PG.
+PUT /api/owner/pgs/{id} - update owned PG.
+DELETE /api/owner/pgs/{id} - delete owned PG.
+POST /api/owner/pgs/images/upload - upload PG image.
+POST /api/owner/pgs/{pgId}/images - add image metadata.
+DELETE /api/owner/pgs/{pgId}/images?publicId=... - delete image.
+PUT /api/owner/pgs/{pgId}/images?publicId=... - update image.
+
+PUBLIC/STUDENT:
+GET /api/student/pgs - approved paginated listings.
+GET /api/student/pgs/{id} - approved PG detail.
+GET /api/student/pgs/search?city=... - city search.
+GET /api/student/pgs/search/gender?gender=... - gender filtering.
+GET /api/student/pgs/search/rent?rent=... - maximum rent filtering.
+GET /api/student/pgs/filter - advanced filtering.
+GET /api/student/pgs/search-suggestions?q=... - suggestions.
+GET /api/public/pg/{id} - alternate public detail route.
+GET /api/search?q=... - full-text search.
+
+ADMIN PG:
+GET /api/admin/pgs
+GET /api/admin/pgs/stats
+GET /api/admin/pgs/{id}
+DELETE /api/admin/pgs/{id}
+GET /api/admin/pgs/pending
+PATCH /api/admin/pgs/{id}/approve
+PATCH /api/admin/pgs/{id}/reject
+GET /api/admin/pgs/suggestions
+All require ADMIN.
+
+ADMIN OWNER VERIFICATION:
+GET /api/admin/owner-verifications?status=...
+GET /api/admin/owner-verifications/{ownerId}/document
+PATCH /api/admin/owner-verifications/{ownerId}/approve
+PATCH /api/admin/owner-verifications/{ownerId}/reject
+All require ADMIN.
+
+NOTIFICATIONS:
+GET /api/notifications
+GET /api/notifications/unread-count
+PATCH /api/notifications/{notificationId}/read
+DELETE /api/notifications/{notificationId}
+All require OWNER and notification ownership is checked.
+
+PUBLIC FORMS:
+GET /api/public/captcha
+POST /api/contact
+POST /api/report-issue
+Contact/report operations use validation, CAPTCHA/honeypot/rate controls as implemented.
+
+Advanced filter parameters verified:
+city, category, maxRent, food, wifi, parking, laundry, roomType, page, size, sortBy, direction.
+Potential mismatch: frontend supports ac and powerBackup filters, but inspected backend dynamic filter does not apply those fields.
+
+8. AUTHENTICATION AND AUTHORIZATION
+-----------------------------------
+Login flow:
+User -> POST /api/auth/login -> AuthService -> admin/owner lookup -> account checks -> BCrypt -> JWT -> HttpOnly access_token cookie.
+
+JWT includes subject, issuer, ID, issued-at, expiration, and owner token version. JwtAuthenticationFilter reads the cookie and also supports Authorization Bearer. It loads current user details and sets the Spring Security context.
+
+Owner security:
+- Owner must be active and email verified to login.
+- Failed login lockout occurs after five failures for 15 minutes.
+- Password changes/resets increment tokenVersion.
+- Owner routes require OWNER role.
+- PG operations verify authenticated owner ownership.
+
+Admin security:
+- Admin routes require ADMIN role.
+- Admin and owner login are distinguished through repositories/role.
+- Admin profile is not returned as owner profile.
+
+RefreshToken persistence exists, but a complete refresh-token issuance/rotation controller was NOT VERIFIED.
+
+9. ROLES AND PERMISSIONS
+------------------------
+PUBLIC: browse approved listings, search, view detail, submit public forms. Cannot access private owner/admin routes.
+OWNER: manage own profile, password, images, verification, PGs, and notifications. Cannot manage another owner’s data or approve listings.
+ADMIN: moderate PGs and owner verification. Cannot be assumed to have student/owner management abilities beyond verified admin APIs.
+
+10. BUSINESS LOGIC
+------------------
+Owner registration:
+1. Validate and normalize input.
+2. Generate and hash OTP.
+3. Store inactive/unverified owner.
+4. Send OTP.
+5. Verify OTP before normal login.
+
+Owner verification:
+1. Authenticated owner submits legal name, document type, number, and document.
+2. Only NOT_VERIFIED or REJECTED can submit.
+3. PENDING cannot submit duplicate request.
+4. File size, MIME type, signature, name, and number are validated.
+5. Document is uploaded to Cloudinary.
+6. Owner status becomes PENDING.
+7. Admin approves to VERIFIED or rejects with reason.
+8. Rejected owners can resubmit.
+
+PG lifecycle:
+1. Authenticated owner must be active and VERIFIED.
+2. Backend ignores client ownerId.
+3. Backend assigns authenticated owner ID.
+4. Backend clears client PG ID on create.
+5. New PG is forced to PENDING.
+6. Minimum five images are required.
+7. Admin approval makes listing public.
+8. Owner updates verify ownership.
+9. Changed listings return to PENDING.
+10. Delete uses PG ID plus owner ID.
+
+Public PG details expose an explicit OwnerSummaryResponse containing public owner contact fields, not password or verification document internals. If WhatsApp is missing, mapper falls back to phone.
+
+11. SEARCH AND LISTINGS
+----------------------
+Search page sends page=0, size=12, sortBy=rent, direction=asc by default. Backend defaults to size 10 and caps size at 50. Search suggestions return at most eight records and use escaped prefix matching for PG name/address/city/state. Full text search uses Mongo text-index support.
+
+Public search lifecycle:
+Browser -> Next search page -> backend client -> StudentController/SearchController -> StudentService/SearchService -> MongoDB -> PagedResponse -> PGCard.
+
+Potential bottleneck: public listing endpoints return PG entities directly rather than a dedicated public list DTO.
+
+12. DATABASE MODELS AND COLLECTIONS
+-----------------------------------
+PG collection: pgs. Fields include id, ownerId, pgName, description, address, landmark, city, state, pincode, category, rent, securityDeposit, noticePeriod, gender, roomType, foodAvailable, wifiAvailable, parkingAvailable, laundryAvailable, acAvailable, powerBackup, approvalStatus, audit fields, and images.
+
+Owner collection: owners. Contains identity/contact, password hash, role, active/email state, verification fields, OTP state, lockout fields, profile-image fields, and token version.
+
+Admin collection: admins. Contains account, role, active state, password/lockout fields.
+
+Notification collection: notifications. Contains owner relationship, read state, message metadata, and timestamps.
+
+Refresh token collection: refresh_tokens. Persistence exists; complete runtime flow NOT VERIFIED.
+
+Operational collections:
+captcha_tokens, request_rate_limits, contact_messages, issue_reports.
+
+Relationships:
+- PG -> owner through ownerId.
+- Notification -> owner through ownerId.
+- Refresh token -> username/email identity.
+- PG images are embedded metadata.
+
+13. MONGODB INDEX AUDIT
+-----------------------
+Verified PG indexes:
+- _id_
+- ownerId
+- rent
+- approvalStatus
+- status_city_idx: approvalStatus + city
+- status_gender_idx: approvalStatus + gender
+- status_rent_idx: approvalStatus + rent
+- PG_TextIndex: searchable PG fields
+
+Owner:
+- Unique email index.
+
+Admin:
+- Unique email index.
+
+Notification:
+- ownerId
+- read
+- ownerId + createdAt descending
+
+RefreshToken:
+- unique token hash
+- expiryDate TTL
+
+Operational:
+- CAPTCHA TTL approximately 300 seconds.
+- Rate-limit TTL approximately one hour.
+
+Automatic index creation is controlled by MONGO_AUTO_INDEX. LegacyMongoIndexCleanup removes a legacy PG owner-email index.
+
+14. CACHING
+-----------
+Backend cache:
+- Caffeine.
+- Cache name approvedPgs.
+- Five-minute expiration.
+- Maximum 500 entries.
+- Statistics enabled.
+- StudentService approved listing method is cached.
+
+Frontend cache:
+- Next.js server revalidation for search: 30 seconds.
+- Next.js server revalidation for PG detail: 60 seconds.
+- RTK Query cache tags for client API state.
+
+No Redis or distributed cache was verified.
+
+Stale-data implications:
+- Search can be stale for about 30 seconds.
+- Detail can be stale for about 60 seconds.
+- Backend approved listing cache can be stale for about five minutes unless invalidated.
+
+Inconsistency: SECURITY_FIXES_REPORT.md describes CAPTCHA TTL differently from the implementation; implementation is the source for the approximately five-minute value.
+
+15. IMAGE SYSTEM
+----------------
+Owner -> frontend upload -> authenticated backend endpoint -> Cloudinary -> public ID/secure URL -> MongoDB -> Next Image -> browser.
+
+Cloudinary folders verified:
+- studentpg for PG images
+- studentpg/owners for owner images
+- studentpg/owner-verifications for verification documents
+
+Next config supports Cloudinary and Unsplash remote images and AVIF/WebP output. Gallery images use lazy loading. Frontend image upload limit is configured at 5 MB. Verification documents have MIME and signature checks and a 5 MB limit.
+
+Potential mismatch: frontend image count configuration allows 10 while backend validation was reported to allow 15.
+
+16. EMAIL SYSTEM
+----------------
+EmailService sends:
+- Registration OTP
+- Password reset OTP
+- Support/contact email
+- Issue-report email
+
+SMTP is attempted first; Brevo REST API is available as fallback. STARTTLS and connection timeouts are configured. Delivery success, bounce handling, and retries in production are NOT VERIFIED.
+
+17. CAPTCHA AND ANTI-ABUSE
+--------------------------
+CAPTCHA is an HMAC-signed arithmetic challenge with a stored token and approximately five-minute validity. Verification is single-use and uses atomic database update behavior. Public contact/report requests also use honeypot checks, validation, HTML escaping, per-IP/per-endpoint rate limiting, and optional image validation.
+
+Rate limiting verified:
+- Ten-minute window.
+- Twenty requests per endpoint/IP/window.
+- Atomic Mongo update.
+- One-hour TTL for rate records.
+
+18. SECURITY AUDIT
+------------------
+GOOD:
+- HttpOnly JWT cookie.
+- BCrypt strength 12.
+- Stateless sessions.
+- OWNER/ADMIN route authorization.
+- PG and notification ownership checks.
+- Password reset OTP hashes.
+- Account lockout.
+- Token-version invalidation.
+- CAPTCHA replay protection.
+- Atomic rate limiting.
+- File signature validation for identity documents.
+- CORS and security headers.
+- Non-root Docker runtime users.
+- Public owner summary DTO.
+
+HIGH: Public list endpoints return PG entities directly. This can expose owner IDs, moderation/audit fields, or future sensitive fields. Recommended fix: dedicated public listing DTO and projection.
+
+MEDIUM: Frontend exposes AC/power-backup filtering while backend dynamic filter does not apply them. Align the contract.
+
+MEDIUM: Frontend/backend image-count limits differ. Establish one limit.
+
+MEDIUM: Refresh-token persistence exists without verified complete issuance/rotation flow. Document or complete it.
+
+LOW: Frontend and backend cookie lifetime configuration may differ.
+
+MEDIUM: Secrets were present in shared .env content during the session. Rotate exposed MongoDB, Cloudinary, SMTP, JWT, and admin credentials immediately. Values are intentionally omitted from this report.
+
+INFO: Do not claim capacity without load testing.
+
+19. PERFORMANCE AUDIT
+---------------------
+Existing strengths:
+- Pagination.
+- Compound indexes.
+- Text index.
+- Caffeine cache.
+- Next revalidation.
+- Next Image AVIF/WebP.
+- Lazy gallery images.
+- Debounced suggestions.
+- Compression settings.
+- Bounded Tomcat thread settings.
+
+P0:
+- Replace public PG entity responses with public DTO/projection.
+- Rotate exposed secrets.
+- Run load tests.
+
+P1:
+- Align filters and image-count limits.
+- Measure query latency, response sizes, and cache hit behavior.
+- Verify cache invalidation after moderation.
+- Verify deployed sitemap.
+
+P2:
+- Add endpoint latency and response-size metrics.
+- Audit duplicate requests.
+- Add browser performance checks.
+- Review owner lookups for listing/detail N+1 behavior.
+
+P3:
+- Consider Redis only after measuring Caffeine limits.
+- Consider background work for heavy uploads/email.
+- Consider horizontal scaling only after load testing.
+
+20. PRODUCTION ARCHITECTURE
+---------------------------
+Repository references Vercel, Render, MongoDB Atlas, Cloudinary, SMTP/Brevo, Docker, and Nginx. The actual production provider settings and environment values are NOT VERIFIED.
+
+Live observations:
+- studentpg.in redirects to www.studentpg.in.
+- Live homepage and search were accessible.
+- Live search showed two listing links during the check.
+- Live robots.txt had an incorrect example.com sitemap at audit time.
+- Local repository configuration now points sitemap generation to https://www.studentpg.in/sitemap.xml.
+- Deployment of that correction is NOT VERIFIED.
+
+21. ENVIRONMENT VARIABLES
+-------------------------
+Names only:
+PORT, MONGO_URI, JWT_SECRET, JWT_EXPIRATION, COOKIE_SECURE, COOKIE_SAME_SITE, COOKIE_DOMAIN, CORS_ALLOWED_ORIGINS, ADMIN_EMAIL, ADMIN_PASSWORD, MAIL_HOST, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM, MAIL_SENDER_NAME, BREVO_API_KEY, BREVO_SENDER_EMAIL, BREVO_SENDER_NAME, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, MONGO_AUTO_INDEX, FRONTEND_URL, SWAGGER_ENABLED, NEXT_PUBLIC_API_URL, NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SITE_URL, BACKEND_INTERNAL_URL, AUTH_COOKIE_NAME, EMAIL_USER, EMAIL_PASS, CAPTCHA_SECRET.
+
+Secret values are configured through environment variables; values intentionally omitted.
+
+22. DEPLOYMENT AND LOCAL SETUP
+------------------------------
+Frontend commands verified from package configuration:
+cd frontend
+npm install
+npm run dev
+npm run build
+npm start
+npm test
+npx tsc --noEmit
+
+Backend commands verified:
+cd backend
+.\mvnw.cmd spring-boot:run
+.\mvnw.cmd compile
+.\mvnw.cmd test
+
+Local URLs:
+Frontend: http://localhost:3000
+Backend: http://localhost:8080
+Health: http://localhost:8080/actuator/health
+
+Use fresh local credentials and never use production secrets. Configure backend using backend/.env.example and frontend using frontend/.env.example. Exact production Render/Vercel settings are NOT VERIFIED.
+
+23. TESTING
+-----------
+Backend tests include:
+- ContactControllerAtomicityTest: atomic rate limiting/CAPTCHA/TTL behavior.
+- ContactControllerCaptchaTest: CAPTCHA behavior.
+- AuthControllerIntegrationTest: auth endpoints.
+- PGControllerTest: controller behavior.
+- PGServiceTest: PG business rules.
+- PGPublicResponseMapperTest: public owner summary mapping.
+- PublicPGControllerTest: public route.
+- JwtAuthenticationFilterTest: JWT filter.
+- EmailServiceTest: email service.
+- GenderTest: gender parsing.
+
+Frontend tests:
+- tests/example.test.tsx
+- tests/auth/cookies.test.ts
+
+Missing or NOT VERIFIED:
+- Production browser E2E tests.
+- Accessibility audit.
+- Production load test.
+- Deployed-service integration tests.
+- Visual regression tests.
+
+24. GIT WORKFLOW
+----------------
+Branches observed in the session:
+- feature-ui
+- feature/production-deployment
+- main
+
+A complete team merge/release policy, rollback procedure, and hotfix process are NOT VERIFIED. CONTRIBUTING.md and .github/workflows/ci.yml are the relevant files to inspect.
+
+Safe general flow:
+feature branch -> tests/build -> pull request -> review -> merge -> deployment.
+
+25. TROUBLESHOOTING
+-------------------
+Frontend start/build failure: check Node version, dependencies, frontend env, and API URL.
+Backend start failure: check Java/Maven, MONGO_URI, JWT variables, Cloudinary variables, and mail variables.
+Mongo failure: check credentials, Atlas network access, and URI.
+CORS failure: check CORS_ALLOWED_ORIGINS and browser origin.
+Login failure: check email verification, active state, password, lockout, and cookie settings.
+PG not public: check owner verification and PG approval status.
+Contact missing: check PG ownerId and matching owner document.
+Image failure: check MIME/size, Cloudinary variables, and remote image config.
+Email failure: check SMTP/Brevo variables and provider logs.
+CAPTCHA failure: check token expiry, answer, IP, and one-time use.
+Sitemap issue: check public/robots.txt, next-sitemap.config.js, canonical host, and deployment.
+
+26. OBSERVABILITY
+-----------------
+Verified:
+- /actuator/health
+- RequestLoggingFilter
+- Application logs
+- Error logs for email/Cloudinary/CAPTCHA
+- Caffeine statistics
+- Request correlation IDs
+
+NOT VERIFIED:
+- Centralized log aggregation
+- Error tracking
+- Alerting
+- Distributed tracing
+- Production dashboards
+- Database alerting
+
+Zero-cost baseline: monitor health endpoint, retain deployment logs, track HTTP failures, inspect MongoDB metrics, run synthetic homepage/search/health checks, and never log secrets.
+
+27. KNOWN LIMITATIONS
+---------------------
+- Actual capacity is unknown.
+- No load-test result is verified.
+- Cold-start impact is not measured.
+- Cache hit ratio is not measured.
+- Public list DTO boundary needs improvement.
+- Frontend/backend filter limits differ.
+- Frontend/backend image limits differ.
+- Refresh-token runtime flow is unclear.
+- Production deployment settings are incomplete in repository evidence.
+- Backups and alerting are NOT VERIFIED.
+- Live robots sitemap was wrong during audit.
+
+28. SCALABILITY
+---------------
+10 concurrent users: likely basic browsing workload if backend is warm and indexes/cache work, but no guarantee.
+50 concurrent users: measure Render CPU/RAM, Mongo latency, image bandwidth, and cache misses.
+100 concurrent users: possible thread, connection-pool, queue, and external-service pressure.
+500+ concurrent users: likely requires shared cache, stronger database sizing, CDN strategy, background work, observability, and possibly horizontal scaling.
+
+Actual capacity requires load testing.
+
+29. ZERO-COST STRATEGY
+----------------------
+Preserve and measure:
+1. Next search/detail caching.
+2. Caffeine approved-PG cache.
+3. Compound MongoDB indexes.
+4. Pagination and maximum page size.
+5. Next Image AVIF/WebP.
+6. Lazy loading.
+7. Compression.
+8. Debounced suggestions.
+9. Query explain plans.
+10. Response DTO/projection.
+11. Lightweight monitoring.
+12. Staged load tests.
+
+Do not add Redis or paid infrastructure before measuring the actual bottleneck.
+
+30. END-TO-END FLOWS
+--------------------
+Search:
+Browser -> Next /search -> backend client -> StudentController/SearchController -> StudentService/SearchService -> MongoDB -> PagedResponse -> PGCard.
+
+PG detail:
+Browser -> /pg/{id} -> getListing -> backend -> approved PG lookup -> owner lookup -> PGPublicResponseMapper -> PGDetailsResponse -> Next revalidation -> UI.
+
+Owner create:
+Owner -> authenticated request -> JWT filter -> PGController -> PGService -> authenticated owner -> verification/active checks -> ownerId assignment -> PENDING status -> image/database operations -> response.
+
+Contact:
+Browser -> CAPTCHA -> contact/report POST -> CAPTCHA verification -> honeypot -> rate limit -> validation/escaping -> MongoDB -> EmailService -> SMTP/Brevo -> response.
+
+Admin:
+Admin -> JWT -> ADMIN authorization -> AdminController -> AdminService -> status/ownership checks -> MongoDB -> notification/response.
+
+31. NEW DEVELOPER PLAN
+----------------------
+Day 1: Understand product, public search, owner onboarding, admin moderation, and security boundaries.
+Day 2: Read frontend app/api and backend controllers/services.
+Day 3: Trace login/session, search, detail, create, approve, and verification flows.
+Day 4: Study PG, Owner, Admin, Notification, indexes, cache, CAPTCHA records.
+Day 5: Add a focused test, make a small change, run tests/typecheck/build, review diff, and keep secrets out of Git.
+
+Top files:
+README.md
+CONTRIBUTING.md
+backend/pom.xml
+backend/src/main/resources/application.properties
+backend/src/main/java/com/studentpg/StudentPgApplication.java
+backend/src/main/java/com/studentpg/security/config/SecurityConfig.java
+backend/src/main/java/com/studentpg/security/jwt/JwtService.java
+backend/src/main/java/com/studentpg/security/filter/JwtAuthenticationFilter.java
+backend/src/main/java/com/studentpg/modules/auth/controller/AuthController.java
+backend/src/main/java/com/studentpg/modules/auth/service/AuthService.java
+backend/src/main/java/com/studentpg/modules/owner/controller/OwnerController.java
+backend/src/main/java/com/studentpg/modules/owner/service/OwnerService.java
+backend/src/main/java/com/studentpg/modules/pg/controller/PGController.java
+backend/src/main/java/com/studentpg/modules/pg/service/PGService.java
+backend/src/main/java/com/studentpg/modules/student/controller/StudentController.java
+backend/src/main/java/com/studentpg/modules/student/service/StudentService.java
+backend/src/main/java/com/studentpg/modules/pg/entity/PG.java
+backend/src/main/java/com/studentpg/modules/owner/entity/Owner.java
+frontend/src/api/backendClient.ts
+frontend/src/app/(public)/search/page.tsx
+
+32. ARCHITECTURE DECISIONS
+--------------------------
+Next.js: selected for App Router, server/client rendering, and image optimization.
+Spring Boot: selected for modular REST services, validation, and Spring Security.
+MongoDB: document model suits PG/owner data; indexes are required for query performance.
+JWT HttpOnly cookie: protects token from normal client-side JavaScript access but requires careful cookie/CORS configuration.
+Cloudinary: external image/document storage and CDN-style delivery.
+Caffeine: zero-additional-cost in-memory backend cache; not shared across instances.
+Pagination: limits response size and database/application work.
+Mongo indexes: support approval, city, gender, rent, owner lookup, and text search.
+Public DTOs: detail mapper exists; public list DTO is recommended because raw PG entity responses remain exposed.
+
+33. CODE QUALITY AUDIT
+----------------------
+GOOD:
+- Module-oriented backend packages.
+- Controllers/services/repositories separation.
+- DTOs for important public/auth flows.
+- Ownership checks near owner operations.
+- Central endpoint constants.
+- Shared frontend schemas.
+- Security-focused tests.
+- Infrastructure integrations separated.
+
+NEEDS IMPROVEMENT:
+- Introduce public listing DTO/projection.
+- Align frontend/backend contracts.
+- Reduce duplicate auth/session abstractions.
+- Standardize formatting and configuration naming.
+- Document deployment source of truth.
+
+RISK:
+- Exposed environment credentials require rotation.
+- Refresh-token flow is unclear.
+- Filter/image limits differ.
+- README and implementation contain technology/port differences.
+
+34. FINAL PROJECT MAP
+---------------------
+StudentPG
+|-- Frontend: Next.js, React, TypeScript, Tailwind, RTK Query
+|-- Backend: Spring Boot, Java, Spring Security, MongoDB
+|-- Database: MongoDB collections for PGs, owners, admins, notifications, tokens, forms
+|-- External services: Cloudinary, SMTP, Brevo fallback
+|-- Authentication: JWT HttpOnly cookie, OWNER/ADMIN roles, BCrypt
+|-- Deployment files: Docker, Docker Compose, Nginx, CI workflow
+|-- Testing: JUnit/Spring tests, Vitest, TypeScript/build checks
+
+Request lifecycle:
+Browser -> Next.js -> API/proxy -> JWT/security -> Controller -> Service -> Cache/Repository -> MongoDB -> external service when needed -> DTO -> Next.js/RTK Query -> Browser.
+
+35. FINAL CHEAT SHEET
+---------------------
+Project: StudentPG
+Frontend: frontend/; Next.js + React + TypeScript
+Backend: backend/; Spring Boot + Java
+Database: MongoDB
+Authentication: JWT HttpOnly access_token cookie, BCrypt, OWNER/ADMIN
+Images: Cloudinary and Next Image
+Email: SMTP with Brevo fallback
+Caching: Caffeine approvedPgs plus Next revalidation (search 30s, detail 60s)
+Main APIs: /api/auth, /api/owners, /api/owner/pgs, /api/student/pgs, /api/public, /api/search, /api/admin, /api/notifications, /api/contact, /api/report-issue
+Main models: PG, Owner, Admin, Notification, RefreshToken, PGImage
+Health: /actuator/health
+Commands:
+- cd frontend; npm install; npm run dev; npm run build; npm test; npx tsc --noEmit
+- cd backend; .\mvnw.cmd spring-boot:run; .\mvnw.cmd compile; .\mvnw.cmd test
+Security rules: never trust client ownerId; preserve role/ownership checks; never expose secrets/passwords/documents; preserve CAPTCHA/rate limits; never commit .env.
+Performance rules: preserve pagination, indexes, caching, image optimization, compression, and DTO boundaries.
+
+FINAL QUALITY NOTES
+-------------------
+No source files were modified to create this report. Secret values are intentionally absent. Production deployment behavior, exact infrastructure settings, DNS, backups, monitoring, and load capacity are NOT VERIFIED from the repository.
