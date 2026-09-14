@@ -8,7 +8,6 @@ import { MarketplacePromoStrip } from '@/components/home/MarketplacePromoStrip';
 import { LocalityIconGrid } from '@/components/home/LocalityIconGrid';
 import { LiveFeaturedPGs } from '@/components/home/LiveFeaturedPGs';
 import { OwnerPromoBanner } from '@/components/home/OwnerPromoBanner';
-import { TrustAndHowItWorks } from '@/components/home/TrustAndHowItWorks';
 
 export const metadata: Metadata = {
   title: 'StudentPG — Find Verified PGs, Hostels & Student Rooms in Bhopal',
@@ -81,9 +80,6 @@ export default async function HomePage() {
 
       {/* 5. High-Converting Property Owner Banner */}
       <OwnerPromoBanner />
-
-      {/* 6. Trust Pillars & 4-Step Student Move-in Stepper */}
-      <TrustAndHowItWorks />
     </main>
   );
 }

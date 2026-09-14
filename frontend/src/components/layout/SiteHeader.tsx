@@ -2,16 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ROUTES } from '@/constants/routes';
 import {
   Menu,
   X,
   PlusCircle,
-  LayoutDashboard,
   UserRound,
   ChevronRight,
+  MapPin,
+  ChevronDown,
 } from 'lucide-react';
+import { StudentPGLogo } from '@/components/common/StudentPGLogo';
+import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
 import { useSessionQuery } from '@/features/auth/api/authApi';
 
 const publicNavLinks = [
@@ -34,55 +36,27 @@ export function SiteHeader() {
     session?.user?.role === 'OWNER';
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
+    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur-xl shadow-2xs">
 
       {/* ================= MAIN HEADER ================= */}
-      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* ================= BRAND ================= */}
         <Link
           href="/"
-          className="group flex items-center gap-3"
+          className="group flex items-center cursor-pointer transition-transform duration-200 active:scale-95"
         >
-          {/* Logo */}
-          <div className="relative h-12 w-12 overflow-hidden rounded-full bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md">
-            <Image
-              src="/Pglogo.jpeg"
-              alt="StudentPG Logo"
-              fill
-              sizes="48px"
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          {/* Brand Name */}
-          <div className="leading-none">
-            <div className="text-[17px] font-black tracking-[-0.04em] text-slate-900">
-              STUDENT<span className="text-emerald-600">PG</span>
-            </div>
-
-            <div className="mt-1 text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400">
-              Find Your Next Home
-            </div>
-          </div>
+          <StudentPGLogo className="h-9 sm:h-10" />
         </Link>
 
         {/* ================= DESKTOP NAV ================= */}
-        <nav className="hidden items-center gap-2 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
 
           {publicNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="
-                rounded-xl px-4 py-2.5
-                text-[11px] font-extrabold uppercase tracking-[0.12em]
-                text-slate-500
-                transition-all duration-200
-                hover:bg-slate-50
-                hover:text-emerald-600
-              "
+              className="rounded-xl px-3.5 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50 hover:text-emerald-700"
             >
               {link.label}
             </Link>
@@ -92,14 +66,7 @@ export function SiteHeader() {
           {!isOwnerLoggedIn && (
             <Link
               href={ROUTES.OWNER.LOGIN}
-              className="
-                ml-1 rounded-xl px-4 py-2.5
-                text-[11px] font-extrabold uppercase tracking-[0.12em]
-                text-slate-500
-                transition-all duration-200
-                hover:bg-slate-50
-                hover:text-emerald-600
-              "
+              className="rounded-xl px-3.5 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50 hover:text-emerald-700"
             >
               Owner Login
             </Link>
@@ -107,197 +74,70 @@ export function SiteHeader() {
         </nav>
 
         {/* ================= RIGHT ACTION AREA ================= */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+
+          {/* Location Selector (matching Reference Design: ðŸ“ Bhopal â–¾) */}
+          <Link
+            href="/search"
+            className="flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-colors cursor-pointer"
+            aria-label="City: Bhopal"
+          >
+            <MapPin className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+            <span>Bhopal</span>
+            <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />
+          </Link>
 
           {/* Loading Placeholder */}
           {isLoading && (
-            <div className="hidden h-10 w-28 animate-pulse rounded-xl bg-slate-100 sm:block" />
+            <div className="hidden h-9 w-24 animate-pulse rounded-xl bg-slate-100 sm:block" />
           )}
 
-          {/* ================= NOT LOGGED IN ================= */}
+          {/* Not Logged In: List Your PG */}
           {!isLoading && !isOwnerLoggedIn && (
             <Link
               href={ROUTES.OWNER.REGISTER}
-              className="
-                hidden sm:inline-flex
-                h-10 items-center gap-2
-                rounded-xl
-                bg-slate-900
-                px-5
-                text-[11px] font-extrabold uppercase tracking-[0.1em]
-                text-white
-                shadow-sm
-                transition-all duration-200
-                hover:-translate-y-0.5
-                hover:bg-emerald-600
-                hover:shadow-lg hover:shadow-emerald-600/20
-                active:scale-95
-              "
+              className="hidden sm:inline-flex h-9 items-center gap-1.5 rounded-xl bg-slate-900 px-4 text-xs font-bold text-white shadow-xs transition-all hover:bg-[#059669] active:scale-95 cursor-pointer"
             >
-              <PlusCircle className="h-4 w-4" />
-              List Your PG
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span>List Your PG</span>
             </Link>
           )}
 
-          {/* ================= LOGGED-IN OWNER ================= */}
+          {/* Logged-In Owner */}
           {!isLoading && isOwnerLoggedIn && (
             <Link
               href={ROUTES.OWNER.DASHBOARD}
-              className="
-                hidden sm:flex
-                items-center gap-3
-                rounded-2xl
-                border border-slate-200
-                bg-white
-                px-3 py-2
-                shadow-sm
-                transition-all duration-200
-                hover:-translate-y-0.5
-                hover:border-emerald-200
-                hover:shadow-md
-              "
+              className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 shadow-2xs hover:border-emerald-300 transition-all cursor-pointer"
             >
-              {/* Avatar */}
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <UserRound className="h-4 w-4" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                <UserRound className="h-3.5 w-3.5" />
               </div>
-
               <div className="text-left leading-none">
-                <p className="text-[10px] font-black uppercase tracking-wider text-slate-900">
-                  Owner
-                </p>
-
-                <p className="mt-1 text-[9px] font-semibold text-emerald-600">
-                  Dashboard
-                </p>
+                <p className="text-[10px] font-bold text-slate-900">Dashboard</p>
               </div>
-
-              <ChevronRight className="h-4 w-4 text-slate-400" />
+              <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
             </Link>
           )}
 
-          {/* ================= MOBILE MENU BUTTON ================= */}
+          {/* Mobile Menu Button with suppressHydrationWarning */}
           <button
             type="button"
-            className="
-              flex h-10 w-10 items-center justify-center
-              rounded-xl
-              border border-slate-200
-              bg-white
-              text-slate-700
-              shadow-sm
-              transition-all
-              hover:border-emerald-200
-              hover:bg-emerald-50
-              hover:text-emerald-600
-              md:hidden
-            "
+            suppressHydrationWarning
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 md:hidden cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle Menu"
           >
             {isOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4 w-4" />
             )}
           </button>
         </div>
       </div>
 
-      {/* ================= MOBILE MENU ================= */}
-      {isOpen && (
-        <div className="border-t border-slate-100 bg-white px-4 pb-5 pt-3 shadow-xl md:hidden">
-
-          <div className="flex flex-col gap-1">
-
-            {publicNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="
-                  flex items-center justify-between
-                  rounded-xl
-                  px-4 py-3
-                  text-sm font-bold text-slate-700
-                  transition-all
-                  hover:bg-emerald-50
-                  hover:text-emerald-600
-                "
-              >
-                {link.label}
-
-                <ChevronRight className="h-4 w-4 text-slate-300" />
-              </Link>
-            ))}
-
-            {/* NOT LOGGED IN MOBILE */}
-            {!isOwnerLoggedIn && (
-              <>
-                <Link
-                  href={ROUTES.OWNER.LOGIN}
-                  onClick={() => setIsOpen(false)}
-                  className="
-                    flex items-center justify-between
-                    rounded-xl
-                    px-4 py-3
-                    text-sm font-bold text-slate-700
-                    transition-all
-                    hover:bg-emerald-50
-                    hover:text-emerald-600
-                  "
-                >
-                  Owner Login
-
-                  <ChevronRight className="h-4 w-4 text-slate-300" />
-                </Link>
-
-                <Link
-                  href={ROUTES.OWNER.REGISTER}
-                  onClick={() => setIsOpen(false)}
-                  className="
-                    mt-3 flex items-center justify-center gap-2
-                    rounded-xl
-                    bg-emerald-600
-                    px-4 py-3.5
-                    text-sm font-extrabold text-white
-                    shadow-lg shadow-emerald-600/20
-                    transition-all
-                    hover:bg-emerald-500
-                    active:scale-[0.98]
-                  "
-                >
-                  <PlusCircle className="h-4 w-4" />
-                  List Your PG Free
-                </Link>
-              </>
-            )}
-
-            {/* LOGGED-IN OWNER MOBILE */}
-            {isOwnerLoggedIn && (
-              <Link
-                href={ROUTES.OWNER.DASHBOARD}
-                onClick={() => setIsOpen(false)}
-                className="
-                  mt-3 flex items-center justify-between
-                  rounded-xl
-                  border border-emerald-100
-                  bg-emerald-50
-                  px-4 py-3.5
-                  text-sm font-extrabold text-emerald-700
-                "
-              >
-                <span className="flex items-center gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Owner Dashboard
-                </span>
-
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
+      {/* ================= MOBILE NAV DRAWER ================= */}
+      <MobileNavDrawer isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </header>
   );
 }
