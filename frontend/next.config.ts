@@ -7,6 +7,7 @@ const scriptSources = process.env.NODE_ENV === "development"
 
 const nextConfig: NextConfig = {
   compress: true,
+  outputFileTracingRoot: process.cwd(),
   experimental: {
     optimizePackageImports: ["lucide-react", "@reduxjs/toolkit", "react-redux"],
   },

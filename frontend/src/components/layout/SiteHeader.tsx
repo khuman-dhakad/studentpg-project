@@ -36,7 +36,7 @@ export function SiteHeader() {
     session?.user?.role === 'OWNER';
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur-xl shadow-2xs">
+    <header className="">
 
       {/* ================= MAIN HEADER ================= */}
       <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -46,7 +46,7 @@ export function SiteHeader() {
           href="/"
           className="group flex items-center cursor-pointer transition-transform duration-200 active:scale-95"
         >
-          <StudentPGLogo className="h-9 sm:h-10" />
+          <StudentPGLogo />
         </Link>
 
         {/* ================= DESKTOP NAV ================= */}
