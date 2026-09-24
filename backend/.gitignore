@@ -44,7 +44,9 @@ src/main/resources/application-local.properties
 .env.*
 !.env.example
 .env.example
-
+report.docs
+ROADMAP.md
+SECURITY_FIXES_REPORT.md
 
 # Logs
 *.log

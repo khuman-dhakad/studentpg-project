@@ -7,6 +7,7 @@ import com.studentpg.modules.owner.repository.OwnerRepository;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.pg.entity.PGImage;
 import com.studentpg.modules.pg.repository.PGRepository;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -115,6 +116,7 @@ private final CloudinaryService cloudinaryService;
         // Creation must never reuse a client-supplied Mongo document id.
         pg.setId(null);
 
+        normalizeAndValidateLocation(pg);
 
         /*
          * NEW PG ALWAYS REQUIRES APPROVAL
@@ -362,6 +364,8 @@ if (!owner.isActive()) {
                 updatedPG.getLandmark()
         );
 
+        normalizeAndValidateLocation(updatedPG);
+        existingPG.setLocation(updatedPG.getLocation());
 
         /*
          * ========================================================
@@ -433,6 +437,46 @@ if (!owner.isActive()) {
      * CHANGE DETECTION
      * ============================================================
      */
+
+    private void normalizeAndValidateLocation(PG pg) {
+        if (pg == null) {
+            return;
+        }
+
+        if (pg.getLocation() != null) {
+            validateCoordinates(pg.getLocation().getY(), pg.getLocation().getX());
+            return;
+        }
+
+        Double latitude = pg.getLatitude();
+        Double longitude = pg.getLongitude();
+
+        if (latitude == null && longitude == null) {
+            return;
+        }
+
+        if (latitude == null || longitude == null) {
+            throw new IllegalArgumentException("Both latitude and longitude are required when providing a location.");
+        }
+
+        validateCoordinates(latitude, longitude);
+        pg.setLocation(new GeoJsonPoint(longitude, latitude));
+    }
+
+    private void validateCoordinates(double latitude, double longitude) {
+        if (Double.isNaN(latitude) || Double.isInfinite(latitude)
+                || Double.isNaN(longitude) || Double.isInfinite(longitude)) {
+            throw new IllegalArgumentException("Latitude and longitude must be valid numbers.");
+        }
+
+        if (latitude < -90 || latitude > 90) {
+            throw new IllegalArgumentException("Latitude must be between -90 and 90.");
+        }
+
+        if (longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("Longitude must be between -180 and 180.");
+        }
+    }
 
     private boolean hasPGChanged(
             PG oldPG,
@@ -599,6 +643,9 @@ if (!owner.isActive()) {
             return true;
         }
 
+        if (!Objects.equals(oldPG.getLocation(), newPG.getLocation())) {
+            return true;
+        }
 
         /*
          * PRICING
