@@ -195,7 +195,7 @@ function FilterContent({ compact = false }: ListingFiltersProps) {
 
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={() => router.push('/filter')}
           className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-900"
         >
           <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-600" />

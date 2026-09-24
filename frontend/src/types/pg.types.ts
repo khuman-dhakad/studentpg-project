@@ -170,6 +170,8 @@ export interface PGFilterParams {
 
   maxRent?: number;
 
+  minRent?: number;
+
 
  category?: string;
 
@@ -185,6 +187,10 @@ export interface PGFilterParams {
   ac?: boolean;
 
   powerBackup?: boolean;
+
+  gender?: 'MALE' | 'FEMALE' | 'UNISEX';
+
+  roomType?: string;
 
 
   page?: number;
