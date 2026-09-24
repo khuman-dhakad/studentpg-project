@@ -20,7 +20,10 @@ async function SearchResults({ searchParams }: { searchParams: Promise<Record<st
   const query = typeof params.q === 'string' ? params.q : '';
   const city = typeof params.city === 'string' ? params.city : 'Bhopal';
   const maxRent = typeof params.maxRent === 'string' ? params.maxRent : '';
+  const minRent = typeof params.minRent === 'string' ? params.minRent : '';
   const category = typeof params.category === 'string' ? params.category : '';
+  const gender = typeof params.gender === 'string' ? params.gender : '';
+  const roomType = typeof params.roomType === 'string' ? params.roomType : '';
   const food = typeof params.food === 'string' ? params.food : '';
   const wifi = typeof params.wifi === 'string' ? params.wifi : '';
   const parking = typeof params.parking === 'string' ? params.parking : '';
@@ -30,7 +33,7 @@ async function SearchResults({ searchParams }: { searchParams: Promise<Record<st
   const sortValue = typeof params.sortBy === 'string' ? params.sortBy : 'rent';
   const direction = typeof params.direction === 'string' ? params.direction : 'asc';
 
-  const hasStructuredFilters = Boolean(city !== 'Bhopal' || maxRent || category || food || wifi || parking || laundry || ac || powerBackup);
+  const hasStructuredFilters = Boolean(city !== 'Bhopal' || maxRent || minRent || category || gender || roomType || food || wifi || parking || laundry || ac || powerBackup);
 
   const queryParams = new URLSearchParams({
     page: '0',
@@ -42,7 +45,10 @@ async function SearchResults({ searchParams }: { searchParams: Promise<Record<st
   if (query) queryParams.set('q', query);
   if (city && city !== 'Bhopal') queryParams.set('city', city);
   if (maxRent) queryParams.set('maxRent', maxRent);
+  if (minRent) queryParams.set('minRent', minRent);
   if (category) queryParams.set('category', category);
+  if (gender) queryParams.set('gender', gender);
+  if (roomType) queryParams.set('roomType', roomType);
   if (food) queryParams.set('food', food);
   if (wifi) queryParams.set('wifi', wifi);
   if (parking) queryParams.set('parking', parking);

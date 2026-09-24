@@ -211,7 +211,13 @@ public class StudentController {
             String category,
 
             @RequestParam(required = false)
+            String gender,
+
+            @RequestParam(required = false)
             Double maxRent,
+
+            @RequestParam(required = false)
+            Double minRent,
 
             @RequestParam(required = false)
             Boolean food,
@@ -227,6 +233,12 @@ public class StudentController {
 
             @RequestParam(required = false)
             String roomType,
+
+            @RequestParam(required = false)
+            Boolean ac,
+
+            @RequestParam(required = false)
+            Boolean powerBackup,
 
             @RequestParam(defaultValue = "0")
             int page,
@@ -253,12 +265,16 @@ public class StudentController {
                 studentService.filterPGs(
                         city,
                         category,
+                        gender,
                         maxRent,
+                        minRent,
                         food,
                         wifi,
                         parking,
                         laundry,
                         roomType,
+                        ac,
+                        powerBackup,
                         pageable
                 );
 

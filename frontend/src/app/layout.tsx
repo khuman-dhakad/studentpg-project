@@ -3,9 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { StoreProvider } from '@/store/StoreProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
-import { SiteHeader } from '@/components/layout/SiteHeader';
-import { SiteFooter } from '@/components/layout/SiteFooter';
-import { BottomNav } from '@/components/layout/BottomNav';
+import { SiteChrome } from '@/components/layout/SiteChrome';
 import './globals.css';
 
 const inter = Inter({
@@ -88,10 +86,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StoreProvider>
           <ThemeProvider>
             <div className="flex min-h-screen flex-col overflow-x-hidden">
-              <SiteHeader />
-              <div className="flex-1 pb-16 md:pb-0">{children}</div>
-              <SiteFooter />
-              <BottomNav />
+              <div className="flex-1 pb-16 md:pb-0">
+                <SiteChrome>{children}</SiteChrome>
+              </div>
             </div>
           </ThemeProvider>
         </StoreProvider>

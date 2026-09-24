@@ -317,12 +317,16 @@ public class StudentService {
     public Page<PG> filterPGs(
             String city,
             String category,
+            String gender,
             Double maxRent,
+            Double minRent,
             Boolean food,
             Boolean wifi,
             Boolean parking,
             Boolean laundry,
             String roomType,
+            Boolean ac,
+            Boolean powerBackup,
             Pageable pageable
     ) {
 
@@ -355,11 +359,27 @@ public class StudentService {
             );
         }
 
+        if (gender != null && !gender.isBlank()) {
+
+            query.addCriteria(
+                    Criteria.where("gender")
+                            .is(gender.trim())
+            );
+        }
+
         if (maxRent != null && maxRent >= 0) {
 
             query.addCriteria(
                     Criteria.where("rent")
                             .lte(maxRent)
+            );
+        }
+
+        if (minRent != null && minRent >= 0) {
+
+            query.addCriteria(
+                    Criteria.where("rent")
+                            .gte(minRent)
             );
         }
 
@@ -400,6 +420,22 @@ public class StudentService {
             query.addCriteria(
                     Criteria.where("roomType")
                             .is(roomType.trim())
+            );
+        }
+
+        if (ac != null) {
+
+            query.addCriteria(
+                    Criteria.where("acAvailable")
+                            .is(ac)
+            );
+        }
+
+        if (powerBackup != null) {
+
+            query.addCriteria(
+                    Criteria.where("powerBackup")
+                            .is(powerBackup)
             );
         }
 
