@@ -31,7 +31,7 @@ This is an active MVP (version 1). Right now the focus is on:
 
 ## Tech stack
 
-- Frontend: React, Vite, Tailwind CSS
+- Frontend: Next.js, React, TypeScript, Tailwind CSS
 - Backend: Spring Boot, Spring Data MongoDB, REST APIs
 - Database: MongoDB Atlas
 - Tools: Git, GitHub, VS Code, Postman
@@ -60,7 +60,7 @@ studentpg-project
 ├── frontend
 │   ├── src
 │   ├── public
-│   └── components
+│   └── tests
 ├── backend
 │   ├── controller
 │   ├── service
@@ -121,10 +121,12 @@ cd frontend
 npm install
 ```
 
-If the frontend needs to know where the API is, set it in a `.env` file:
+If the frontend needs to know where the API is, set it in `frontend/.env` (see
+[`frontend/.env.example`](frontend/.env.example)):
 
 ```
-VITE_API_BASE_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=http://localhost:8080
+BACKEND_INTERNAL_URL=http://localhost:8080
 ```
 
 Then run it:
