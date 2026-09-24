@@ -186,7 +186,7 @@ export default function FilterPage() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1120px] px-4 pb-8 pt-6 sm:px-6 sm:pt-8">
+      <div className="mx-auto max-w-[1120px] px-4 pb-8 pt-5 sm:px-6 sm:pt-7">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-[30px] font-black tracking-[-0.04em] sm:text-[34px]">Filters</h1>
@@ -198,7 +198,7 @@ export default function FilterPage() {
           </button>
         </div>
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-5 space-y-3 sm:mt-6">
           <section className="rounded-2xl bg-white p-4 shadow-[0_4px_20px_rgba(15,23,42,0.04)] sm:p-5">
             <SectionTitle icon={<MapPin />} title="Location" action="Select Area" />
             <div className="relative mt-4">
@@ -236,7 +236,7 @@ export default function FilterPage() {
 
           <section className="rounded-2xl bg-white p-4 shadow-[0_4px_20px_rgba(15,23,42,0.04)] sm:p-5">
             <SectionTitle icon={<Zap />} title="Amenities" />
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               {amenities.map(({ key, label, icon: Icon }) => (
                 <ChoiceCard key={key} selected={filters[key]} onClick={() => update(key, !filters[key])} label={label} icon={<Icon />} />
               ))}
@@ -245,7 +245,7 @@ export default function FilterPage() {
 
           <section className="rounded-2xl bg-white p-4 shadow-[0_4px_20px_rgba(15,23,42,0.04)] sm:p-5">
             <SectionTitle icon={<Building2 />} title="Property Type" />
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-3 gap-2">
               {propertyTypes.map(({ value, label }) => (
                 <ChoiceCard key={value} selected={filters.category === value} onClick={() => update('category', filters.category === value ? '' : value)} label={label} icon={<Building2 />} />
               ))}

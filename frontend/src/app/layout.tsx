@@ -86,8 +86,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StoreProvider>
           <ThemeProvider>
             <div className="flex min-h-screen flex-col overflow-x-hidden">
-              <SiteChrome />
-              <div className="flex-1 pb-16 md:pb-0">{children}</div>
+              <div className="flex-1 pb-16 md:pb-0">
+                <SiteChrome>{children}</SiteChrome>
+              </div>
             </div>
           </ThemeProvider>
         </StoreProvider>
