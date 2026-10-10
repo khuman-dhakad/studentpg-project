@@ -9,8 +9,18 @@ import { BottomNav } from '@/components/layout/BottomNav';
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isFilterPage = pathname === '/filter';
+  const isPgDetails = pathname?.startsWith('/pg/');
 
   if (isFilterPage) return <>{children}</>;
+
+  if (isPgDetails) {
+    return (
+      <>
+        {children}
+        <SiteFooter />
+      </>
+    );
+  }
 
   return (
     <>
