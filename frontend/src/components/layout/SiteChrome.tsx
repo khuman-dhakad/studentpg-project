@@ -10,8 +10,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isFilterPage = pathname === '/filter';
   const isPgDetails = pathname?.startsWith('/pg/');
+  const isOwnerRoute = pathname?.startsWith('/owner');
+  const isAdminRoute = pathname?.startsWith('/admin');
 
-  if (isFilterPage) return <>{children}</>;
+  if (isFilterPage || isOwnerRoute || isAdminRoute) return <>{children}</>;
 
   if (isPgDetails) {
     return (
