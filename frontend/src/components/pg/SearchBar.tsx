@@ -120,7 +120,7 @@ export function SearchBar({ initialQuery = '' }: SearchBarProps) {
           type="button"
           onClick={() => submit(value)}
           aria-label="Search properties"
-          className="shrink-0 rounded-xl bg-emerald-600 px-5 py-3 text-xs font-black uppercase tracking-[0.08em] text-white shadow-sm transition-all hover:bg-emerald-700 active:scale-[0.99]"
+          className="shrink-0 rounded-xl bg-[#059669] hover:bg-[#047857] px-5 py-2.5 sm:py-3 text-sm font-bold text-white shadow-xs transition-all active:scale-[0.98]"
         >
           Search
         </button>
