@@ -7,6 +7,7 @@ import {
   MapPin,
   IndianRupee,
   Users,
+  Building2,
   Wifi,
   Utensils,
   Car,
@@ -173,34 +174,48 @@ function FilterContent({ compact = false }: ListingFiltersProps) {
 
   if (compact) {
     const chips = [
-      { label: city || 'Bhopal', icon: <MapPin className="h-3.5 w-3.5" /> },
-      { label: category ? category === 'MALE' ? 'Boys' : category === 'FEMALE' ? 'Girls' : 'Unisex' : 'Stay Type', icon: <Users className="h-3.5 w-3.5" /> },
-      { label: maxRent ? `₹${Number(maxRent).toLocaleString('en-IN')}` : 'Budget', icon: <IndianRupee className="h-3.5 w-3.5" /> },
+      { label: city || 'Bhopal', icon: <MapPin className="h-3.5 w-3.5 text-slate-500" /> },
+      {
+        label: category
+          ? category === 'MALE'
+            ? 'Boys'
+            : category === 'FEMALE'
+              ? 'Girls'
+              : 'Co-living'
+          : 'Stay Type',
+        icon: <Building2 className="h-3.5 w-3.5 text-slate-500" />,
+      },
+      {
+        label: maxRent ? `₹${Number(maxRent).toLocaleString('en-IN')}` : 'Budget',
+        icon: <IndianRupee className="h-3.5 w-3.5 text-slate-500" />,
+      },
     ];
 
     return (
       <>
-        {chips.map((chip) => (
+        <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          {chips.map((chip) => (
+            <button
+              key={chip.label}
+              type="button"
+              onClick={() => setIsOpen(true)}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:text-slate-900"
+            >
+              {chip.icon}
+              <span>{chip.label}</span>
+              <ChevronDown className="h-3 w-3 text-slate-400" />
+            </button>
+          ))}
+
           <button
-            key={chip.label}
             type="button"
             onClick={() => setIsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-900"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:text-slate-900"
           >
-            <span className="text-emerald-600">{chip.icon}</span>
-            <span>{chip.label}</span>
-            <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+            <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" />
+            <span>More Filters</span>
           </button>
-        ))}
-
-        <button
-          type="button"
-          onClick={() => router.push('/filter')}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-900"
-        >
-          <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-600" />
-          More Filters
-        </button>
+        </div>
 
         {isOpen && (
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)}>

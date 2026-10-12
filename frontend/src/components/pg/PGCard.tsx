@@ -55,22 +55,22 @@ export function PGCard({ pg }: PGCardProps) {
 
   return (
     <>
-      <div className="group relative overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_25px_rgba(15,23,42,0.06)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_30px_rgba(15,23,42,0.1)]">
-        <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-stretch">
-          <div className="relative min-h-[178px] w-full overflow-hidden rounded-[18px] bg-slate-100 sm:max-w-[210px]">
-            <Link href={ROUTES.PG_DETAILS(pg.id)} className="block h-full w-full">
+      <div className="group relative overflow-hidden rounded-[20px] sm:rounded-[24px] border border-slate-200/90 bg-white shadow-[0_4px_16px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
+        <div className="flex items-stretch gap-2.5 p-2.5 sm:gap-3.5 sm:p-3">
+          <div className="relative w-[130px] min-w-[130px] shrink-0 overflow-hidden rounded-[14px] bg-slate-100 sm:w-[210px] sm:min-w-[210px] sm:rounded-[18px]">
+            <Link href={ROUTES.PG_DETAILS(pg.id)} className="block h-full w-full min-h-[160px] sm:min-h-[190px]">
               <Image
                 src={image}
                 alt={pg.pgName}
                 fill
-                sizes="(max-width: 768px) 100vw, 360px"
+                sizes="(max-width: 640px) 140px, 320px"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 onError={() => setImageLoadFailed(true)}
               />
             </Link>
 
             {isVerified && (
-              <div className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
+              <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full bg-[#059669] px-2 py-0.5 text-[10px] font-semibold text-white shadow-2xs">
                 <Check className="h-3 w-3 stroke-[2.5]" />
                 Verified
               </div>
@@ -84,80 +84,86 @@ export function PGCard({ pg }: PGCardProps) {
                 event.stopPropagation();
                 setIsLiked(!isLiked);
               }}
-              className="absolute right-2.5 top-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/85 text-slate-700 shadow-sm transition-all hover:bg-white"
+              className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white shadow-2xs backdrop-blur-xs transition-colors hover:bg-black/60"
             >
-              <Heart className={`h-4 w-4 transition-colors ${isLiked ? 'fill-rose-500 text-rose-500' : 'text-slate-700'}`} />
+              <Heart className={`h-3.5 w-3.5 transition-colors ${isLiked ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
             </button>
 
             <button
               type="button"
               onClick={openGallery}
               aria-label={`View ${images.length} photos of ${pg.pgName}`}
-              className="absolute bottom-2 right-2 z-10 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-sm"
+              className="absolute bottom-2 right-2 z-10 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-xs"
             >
               1/{images.length}
             </button>
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col justify-between gap-2.5">
-            <div className="space-y-2">
+          <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5 gap-1.5 sm:gap-2">
+            <div className="space-y-1 sm:space-y-1.5">
               <Link href={ROUTES.PG_DETAILS(pg.id)} className="block">
-                <h3 className="line-clamp-1 text-[19px] font-black tracking-[-0.03em] text-slate-900 hover:text-emerald-700">{pg.pgName}</h3>
+                <h3 className="line-clamp-1 text-sm sm:text-base font-black tracking-tight text-slate-900 hover:text-emerald-700">
+                  {pg.pgName}
+                </h3>
               </Link>
 
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-slate-500">
-                  <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+              <div className="flex items-center justify-between gap-1 text-[11px] sm:text-xs">
+                <div className="flex min-w-0 items-center gap-1 text-slate-500">
+                  <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
                   <span className="truncate">{locationLabel}</span>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0 text-sm font-bold text-slate-700">
+                <div className="flex items-center gap-1 shrink-0 font-bold text-slate-700">
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                   <span>4.5</span>
-                  <span className="text-slate-400">(120)</span>
+                  <span className="text-slate-400 font-normal">(120)</span>
                 </div>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-[1.05rem] font-black text-emerald-600">₹{pg.rent.toLocaleString('en-IN')}</span>
-                <span className="text-xs font-medium text-slate-400">/ month</span>
+                <span className="text-sm sm:text-base font-black text-[#059669]">
+                  ₹{pg.rent.toLocaleString('en-IN')}
+                </span>
+                <span className="text-[10px] sm:text-xs font-medium text-slate-400">/ month</span>
               </div>
 
-              <div className="flex flex-wrap gap-1.5 pt-0.5">
+              <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-0.5">
                 {pg.wifiAvailable && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-600">
-                    <Wifi className="h-3 w-3 text-slate-500" />
+                  <span className="inline-flex items-center gap-1 rounded-md bg-[#eff6ff] border border-blue-100/70 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563eb]">
+                    <Wifi className="h-3 w-3" />
                     Wi-Fi
                   </span>
                 )}
                 {pg.foodAvailable && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-600">
-                    <Utensils className="h-3 w-3 text-slate-500" />
+                  <span className="inline-flex items-center gap-1 rounded-md bg-[#eff6ff] border border-blue-100/70 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563eb]">
+                    <Utensils className="h-3 w-3" />
                     Meals
                   </span>
                 )}
                 {pg.acAvailable && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-600">
-                    <Snowflake className="h-3 w-3 text-slate-500" />
+                  <span className="inline-flex items-center gap-1 rounded-md bg-[#eff6ff] border border-blue-100/70 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563eb]">
+                    <Snowflake className="h-3 w-3" />
                     AC
                   </span>
                 )}
                 {!pg.acAvailable && pg.parkingAvailable && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-600">
-                    <Car className="h-3 w-3 text-slate-500" />
+                  <span className="inline-flex items-center gap-1 rounded-md bg-[#eff6ff] border border-blue-100/70 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563eb]">
+                    <Car className="h-3 w-3" />
                     Parking
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="line-clamp-2 text-sm leading-5 text-slate-500">{propertyDescription}</p>
+            <div>
+              <p className="line-clamp-2 text-[11px] sm:text-xs text-slate-500 leading-snug">
+                {propertyDescription}
+              </p>
 
-              <div className="flex flex-wrap items-center gap-2 pt-1">
+              <div className="flex items-center gap-2 pt-2">
                 <Link
                   href={ROUTES.PG_DETAILS(pg.id)}
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#e8f8f2] hover:bg-[#d5f3e7] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-[#059669] transition-colors shrink-0"
                 >
                   View Details →
                 </Link>
@@ -165,10 +171,10 @@ export function PGCard({ pg }: PGCardProps) {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-emerald-700"
+                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#059669] hover:bg-[#047857] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-white transition-colors shadow-2xs"
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
-                  WhatsApp Get Contact
+                  Get Contact
                 </a>
               </div>
             </div>
