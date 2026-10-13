@@ -12,21 +12,14 @@ interface BackendError {
   message?: string;
 }
 
-export async function PUT(
+async function handleApprove(
   _request: NextRequest,
   context: {
     params: Promise<{ id: string }>;
   }
 ) {
   try {
-    /*
-     * =====================================================
-     * GET PG ID
-     * =====================================================
-     */
-
     const { id: rawId } = await context.params;
-
     const id = rawId?.trim();
 
     if (!id) {
@@ -40,85 +33,37 @@ export async function PUT(
       );
     }
 
-    /*
-     * =====================================================
-     * CALL SPRING BOOT BACKEND
-     *
-     * PUT /api/admin/pgs/{id}/approve
-     * =====================================================
-     */
-
-    const response =
-      await backendClient.put<AdminActionResponse>(
-        BACKEND_ENDPOINTS.ADMIN.APPROVE_PG(id),
-        {}
-      );
-
-    /*
-     * =====================================================
-     * SUCCESS RESPONSE
-     * =====================================================
-     */
+    const response = await backendClient.put<AdminActionResponse>(
+      BACKEND_ENDPOINTS.ADMIN.APPROVE_PG(id),
+      {}
+    );
 
     return NextResponse.json(
       {
-        message:
-          response?.message ??
-          'PG approved successfully.',
+        message: response?.message ?? 'PG approved successfully.',
       },
       {
         status: 200,
       }
     );
-
   } catch (error: unknown) {
-
-    console.error(
-      'Admin approve PG error:',
-      error
-    );
-
-    /*
-     * =====================================================
-     * EXTRACT BACKEND STATUS
-     * =====================================================
-     */
+    console.error('Admin approve PG error:', error);
 
     const status =
       typeof error === 'object' &&
       error !== null &&
       'status' in error &&
-      typeof (
-        error as BackendError
-      ).status === 'number'
-        ? (
-            error as BackendError
-          ).status!
+      typeof (error as BackendError).status === 'number'
+        ? (error as BackendError).status!
         : 500;
-
-    /*
-     * =====================================================
-     * EXTRACT ERROR MESSAGE
-     * =====================================================
-     */
 
     const message =
       typeof error === 'object' &&
       error !== null &&
       'message' in error &&
-      typeof (
-        error as BackendError
-      ).message === 'string'
-        ? (
-            error as BackendError
-          ).message!
+      typeof (error as BackendError).message === 'string'
+        ? (error as BackendError).message!
         : 'Failed to approve PG.';
-
-    /*
-     * =====================================================
-     * ERROR RESPONSE
-     * =====================================================
-     */
 
     return NextResponse.json(
       {
@@ -129,4 +74,22 @@ export async function PUT(
       }
     );
   }
+}
+
+export async function PUT(
+  request: NextRequest,
+  context: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  return handleApprove(request, context);
+}
+
+export async function PATCH(
+  request: NextRequest,
+  context: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  return handleApprove(request, context);
 }
