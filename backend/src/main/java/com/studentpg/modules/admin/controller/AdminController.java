@@ -2,6 +2,7 @@ package com.studentpg.modules.admin.controller;
 
 import com.studentpg.common.util.PageableUtils;
 import com.studentpg.modules.admin.dto.request.RejectPGRequest;
+import com.studentpg.modules.admin.dto.response.AdminDashboardOverviewResponse;
 import com.studentpg.modules.admin.service.AdminService;
 import com.studentpg.modules.pg.entity.PG;
 
@@ -103,6 +104,23 @@ public ResponseEntity<Page<PG>> getPGs(
 
     /*
      * =====================================================
+     * GET ADMIN DASHBOARD OVERVIEW
+     * =====================================================
+     *
+     * GET /api/admin/pgs/dashboard-overview
+     */
+
+    @GetMapping("/dashboard-overview")
+    public ResponseEntity<AdminDashboardOverviewResponse> getDashboardOverview() {
+
+        return ResponseEntity.ok(
+                adminService.getDashboardOverview()
+        );
+    }
+
+
+    /*
+     * =====================================================
      * GET PENDING PGs
      * =====================================================
      *
@@ -165,10 +183,10 @@ public ResponseEntity<Page<PG>> getPendingPGs(
      * APPROVE PG
      * =====================================================
      *
-     * PATCH /api/admin/pgs/{id}/approve
+     * PATCH / PUT /api/admin/pgs/{id}/approve
      */
 
-    @PatchMapping("/{id}/approve")
+    @RequestMapping(value = "/{id}/approve", method = {RequestMethod.PATCH, RequestMethod.PUT})
     public ResponseEntity<String> approvePG(
 
             @PathVariable
@@ -191,7 +209,7 @@ public ResponseEntity<Page<PG>> getPendingPGs(
      * REJECT PG
      * =====================================================
      *
-     * PATCH /api/admin/pgs/{id}/reject
+     * PATCH / POST /api/admin/pgs/{id}/reject
      *
      * Body:
      *
@@ -200,7 +218,7 @@ public ResponseEntity<Page<PG>> getPendingPGs(
      * }
      */
 
-    @PatchMapping("/{id}/reject")
+    @RequestMapping(value = "/{id}/reject", method = {RequestMethod.PATCH, RequestMethod.POST})
     public ResponseEntity<String> rejectPG(
 
             @PathVariable
