@@ -84,6 +84,8 @@ export const BACKEND_ENDPOINTS = {
 
     STATS: "/api/admin/pgs/stats",
 
+    DASHBOARD_OVERVIEW: "/api/admin/pgs/dashboard-overview",
+
     PGS: "/api/admin/pgs",
 
     APPROVE_PG: (id: string) =>
