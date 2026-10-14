@@ -12,6 +12,7 @@ import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
 // import com.studentpg.modules.owner.dto.response.LoginResponse;
 import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
 import com.studentpg.modules.owner.entity.Owner;
+import com.studentpg.modules.admin.repository.AdminRepository;
 import com.studentpg.modules.owner.entity.VerificationStatus;
 import com.studentpg.modules.owner.dto.request.OwnerVerificationRequest;
 import com.studentpg.modules.owner.repository.OwnerRepository;
@@ -67,6 +68,7 @@ public class OwnerService {
             60 * 60 * 1000L;
 
     private final OwnerRepository ownerRepository;
+    private final AdminRepository adminRepository;
     private final JwtService jwtService;
     private final CloudinaryService cloudinaryService;
     private final EmailService emailService;
@@ -131,6 +133,10 @@ public class OwnerService {
     String email =
             normalizeEmail(request.getEmail());
             validatePassword(request.getPassword());    
+
+    if (adminRepository.existsByEmailIgnoreCase(email)) {
+        throw new IllegalStateException("Email already exists");
+    }
 
     Owner existingOwner = ownerRepository.findByEmail(email).orElse(null);
     if (existingOwner != null && existingOwner.isEmailVerified()) {
@@ -853,4 +859,4 @@ if (image.getSize() > 5 * 1024 * 1024) {
         return email.trim()
                 .toLowerCase();
     }
-}   
+}

@@ -32,6 +32,12 @@ class PGPublicResponseMapperTest {
         owner.setWhatsappNumber("8604325848");
         owner.setPassword("secret");
 
+        pg.setApprovedBy("admin@studentpg.com");
+        pg.setApprovedAt(java.time.Instant.now());
+        pg.setRejectedBy("admin@studentpg.com");
+        pg.setRejectedAt(java.time.Instant.now());
+        pg.setRejectionReason("Internal moderation notes");
+
         PGDetailsResponse response = mapper.toPublicResponse(pg, owner);
 
         assertNotNull(response);
@@ -44,5 +50,12 @@ class PGPublicResponseMapperTest {
         assertEquals("8604325848", response.getOwner().getPhone());
         assertEquals("8604325848", response.getOwner().getWhatsappNumber());
         assertThrows(NoSuchMethodException.class, () -> OwnerSummaryResponse.class.getMethod("getPassword"));
+
+        // Verify sensitive admin audit and moderation fields are NOT exposed to public students
+        org.junit.jupiter.api.Assertions.assertNull(response.getApprovedBy(), "Public response must not expose admin email");
+        org.junit.jupiter.api.Assertions.assertNull(response.getRejectedBy(), "Public response must not expose rejector email");
+        org.junit.jupiter.api.Assertions.assertNull(response.getRejectionReason(), "Public response must not expose rejection reason");
+        org.junit.jupiter.api.Assertions.assertNull(response.getApprovedAt(), "Public response must not expose approval timestamp");
+        org.junit.jupiter.api.Assertions.assertNull(response.getRejectedAt(), "Public response must not expose rejection timestamp");
     }
 }

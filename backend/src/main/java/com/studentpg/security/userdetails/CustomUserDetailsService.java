@@ -62,10 +62,40 @@ public class CustomUserDetailsService
 
         /*
          * ============================================================
-         * 3. SEARCH OWNER
+         * 3. SEARCH ADMIN (Admin accounts take precedence to prevent
+         *    account shadowing or role ambiguity)
          * ============================================================
          */
-        
+
+        Admin admin =
+                adminRepository
+                        .findByEmailIgnoreCase(
+                                normalizedEmail
+                        )
+                        .orElse(null);
+
+        if (admin != null) {
+            if (!admin.isActive()) {
+                throw new UsernameNotFoundException(
+                        "User not found"
+                );
+            }
+
+            return new StudentPgUserDetails(
+                    admin.getId(),
+                    admin.getEmail().trim().toLowerCase(),
+                    admin.getPassword(),
+                    admin.getRole(),
+                    0L,
+                    admin.isActive()
+            );
+        }
+
+        /*
+         * ============================================================
+         * 4. SEARCH OWNER
+         * ============================================================
+         */
 
         Owner owner =
                 ownerRepository
@@ -88,49 +118,6 @@ public class CustomUserDetailsService
                     owner.getRole(),
                     owner.getTokenVersion(),
                     owner.isActive()
-            );
-        }
-
-
-        /*
-         * ============================================================
-         * 4. SEARCH ADMIN
-         * ============================================================
-         */
-
-        Admin admin =
-                adminRepository
-                        .findByEmailIgnoreCase(
-                                normalizedEmail
-                        )
-                        .orElse(null);
-
-
-        if (
-                admin != null
-        ) {
-
-            /*
-             * Disabled admin must not authenticate.
-             */
-
-            if (
-                    !admin.isActive()
-            ) {
-
-                throw new UsernameNotFoundException(
-                        "User not found"
-                );
-            }
-
-
-            return new StudentPgUserDetails(
-                    admin.getId(),
-                    admin.getEmail().trim().toLowerCase(),
-                    admin.getPassword(),
-                    admin.getRole(),
-                    0L,
-                    admin.isActive()
             );
         }
 
