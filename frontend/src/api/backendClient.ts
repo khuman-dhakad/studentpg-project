@@ -258,14 +258,17 @@ export const backendClient = {
     try {
 
       const { onSetCookie, ...fetchOptions } = options;
-      const response =
-       await fetch(url,{
-     ...fetchOptions,
-    headers,
-
-    cache: options.cache ?? (options.next ? "force-cache" : "no-store"),
-    credentials: "include",
-})
+      const fetchInit: RequestInit = {
+        ...fetchOptions,
+        headers,
+        credentials: 'include',
+      };
+      if (options.cache) {
+        fetchInit.cache = options.cache;
+      } else if (!options.next) {
+        fetchInit.cache = 'no-store';
+      }
+      const response = await fetch(url, fetchInit);
 
       const setCookieHeader = captureSetCookieHeader(response);
       onSetCookie?.(setCookieHeader);

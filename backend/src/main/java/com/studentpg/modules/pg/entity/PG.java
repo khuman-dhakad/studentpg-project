@@ -36,6 +36,10 @@ import com.studentpg.modules.pg.entity.ApprovalStatus;
         @CompoundIndex(
                 name = "status_rent_idx",
                 def = "{'approvalStatus': 1, 'rent': 1}"
+        ),
+        @CompoundIndex(
+                name = "status_submitted_idx",
+                def = "{'approvalStatus': 1, 'submittedAt': -1}"
         )
 })
 public class PG {

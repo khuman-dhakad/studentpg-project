@@ -80,9 +80,10 @@ export function MarketplaceHero() {
           <Image
             src="/hero-student.png"
             alt="StudentPG Accommodation in Bhopal"
-            width={1024}
-            height={682}
+            width={210}
+            height={140}
             priority
+            sizes="(max-width: 640px) 210px, 240px"
             className="w-full h-auto object-contain object-right-top"
           />
         </div>

@@ -69,9 +69,9 @@ export function LocalityIconGrid() {
 
           {/* Locality Cards Carousel / Grid: 4 items matching reference */}
           <div className="flex sm:grid sm:grid-cols-4 gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-            {HOMEPAGE_POPULAR_AREAS.map((area, index) => (
+            {HOMEPAGE_POPULAR_AREAS.map((area) => (
               <div key={area.id} className="w-36 sm:w-auto shrink-0">
-                <AreaCard area={area} priority={index === 0} />
+                <AreaCard area={area} priority={false} />
               </div>
             ))}
           </div>
