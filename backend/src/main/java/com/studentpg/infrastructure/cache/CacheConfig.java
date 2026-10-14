@@ -13,17 +13,28 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class CacheConfig {
 
+    public static final String CACHE_APPROVED_PGS = "approvedPgs";
+    public static final String CACHE_PG_DETAILS = "pgDetails";
+    public static final String CACHE_SEARCH_SUGGESTIONS = "searchSuggestions";
+    public static final String CACHE_PG_SEARCH = "pgSearch";
+
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager("approvedPgs");
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager(
+                CACHE_APPROVED_PGS,
+                CACHE_PG_DETAILS,
+                CACHE_SEARCH_SUGGESTIONS,
+                CACHE_PG_SEARCH
+        );
 
         cacheManager.setCaffeine(
                 Caffeine.newBuilder()
                         .expireAfterWrite(5, TimeUnit.MINUTES) // cache refreshes every 5 minutes
-                        .maximumSize(500)
+                        .maximumSize(1000)
                         .recordStats()
         );
 
+        cacheManager.setAllowNullValues(true);
         return cacheManager;
     }
 }

@@ -199,7 +199,7 @@ ApprovalStatus.PENDING
      */
 
     @CacheEvict(
-            value = "approvedPgs",
+            value = {"approvedPgs", "pgDetails", "searchSuggestions", "pgSearch"},
             allEntries = true
     )
     public String updatePG(
@@ -710,7 +710,7 @@ if (!owner.isActive()) {
      */
 
     @CacheEvict(
-            value = "approvedPgs",
+            value = {"approvedPgs", "pgDetails", "searchSuggestions", "pgSearch"},
             allEntries = true
     )
     public String deletePG(String id) {
