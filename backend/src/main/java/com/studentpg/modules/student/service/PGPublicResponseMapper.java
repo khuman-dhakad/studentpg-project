@@ -34,11 +34,13 @@ public class PGPublicResponseMapper {
         response.setAcAvailable(pg.isAcAvailable());
         response.setPowerBackup(pg.isPowerBackup());
         response.setApprovalStatus(pg.getApprovalStatus());
-        response.setRejectionReason(pg.getRejectionReason());
-        response.setRejectedAt(pg.getRejectedAt());
-        response.setRejectedBy(pg.getRejectedBy());
-        response.setApprovedBy(pg.getApprovedBy());
-        response.setApprovedAt(pg.getApprovedAt());
+        // SECURITY REMEDIATION: Admin email and internal moderation audit details
+        // must NEVER be exposed in public student endpoints.
+        response.setRejectionReason(null);
+        response.setRejectedAt(null);
+        response.setRejectedBy(null);
+        response.setApprovedBy(null);
+        response.setApprovedAt(null);
         response.setSubmittedAt(pg.getSubmittedAt());
         response.setImages(pg.getImages());
 
@@ -60,5 +62,42 @@ public class PGPublicResponseMapper {
         }
 
         return response;
+    }
+
+    public static PG sanitizePGForPublic(PG pg) {
+        if (pg == null) {
+            return null;
+        }
+        PG copy = new PG();
+        copy.setId(pg.getId());
+        copy.setOwnerId(pg.getOwnerId());
+        copy.setPgName(pg.getPgName());
+        copy.setAddress(pg.getAddress());
+        copy.setDescription(pg.getDescription());
+        copy.setCity(pg.getCity());
+        copy.setState(pg.getState());
+        copy.setLocation(pg.getLocation());
+        copy.setLatitude(pg.getLatitude());
+        copy.setLongitude(pg.getLongitude());
+        copy.setPincode(pg.getPincode());
+        copy.setLandmark(pg.getLandmark());
+        copy.setCategory(pg.getCategory());
+        copy.setRent(pg.getRent());
+        copy.setSecurityDeposit(pg.getSecurityDeposit());
+        copy.setNoticePeriod(pg.getNoticePeriod());
+        copy.setGender(pg.getGender());
+        copy.setRoomType(pg.getRoomType());
+        copy.setFoodAvailable(pg.isFoodAvailable());
+        copy.setWifiAvailable(pg.isWifiAvailable());
+        copy.setParkingAvailable(pg.isParkingAvailable());
+        copy.setLaundryAvailable(pg.isLaundryAvailable());
+        copy.setAcAvailable(pg.isAcAvailable());
+        copy.setPowerBackup(pg.isPowerBackup());
+        copy.setApprovalStatus(pg.getApprovalStatus());
+        copy.setSubmittedAt(pg.getSubmittedAt());
+        copy.setImages(pg.getImages());
+        // SECURITY NOTE: admin and moderation audit fields (approvedBy, approvedAt, rejectedBy, rejectedAt, rejectionReason)
+        // are intentionally omitted (null) to prevent leaking administrator email and internal notes to public consumers.
+        return copy;
     }
 }

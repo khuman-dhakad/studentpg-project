@@ -5,6 +5,7 @@ import com.studentpg.common.util.PageableUtils;
 import com.studentpg.modules.pg.entity.PG;
 import com.studentpg.modules.student.dto.response.PGDetailsResponse;
 import com.studentpg.modules.student.dto.response.PGSuggestionResponse;
+import com.studentpg.modules.student.service.PGPublicResponseMapper;
 import com.studentpg.modules.student.service.StudentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -303,9 +304,12 @@ public List<PGSuggestionResponse> getSearchSuggestions(
     private PagedResponse<PG> toPagedResponse(
             Page<PG> result
     ) {
+        List<PG> sanitizedContent = result.getContent().stream()
+                .map(PGPublicResponseMapper::sanitizePGForPublic)
+                .toList();
 
         return new PagedResponse<>(
-                result.getContent(),
+                sanitizedContent,
                 result.getNumber(),
                 result.getSize(),
                 result.getTotalElements(),
