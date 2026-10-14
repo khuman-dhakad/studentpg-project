@@ -55,9 +55,8 @@ public class StudentService {
      */
     @Cacheable(
             value = "approvedPgs",
-            key = "#pageable.pageNumber + '-' + "
-                    + "#pageable.pageSize + '-' "
-                    + "+ #pageable.sort"
+            key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort",
+            sync = true
     )
     public Page<PG> getApprovedPGs(Pageable pageable) {
         return pgRepository.findByApprovalStatus(
@@ -149,6 +148,7 @@ public class StudentService {
      *
      * Students must never receive PENDING or REJECTED listings.
      */
+    @Cacheable(value = "pgDetails", key = "#id", sync = true)
     public PGDetailsResponse getPGDetails(String id) {
 
         if (id == null || id.isBlank()) {
@@ -244,6 +244,7 @@ public class StudentService {
      *
      * Only _id, pgName and city are returned.
      */
+    @Cacheable(value = "searchSuggestions", key = "#query.trim().toLowerCase()", sync = true)
     public List<PGSuggestionResponse> getSearchSuggestions(String query) {
 
     if (query == null || query.trim().length() < 2) {
@@ -251,36 +252,25 @@ public class StudentService {
     }
 
     query = query.trim();
+    if (query.length() > 50) {
+        query = query.substring(0, 50).trim();
+    }
 
     Query mongoQuery = new Query();
 
     mongoQuery.addCriteria(
             new Criteria().andOperator(
-
                     Criteria.where("approvalStatus")
                             .is(ApprovalStatus.APPROVED),
 
                     new Criteria().orOperator(
-
                             Criteria.where("pgName")
                                     .regex(
                                             "^" + Pattern.quote(query),
                                             "i"
                                     ),
 
-                            Criteria.where("address")
-                                    .regex(
-                                            "^" + Pattern.quote(query),
-                                            "i"
-                                    ),
-
                             Criteria.where("city")
-                                    .regex(
-                                            "^" + Pattern.quote(query),
-                                            "i"
-                                    ),
-
-                            Criteria.where("state")
                                     .regex(
                                             "^" + Pattern.quote(query),
                                             "i"
@@ -455,16 +445,10 @@ public class StudentService {
                         .limit(-1)
                         .skip(-1);
 
-        long total =
-                mongoTemplate.count(
-                        countQuery,
-                        PG.class
-                );
-
         return PageableExecutionUtils.getPage(
                 results,
                 pageable,
-                () -> total
+                () -> mongoTemplate.count(countQuery, PG.class)
         );
     }
 }

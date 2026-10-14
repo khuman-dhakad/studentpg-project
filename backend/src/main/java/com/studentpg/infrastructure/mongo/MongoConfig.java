@@ -21,6 +21,18 @@ public class MongoConfig {
         ));
     }
 
+    @Bean
+    public org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer mongoClientSettingsBuilderCustomizer() {
+        return builder -> builder.applyToConnectionPoolSettings(pool ->
+                pool.maxSize(150)
+                    .minSize(0)
+                    .maxWaitTime(5, java.util.concurrent.TimeUnit.SECONDS)
+        ).applyToSocketSettings(socket ->
+                socket.connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                      .readTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+        );
+    }
+
     @ReadingConverter
     static class GenderReadingConverter implements Converter<String, Gender> {
         @Override

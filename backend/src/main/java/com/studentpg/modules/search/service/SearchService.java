@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,20 +19,32 @@ import java.util.List;
 @Service
 public class SearchService {
 
+    private static final int MAX_KEYWORD_LENGTH = 100;
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Cacheable(
+            value = "pgSearch",
+            key = "#keyword.trim().toLowerCase() + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort",
+            sync = true
+    )
     public Page<PG> search(String keyword, Pageable pageable) {
 
         if (keyword == null || keyword.trim().isEmpty()) {
             return Page.empty(pageable);
         }
 
-        if (!InputSanitizer.isSafe(keyword)) {
+        String trimmedKeyword = keyword.trim();
+        if (trimmedKeyword.length() > MAX_KEYWORD_LENGTH) {
+            trimmedKeyword = trimmedKeyword.substring(0, MAX_KEYWORD_LENGTH).trim();
+        }
+
+        if (!InputSanitizer.isSafe(trimmedKeyword)) {
             return Page.empty(pageable);
         }
 
-        TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(keyword.trim());
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(trimmedKeyword);
 
         Query query = TextQuery.queryText(textCriteria).sortByScore();
         query.addCriteria(Criteria.where("approvalStatus").is("APPROVED"));
@@ -42,8 +55,10 @@ public class SearchService {
         Query countQuery = TextQuery.queryText(textCriteria);
         countQuery.addCriteria(Criteria.where("approvalStatus").is("APPROVED"));
 
-        long total = mongoTemplate.count(countQuery, PG.class);
-
-        return PageableExecutionUtils.getPage(results, pageable, () -> total);
+        return PageableExecutionUtils.getPage(
+                results,
+                pageable,
+                () -> mongoTemplate.count(countQuery, PG.class)
+        );
     }
 }

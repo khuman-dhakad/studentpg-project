@@ -240,11 +240,8 @@ public class AdminService {
      */
 
     @CacheEvict(
-
-            value = "approvedPgs",
-
+            value = {"approvedPgs", "pgDetails", "searchSuggestions", "pgSearch"},
             allEntries = true
-
     )
     public String approvePG(
 
@@ -399,11 +396,8 @@ public class AdminService {
      */
 
     @CacheEvict(
-
-            value = "approvedPgs",
-
+            value = {"approvedPgs", "pgDetails", "searchSuggestions", "pgSearch"},
             allEntries = true
-
     )
     public String rejectPG(
 
@@ -857,7 +851,7 @@ public class AdminService {
 
 
 @CacheEvict(
-        value = "approvedPgs",
+        value = {"approvedPgs", "pgDetails", "searchSuggestions", "pgSearch"},
         allEntries = true
 )
 public String deletePG(String id) {
