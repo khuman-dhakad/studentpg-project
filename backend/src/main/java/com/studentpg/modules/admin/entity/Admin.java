@@ -15,6 +15,7 @@ public class Admin {
     @Indexed(unique = true)
     private String email;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String password;
 
     private String role;
