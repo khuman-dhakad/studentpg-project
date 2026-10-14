@@ -63,7 +63,7 @@ export function PGCard({ pg }: PGCardProps) {
                 src={image}
                 alt={pg.pgName}
                 fill
-                sizes="(max-width: 640px) 140px, 320px"
+                sizes="(max-width: 640px) 130px, 210px"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 onError={() => setImageLoadFailed(true)}
               />
