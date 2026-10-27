@@ -755,15 +755,8 @@ if (!owner.isActive()) {
         if (!owner.isActive()) {
             throw new SecurityException("Account is disabled.");
         }
-        if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException("Empty image file is not allowed.");
-        }
-        String contentType = image.getContentType();
-        if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed.");
-        }
-        if (image.getSize() > 5 * 1024 * 1024) {
-            throw new IllegalArgumentException("Image size must not exceed 5 MB.");
+        if (!com.studentpg.common.util.ImageValidator.isValidImage(image)) {
+            throw new IllegalArgumentException("Invalid image file. Only valid JPEG, PNG, WebP, and GIF images up to 5MB are allowed.");
         }
         return cloudinaryService.uploadImage(image);
     }
@@ -841,33 +834,8 @@ if (!owner.isActive()) {
                 ) {
 
 
-            if (
-                    image == null
-                            || image.isEmpty()
-            ) {
-                return "Empty image file is not allowed.";
-            }
-
-
-            String contentType =
-                    image.getContentType();
-
-
-            if (
-                    contentType == null
-                            || !contentType
-                            .toLowerCase()
-                            .startsWith("image/")
-            ) {
-                return "Only image files are allowed.";
-            }
-
-
-            if (
-                    image.getSize()
-                            > 5 * 1024 * 1024
-            ) {
-                return "Image size must not exceed 5 MB.";
+            if (!com.studentpg.common.util.ImageValidator.isValidImage(image)) {
+                return "Invalid image file. Only valid JPEG, PNG, WebP, and GIF images up to 5MB are allowed.";
             }
 
 
@@ -1101,33 +1069,8 @@ if (!owner.isActive()) {
         }
 
 
-        if (
-                newImage == null
-                        || newImage.isEmpty()
-        ) {
-            return "New image is required.";
-        }
-
-
-        String contentType =
-                newImage.getContentType();
-
-
-        if (
-                contentType == null
-                        || !contentType
-                        .toLowerCase()
-                        .startsWith("image/")
-        ) {
-            return "Only image files are allowed.";
-        }
-
-
-        if (
-                newImage.getSize()
-                        > 5 * 1024 * 1024
-        ) {
-            return "Image size must not exceed 5 MB.";
+        if (!com.studentpg.common.util.ImageValidator.isValidImage(newImage)) {
+            return "Invalid image file. Only valid JPEG, PNG, WebP, and GIF images up to 5MB are allowed.";
         }
 
 

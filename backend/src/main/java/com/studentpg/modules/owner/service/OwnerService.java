@@ -711,28 +711,12 @@ public class OwnerService {
             MultipartFile image
     ) throws IOException {
 
-        if (image == null
-                || image.isEmpty()) {
-
-            return "Image is required.";
+        if (!com.studentpg.common.util.ImageValidator.isValidImage(image)) {
+            throw new IllegalArgumentException("Invalid image file. Only valid JPEG, PNG, WebP, and GIF images up to 5MB are allowed.");
         }
 
         Owner owner =
                 getLoggedInOwner();
-                if (image.getContentType() == null
-        || !image.getContentType().startsWith("image/")) {
-
-    throw new IllegalArgumentException(
-            "Only image files are allowed."
-    );
-}
-
-if (image.getSize() > 5 * 1024 * 1024) {
-
-    throw new IllegalArgumentException(
-            "Maximum image size is 5 MB."
-    );
-}
 
         // Upload new image first
         Map<String, String> uploadedImage =

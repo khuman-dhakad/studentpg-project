@@ -63,7 +63,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-white font-sans antialiased text-slate-900 pb-16 md:pb-0">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
 
       {/* 1. Two-Part Search Hero */}

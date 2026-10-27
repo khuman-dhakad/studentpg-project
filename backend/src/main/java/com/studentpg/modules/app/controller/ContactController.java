@@ -1,6 +1,7 @@
 package com.studentpg.modules.app.controller;
 
 import com.studentpg.common.response.MessageResponse;
+import com.studentpg.common.util.ImageValidator;
 import com.studentpg.infrastructure.cloudinary.CloudinaryService;
 import com.studentpg.modules.pg.entity.PGImage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -230,9 +231,8 @@ public class ContactController {
         if (req.getImages() != null) {
             for (MultipartFile img : req.getImages()) {
                 if (img == null || img.isEmpty()) continue;
-                String ct = img.getContentType();
-                if (ct == null || !ct.toLowerCase().startsWith("image/")) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Only image uploads are allowed."));
+                if (!ImageValidator.isValidImage(img)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Only valid image files (JPG, PNG, WEBP, GIF) are allowed."));
                 }
                 if (img.getSize() > 5L * 1024 * 1024) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "Each image must be smaller than 5MB."));
