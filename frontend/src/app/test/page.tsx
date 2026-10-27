@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface TestResultItem {
@@ -9,6 +10,9 @@ interface TestResultItem {
 }
 
 export default function TestPage() {
+  if (process.env.NODE_ENV === 'production') {
+    notFound();
+  }
   const [results, setResults] = useState<Record<string, TestResultItem>>({});
   const [loading, setLoading] = useState(true);
 
