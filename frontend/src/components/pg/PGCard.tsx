@@ -57,7 +57,7 @@ export function PGCard({ pg }: PGCardProps) {
     <>
       <div className="group relative overflow-hidden rounded-[20px] sm:rounded-[24px] border border-slate-200/90 bg-white shadow-[0_4px_16px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
         <div className="flex items-stretch gap-2.5 p-2.5 sm:gap-3.5 sm:p-3">
-          <div className="relative w-[130px] min-w-[130px] shrink-0 overflow-hidden rounded-[14px] bg-slate-100 sm:w-[210px] sm:min-w-[210px] sm:rounded-[18px]">
+          <div className="relative w-[105px] min-w-[105px] min-[380px]:w-[125px] min-[380px]:min-w-[125px] shrink-0 overflow-hidden rounded-[14px] bg-slate-100 sm:w-[210px] sm:min-w-[210px] sm:rounded-[18px]">
             <Link href={ROUTES.PG_DETAILS(pg.id)} className="block h-full w-full min-h-[160px] sm:min-h-[190px]">
               <Image
                 src={image}
@@ -160,10 +160,10 @@ export function PGCard({ pg }: PGCardProps) {
                 {propertyDescription}
               </p>
 
-              <div className="flex items-center gap-2 pt-2">
+              <div className="flex flex-col min-[440px]:flex-row items-stretch min-[440px]:items-center gap-1.5 sm:gap-2 pt-2">
                 <Link
                   href={ROUTES.PG_DETAILS(pg.id)}
-                  className="inline-flex items-center justify-center rounded-lg bg-[#e8f8f2] hover:bg-[#d5f3e7] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-[#059669] transition-colors shrink-0"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#e8f8f2] hover:bg-[#d5f3e7] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-[#059669] transition-colors w-full min-[440px]:w-auto shrink-0"
                 >
                   View Details →
                 </Link>
@@ -171,7 +171,7 @@ export function PGCard({ pg }: PGCardProps) {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#059669] hover:bg-[#047857] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-white transition-colors shadow-2xs"
+                  className="inline-flex w-full min-[440px]:flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#059669] hover:bg-[#047857] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-white transition-colors shadow-2xs"
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
                   Get Contact

@@ -68,7 +68,7 @@ export function OwnerListingCard({ pg, onDelete }: OwnerListingCardProps) {
     <div className="group relative overflow-hidden rounded-[20px] sm:rounded-[24px] border border-slate-200/90 bg-white p-2.5 sm:p-3 shadow-[0_4px_16px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
       <div className="flex items-stretch gap-2.5 sm:gap-3.5">
         {/* IMAGE CONTAINER */}
-        <div className="relative w-[130px] min-w-[130px] shrink-0 overflow-hidden rounded-[14px] bg-slate-100 sm:w-[190px] sm:min-w-[190px] sm:rounded-[18px]">
+        <div className="relative w-[105px] min-w-[105px] min-[380px]:w-[125px] min-[380px]:min-w-[125px] shrink-0 overflow-hidden rounded-[14px] bg-slate-100 sm:w-[190px] sm:min-w-[190px] sm:rounded-[18px]">
           <Link
             href={ROUTES.OWNER.EDIT_PG ? ROUTES.OWNER.EDIT_PG(pg.id) : `/owner/edit-pg/${pg.id}`}
             className="block h-full w-full min-h-[150px] sm:min-h-[170px]"
@@ -232,10 +232,10 @@ export function OwnerListingCard({ pg, onDelete }: OwnerListingCardProps) {
           </div>
 
           {/* ACTION BUTTONS (Edit & Manage) */}
-          <div className="flex items-center gap-2 pt-2">
+          <div className="flex flex-col min-[420px]:flex-row items-stretch min-[420px]:items-center gap-1.5 sm:gap-2 pt-2">
             <Link
               href={ROUTES.OWNER.EDIT_PG ? ROUTES.OWNER.EDIT_PG(pg.id) : `/owner/edit-pg/${pg.id}`}
-              className="inline-flex items-center justify-center gap-1 rounded-xl bg-[#e8f8f2] hover:bg-[#d5f3e7] px-3 py-1.5 text-xs font-bold text-[#059669] transition-colors shrink-0"
+              className="inline-flex w-full min-[420px]:w-auto items-center justify-center gap-1 rounded-xl bg-[#e8f8f2] hover:bg-[#d5f3e7] px-3 py-1.5 text-xs font-bold text-[#059669] transition-colors shrink-0"
             >
               <Pencil className="h-3 w-3" />
               <span>Edit</span>
@@ -243,7 +243,7 @@ export function OwnerListingCard({ pg, onDelete }: OwnerListingCardProps) {
 
             <Link
               href={ROUTES.OWNER.EDIT_PG ? ROUTES.OWNER.EDIT_PG(pg.id) : `/owner/edit-pg/${pg.id}`}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#059669] hover:bg-[#047857] px-3.5 py-1.5 text-xs font-bold text-white transition-colors shadow-2xs"
+              className="inline-flex w-full min-[420px]:flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#059669] hover:bg-[#047857] px-3.5 py-1.5 text-xs font-bold text-white transition-colors shadow-2xs"
             >
               <Settings className="h-3 w-3" />
               <span>Manage →</span>
