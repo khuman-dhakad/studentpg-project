@@ -136,4 +136,7 @@ ApprovalStatus approvalStatus
     long countByApprovalStatus(
             ApprovalStatus approvalStatus
     );
+
+    @Query(value = "{ 'images.publicId': ?0 }", exists = true)
+    boolean existsByImagesPublicId(String publicId);
 }

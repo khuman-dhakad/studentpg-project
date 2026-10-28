@@ -135,6 +135,21 @@ public class PGController {
 
     /*
      * ============================================================
+     * OWNER: DELETE UNASSIGNED STANDALONE IMAGE
+     * ============================================================
+     */
+    @DeleteMapping("/images/unassigned")
+    public ResponseEntity<MessageResponse> deleteUnassignedImage(
+            @RequestParam String publicId
+    ) throws IOException {
+        String message = pgService.deleteUnassignedImage(publicId);
+        return ResponseEntity.ok(
+                new MessageResponse(true, message)
+        );
+    }
+
+    /*
+     * ============================================================
      * OWNER: UPLOAD IMAGES
      * ============================================================
      */

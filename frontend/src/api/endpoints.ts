@@ -24,6 +24,8 @@ export const BACKEND_ENDPOINTS = {
 
     VERIFY_REGISTRATION: "/api/owners/verify-registration",
 
+    RESEND_REGISTRATION_OTP: "/api/owners/resend-registration-otp",
+
     PROFILE: "/api/owners/profile",
 
     CHANGE_PASSWORD: "/api/owners/change-password",
@@ -45,6 +47,9 @@ export const BACKEND_ENDPOINTS = {
     OWNER_LISTINGS: "/api/owner/pgs",
 
     UPLOAD_IMAGE: "/api/owner/pgs/images/upload",
+
+    DELETE_UNASSIGNED_IMAGE: (publicId: string) =>
+      `/api/owner/pgs/images/unassigned?publicId=${encodeURIComponent(publicId)}`,
 
     BY_ID: (id: string) =>
       `/api/owner/pgs/${encodeURIComponent(id)}`,
