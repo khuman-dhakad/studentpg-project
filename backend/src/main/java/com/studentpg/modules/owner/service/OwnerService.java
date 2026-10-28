@@ -433,6 +433,14 @@ public class OwnerService {
                 String documentNumber = request.getDocumentNumber().replaceAll("[\\s-]", "").toUpperCase();
                 validateDocumentNumber(documentType, documentNumber);
 
+                                if (owner.getVerificationDocumentPublicId() != null && !owner.getVerificationDocumentPublicId().isBlank()) {
+                        try {
+                                cloudinaryService.deleteVerificationDocument(owner.getVerificationDocumentPublicId());
+                        } catch (Exception ex) {
+                                logger.warn("Failed to delete previous verification document {}: {}", owner.getVerificationDocumentPublicId(), ex.getMessage());
+                        }
+                }
+
                 Map<String, String> uploadedDocument;
                 try {
                         uploadedDocument = cloudinaryService.uploadVerificationDocument(document);
@@ -444,13 +452,15 @@ public class OwnerService {
                 owner.setVerificationLegalName(legalName);
                 owner.setVerificationDocumentType(documentType);
                 owner.setVerificationDocumentNumber(documentNumber);
-                owner.setVerificationDocumentData(documentBytes);
+                owner.setVerificationDocumentData(null);
                 owner.setVerificationDocumentContentType(contentType);
                 owner.setVerificationDocumentFilename(document.getOriginalFilename() == null
                                 ? "verification-document"
                                 : document.getOriginalFilename().replaceAll("[^A-Za-z0-9._-]", "_"));
-                owner.setVerificationDocumentUrl(uploadedDocument.get("url"));
+                owner.setVerificationDocumentUrl(null);
                 owner.setVerificationDocumentPublicId(uploadedDocument.get("publicId"));
+                owner.setVerificationDocumentFormat(uploadedDocument.get("format"));
+                owner.setVerificationDocumentResourceType(uploadedDocument.get("resourceType"));
                 owner.setVerificationStatus(VerificationStatus.PENDING);
                 owner.setVerificationSubmittedAt(Instant.now());
                 owner.setVerificationReviewedAt(null);
@@ -682,7 +692,7 @@ public class OwnerService {
         );
 
         throw new IllegalStateException(
-                "Unable to send OTP email",
+                "Unable to send OTP email. Please try again in a moment.",
                 ex
         );
     }

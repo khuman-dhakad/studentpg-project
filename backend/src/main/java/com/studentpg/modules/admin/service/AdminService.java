@@ -32,8 +32,11 @@ public class AdminService {
 
     private final PGRepository pgRepository;
 
+        private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdminService.class);
     private final NotificationService notificationService;
-        private final OwnerRepository ownerRepository;
+    private final OwnerRepository ownerRepository;
+    private final com.studentpg.infrastructure.cloudinary.CloudinaryService cloudinaryService;
+    private final org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
 
 
     /*
@@ -58,21 +61,27 @@ public class AdminService {
      * ============================================================
      */
 
+    @org.springframework.beans.factory.annotation.Autowired
     public AdminService(
-
             PGRepository pgRepository,
+            NotificationService notificationService,
+            OwnerRepository ownerRepository,
+            com.studentpg.infrastructure.cloudinary.CloudinaryService cloudinaryService,
+            org.springframework.data.mongodb.core.MongoTemplate mongoTemplate
+    ) {
+        this.pgRepository = pgRepository;
+        this.notificationService = notificationService;
+        this.ownerRepository = ownerRepository;
+        this.cloudinaryService = cloudinaryService;
+        this.mongoTemplate = mongoTemplate;
+    }
 
+    public AdminService(
+            PGRepository pgRepository,
             NotificationService notificationService,
             OwnerRepository ownerRepository
-
     ) {
-
-        this.pgRepository =
-                pgRepository;
-
-        this.notificationService =
-                notificationService;
-                this.ownerRepository = ownerRepository;
+        this(pgRepository, notificationService, ownerRepository, null, null);
     }
 
         public List<OwnerVerificationAdminResponse> getOwnerVerifications(String status) {
@@ -88,18 +97,61 @@ public class AdminService {
                                 .toList();
         }
 
-        public VerificationDocument getVerificationDocument(String ownerId) {
-                Owner owner = ownerRepository.findById(ownerId)
-                                .orElseThrow(() -> new IllegalArgumentException("Owner not found."));
-                if (owner.getVerificationDocumentData() == null
-                                || owner.getVerificationDocumentData().length == 0) {
-                        throw new IllegalArgumentException("Verification document not found.");
+            public VerificationDocument getVerificationDocument(String ownerId) {
+        Owner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("Owner not found."));
+
+        // 1. Try private/authenticated Cloudinary storage
+        if (owner.getVerificationDocumentPublicId() != null && !owner.getVerificationDocumentPublicId().isBlank()) {
+            if (cloudinaryService != null) {
+                try {
+                    byte[] data = cloudinaryService.downloadVerificationDocument(
+                            owner.getVerificationDocumentPublicId(),
+                            owner.getVerificationDocumentFormat(),
+                            owner.getVerificationDocumentResourceType()
+                    );
+                    if (data != null && data.length > 0) {
+                        return new VerificationDocument(
+                                data,
+                                owner.getVerificationDocumentContentType() != null ? owner.getVerificationDocumentContentType() : "application/pdf",
+                                owner.getVerificationDocumentFilename() != null ? owner.getVerificationDocumentFilename() : "verification-document");
+                    }
+                } catch (Exception ex) {
+                    logger.error("Failed to download KYC document from Cloudinary for owner {}: {}", ownerId, ex.getMessage());
                 }
-                return new VerificationDocument(
-                                owner.getVerificationDocumentData(),
-                                owner.getVerificationDocumentContentType(),
-                                owner.getVerificationDocumentFilename());
+            }
         }
+
+        // 2. Fallback to in-memory/transient data
+        if (owner.getVerificationDocumentData() != null && owner.getVerificationDocumentData().length > 0) {
+            return new VerificationDocument(
+                    owner.getVerificationDocumentData(),
+                    owner.getVerificationDocumentContentType() != null ? owner.getVerificationDocumentContentType() : "application/pdf",
+                    owner.getVerificationDocumentFilename() != null ? owner.getVerificationDocumentFilename() : "verification-document");
+        }
+
+        // 3. Fallback to legacy MongoDB document binary via MongoTemplate
+        if (mongoTemplate != null) {
+            org.bson.Document rawDoc = mongoTemplate.findById(ownerId, org.bson.Document.class, "owners");
+            if (rawDoc != null && rawDoc.containsKey("verificationDocumentData")) {
+                Object rawData = rawDoc.get("verificationDocumentData");
+                byte[] data = null;
+                if (rawData instanceof org.bson.types.Binary bin) {
+                    data = bin.getData();
+                } else if (rawData instanceof byte[] b) {
+                    data = b;
+                }
+                if (data != null && data.length > 0) {
+                    return new VerificationDocument(
+                            data,
+                            owner.getVerificationDocumentContentType() != null ? owner.getVerificationDocumentContentType() : "application/pdf",
+                            owner.getVerificationDocumentFilename() != null ? owner.getVerificationDocumentFilename() : "verification-document");
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Verification document not found.");
+    }
 
         public String approveOwnerVerification(String ownerId) {
                 Owner owner = getOwnerForVerificationReview(ownerId);
@@ -137,15 +189,16 @@ public class AdminService {
                 return owner;
         }
 
-        private OwnerVerificationAdminResponse toOwnerVerificationResponse(Owner owner) {
-                return new OwnerVerificationAdminResponse(
-                                owner.getId(), owner.getName(), owner.getEmail(), owner.getPhone(),
-                                owner.getVerificationLegalName(), owner.getVerificationDocumentType(),
-                                owner.getVerificationDocumentNumber(), owner.getVerificationDocumentUrl(),
-                                owner.getVerificationStatus(), owner.getVerificationSubmittedAt(),
-                                owner.getVerificationReviewedAt(), owner.getVerificationReviewedBy(),
-                                owner.getVerificationRejectionReason());
-        }
+            private OwnerVerificationAdminResponse toOwnerVerificationResponse(Owner owner) {
+        String secureDocumentUrl = "/api/admin/owner-verifications/" + owner.getId() + "/document";
+        return new OwnerVerificationAdminResponse(
+                owner.getId(), owner.getName(), owner.getEmail(), owner.getPhone(),
+                owner.getVerificationLegalName(), owner.getVerificationDocumentType(),
+                owner.getVerificationDocumentNumber(), secureDocumentUrl,
+                owner.getVerificationStatus(), owner.getVerificationSubmittedAt(),
+                owner.getVerificationReviewedAt(), owner.getVerificationReviewedBy(),
+                owner.getVerificationRejectionReason());
+    }
 
         public record VerificationDocument(byte[] data, String contentType, String filename) {}
 
