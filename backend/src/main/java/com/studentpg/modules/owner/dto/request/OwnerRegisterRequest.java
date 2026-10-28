@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public class OwnerRegisterRequest {
 
     @NotBlank(message = "Name is required")
-    @Size(min = 3, max = 50)
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
     private String name;
 
     @NotBlank(message = "Email is required")
@@ -23,11 +23,18 @@ public class OwnerRegisterRequest {
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid Indian mobile number")
     private String phone;
 
-    @NotBlank(message = "WhatsApp number is required")
-    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid Indian WhatsApp number")
+    @Pattern(regexp = "^$|^[6-9]\\d{9}$", message = "Invalid Indian WhatsApp number")
     private String whatsappNumber;
 
     public OwnerRegisterRequest() {}
+
+    public OwnerRegisterRequest(String name, String email, String password, String phone, String whatsappNumber) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.whatsappNumber = whatsappNumber;
+    }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
