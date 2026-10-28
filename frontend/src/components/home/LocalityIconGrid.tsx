@@ -68,7 +68,7 @@ export function LocalityIconGrid() {
           </div>
 
           {/* Locality Cards Carousel / Grid: 4 items matching reference */}
-          <div className="flex sm:grid sm:grid-cols-4 gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex sm:grid sm:grid-cols-4 gap-2.5 sm:gap-3 overflow-x-auto scrollbar-none touch-pan-x pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
             {HOMEPAGE_POPULAR_AREAS.map((area) => (
               <div key={area.id} className="w-36 sm:w-auto shrink-0">
                 <AreaCard area={area} priority={false} />
@@ -101,7 +101,7 @@ export function LocalityIconGrid() {
           </div>
 
           {/* Stay Category Cards Grid: 4 items */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 min-[540px]:grid-cols-4 gap-2.5 sm:gap-3">
             {STAY_CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               return (
