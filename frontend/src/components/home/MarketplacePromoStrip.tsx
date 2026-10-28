@@ -40,7 +40,7 @@ export function MarketplacePromoStrip() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* 4 Trust Benefits Row matching the approved reference design */}
-        <div className="grid grid-cols-4 gap-2 sm:gap-4">
+        <div className="grid grid-cols-2 min-[540px]:grid-cols-4 gap-3 sm:gap-4">
           {TRUST_BENEFITS.map((item) => {
             const Icon = item.icon;
             return (

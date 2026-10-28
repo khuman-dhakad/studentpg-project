@@ -26,7 +26,7 @@ export function PGFixedContactBar({
         {hasPhone ? (
           <a
             href={`tel:${contactNumber}`}
-            className="flex-1 py-3 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-[#047857] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+            className="flex-1 py-2.5 sm:py-3 px-2.5 sm:px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-[#047857] font-bold text-[11px] min-[360px]:text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all active:scale-[0.98] cursor-pointer"
           >
             <Phone className="h-4 w-4 text-[#047857]" />
             <span>Call Now</span>
@@ -48,10 +48,10 @@ export function PGFixedContactBar({
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 py-3 px-4 rounded-xl bg-[#047857] hover:bg-[#065f46] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+            className="flex-1 py-2.5 sm:py-3 px-2.5 sm:px-4 rounded-xl bg-[#047857] hover:bg-[#065f46] text-white font-bold text-[11px] min-[360px]:text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           >
             <MessageCircle className="h-4 w-4" />
-            <span>Chat on WhatsApp</span>
+            <span><span className="hidden min-[380px]:inline">Chat on </span>WhatsApp</span>
           </a>
         ) : (
           <button

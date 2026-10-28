@@ -219,7 +219,7 @@ function FilterContent({ compact = false }: ListingFiltersProps) {
 
         {isOpen && (
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)}>
-            <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl pb-[max(1.5rem,env(safe-area-inset-bottom))]" onClick={(event) => event.stopPropagation()}>
+            <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-4 sm:p-6 shadow-2xl pb-[max(1.5rem,env(safe-area-inset-bottom))]" onClick={(event) => event.stopPropagation()}>
               <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-slate-200" />
               <div className="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
                 <span className="text-base font-black tracking-tight text-slate-900">Filter Stays</span>
@@ -263,7 +263,7 @@ function FilterContent({ compact = false }: ListingFiltersProps) {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)}>
-          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl pb-[max(1.5rem,env(safe-area-inset-bottom))]" onClick={(event) => event.stopPropagation()}>
+          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-4 sm:p-6 shadow-2xl pb-[max(1.5rem,env(safe-area-inset-bottom))]" onClick={(event) => event.stopPropagation()}>
             <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-slate-200" />
             <div className="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
               <span className="text-base font-black tracking-tight text-slate-900">Filter Stays</span>

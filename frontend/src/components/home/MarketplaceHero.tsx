@@ -76,7 +76,7 @@ export function MarketplaceHero() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
 
         {/* Mobile Upper-Right Student Visual (integrated seamlessly into background) */}
-        <div className="absolute top-0 right-0 w-[46%] max-w-[210px] aspect-[1024/682] pointer-events-none lg:hidden z-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[38%] min-[400px]:w-[42%] max-w-[210px] aspect-[1024/682] pointer-events-none opacity-85 sm:opacity-100 lg:hidden z-0 overflow-hidden">
           <Image
             src="/hero-student.png"
             alt="StudentPG Accommodation in Bhopal"
@@ -101,13 +101,13 @@ export function MarketplaceHero() {
             </div>
 
             {/* 2. Headline */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-black text-slate-900 tracking-tight leading-[1.18] max-w-[65%] min-[480px]:max-w-[75%] lg:max-w-none">
+            <h1 className="text-xl min-[360px]:text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-black text-slate-900 tracking-tight leading-[1.18] max-w-[74%] min-[400px]:max-w-[80%] min-[540px]:max-w-none">
               Find Your Perfect <br />
               <span className="text-[#059669]">Student Accommodation</span>
             </h1>
 
             {/* 3. Subtitle */}
-            <p className="mt-2 text-xs sm:text-sm font-medium text-slate-600 leading-relaxed max-w-[70%] min-[480px]:max-w-[80%] lg:max-w-lg">
+            <p className="mt-1.5 sm:mt-2 text-[11px] min-[360px]:text-xs sm:text-sm font-medium text-slate-600 leading-relaxed max-w-[78%] min-[480px]:max-w-[85%] lg:max-w-lg">
               Verified PGs. Real Photos. No Brokerage. <br />
               A Safe, Comfortable &amp; Hassle-Free Stay.
             </p>
@@ -164,7 +164,7 @@ export function MarketplaceHero() {
                 <button
                   type="button"
                   onClick={() => handleSearchSubmit()}
-                  className="rounded-xl bg-[#047857] hover:bg-emerald-800 active:scale-98 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-all shrink-0 cursor-pointer"
+                  className="rounded-xl bg-[#047857] hover:bg-emerald-800 active:scale-98 px-3.5 min-[360px]:px-5 py-2 min-[360px]:py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-all shrink-0 cursor-pointer"
                 >
                   Search
                 </button>

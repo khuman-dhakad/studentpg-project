@@ -190,7 +190,7 @@ export default function OwnerSettingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Navigation Tabs */}
-        <nav className="md:col-span-4 lg:col-span-3 bg-white p-3 rounded-3xl border border-slate-200/80 shadow-xs space-y-1">
+        <nav className="md:col-span-4 lg:col-span-3 bg-white p-2 md:p-3 rounded-2xl md:rounded-3xl border border-slate-200/80 shadow-xs flex overflow-x-auto md:flex-col gap-1.5 md:gap-0 md:space-y-1 scrollbar-none touch-pan-x">
           {[
             { name: 'Profile Settings', icon: User },
             { name: 'Change Password', icon: KeyRound },
@@ -206,7 +206,7 @@ export default function OwnerSettingsPage() {
                   setActiveTab(tab.name as TabType);
                   setStatusMessage(null);
                 }}
-                className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-black transition-all flex items-center gap-3 cursor-pointer ${
+                className={`shrink-0 md:shrink md:w-full text-left px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl md:rounded-2xl text-xs font-black transition-all flex items-center gap-2 md:gap-3 cursor-pointer ${
                   isActive
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 hover:bg-slate-50'
