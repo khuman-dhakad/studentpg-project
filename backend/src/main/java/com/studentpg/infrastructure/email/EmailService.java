@@ -19,13 +19,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 
 @Service
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-
 
     private final JavaMailSender mailSender;
     private final RestTemplate restTemplate;
@@ -37,8 +35,9 @@ public class EmailService {
         this.mailSender = mailSender;
         this.restTemplate = restTemplate;
     }
+
     @Value("${brevo.url}")
-private String brevoUrl;
+    private String brevoUrl;
 
     @Value("${mail.from:studentpg.support@gmail.com}")
     private String fromEmail;
@@ -103,8 +102,13 @@ private String brevoUrl;
         if (brevoApiKey != null && !brevoApiKey.isBlank()) {
             String senderEmail = (brevoSenderEmail != null && !brevoSenderEmail.isBlank()) ? brevoSenderEmail : effectiveFrom;
             String senderDisplayName = (brevoSenderName != null && !brevoSenderName.isBlank()) ? brevoSenderName : effectiveSenderName;
-            sendOtpEmailViaBrevo(toEmail, "support", subject, htmlBody, textBody, senderEmail, senderDisplayName);
-            return;
+            try {
+                sendOtpEmailViaBrevo(toEmail, "support", subject, htmlBody, textBody, senderEmail, senderDisplayName);
+                return;
+            } catch (Exception ex) {
+                logger.error("Brevo API delivery failed for support email to {}. Error: {}", toEmail, ex.getMessage(), ex);
+                throw new MailSendException("Support email provider failed: " + ex.getMessage(), ex);
+            }
         }
 
         throw new MailSendException("No SMTP or Brevo provider is configured for support email");
@@ -145,8 +149,13 @@ private String brevoUrl;
         }
 
         if (brevoApiKey != null && !brevoApiKey.isBlank()) {
-            sendOtpEmailViaBrevo(toEmail, otp, subject, htmlBody, textBody, effectiveFrom, effectiveSenderName);
-            return;
+            try {
+                sendOtpEmailViaBrevo(toEmail, otp, subject, htmlBody, textBody, effectiveFrom, effectiveSenderName);
+                return;
+            } catch (Exception ex) {
+                logger.error("Brevo API fallback failed for OTP email to {}. Error: {}", toEmail, ex.getMessage(), ex);
+                throw new MailSendException("Email delivery provider failed: " + ex.getMessage(), ex);
+            }
         }
 
         throw new MailSendException("No email delivery provider is configured for OTP emails");
@@ -195,10 +204,10 @@ private String brevoUrl;
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(
-        brevoUrl,
-        request,
-        String.class
-);
+                    brevoUrl,
+                    request,
+                    String.class
+            );
             logger.info("OTP email sent successfully via Brevo API to {} from {} with status {}", toEmail, senderEmail, response.getStatusCode());
         } catch (HttpStatusCodeException ex) {
             logger.error("Failed to send OTP email to {} via Brevo API. Status: {}, body: {}", toEmail, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);

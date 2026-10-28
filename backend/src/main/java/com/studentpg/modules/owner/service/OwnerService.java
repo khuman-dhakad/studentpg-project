@@ -672,7 +672,7 @@ public class OwnerService {
                 email
         );
 
-    } catch (MailException ex) {
+    } catch (Exception ex) {
 
         logger.error(
                 "OTP process failed for owner {}. Error: {}",
