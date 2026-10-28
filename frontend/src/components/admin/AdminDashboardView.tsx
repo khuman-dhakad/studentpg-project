@@ -355,7 +355,7 @@ export function AdminDashboardView({
       {/* ROW 2: 3 CARDS (TREND, DONUT, RECENT ACTIVITY) */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* COL 1: PG LISTINGS TREND (5 COLS) */}
-        <div className="lg:col-span-5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-6 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4.5 w-4.5 text-emerald-700" />
@@ -410,7 +410,7 @@ export function AdminDashboardView({
         </div>
 
         {/* COL 2: PG STATUS OVERVIEW (3.5 COLS) */}
-        <div className="lg:col-span-3.5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
             <ShieldCheck className="h-4.5 w-4.5 text-emerald-700" />
             <h2 className="text-sm font-bold text-slate-900">
@@ -430,7 +430,7 @@ export function AdminDashboardView({
         </div>
 
         {/* COL 3: RECENT ACTIVITY (3.5 COLS) */}
-        <div className="lg:col-span-3.5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <Clock className="h-4.5 w-4.5 text-emerald-700" />

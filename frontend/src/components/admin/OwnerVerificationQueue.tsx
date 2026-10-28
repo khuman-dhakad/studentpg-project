@@ -147,9 +147,9 @@ export function OwnerVerificationQueue() {
                     </div>
                     <div className="grid gap-2 text-xs text-slate-600 sm:grid-cols-2 lg:grid-cols-4">
                       <p><strong className="text-slate-900 font-bold">Account:</strong> {item.name}</p>
-                      <p><strong className="text-slate-900 font-bold">Email:</strong> {item.email}</p>
+                      <p className="break-all"><strong className="text-slate-900 font-bold">Email:</strong> {item.email}</p>
                       <p><strong className="text-slate-900 font-bold">Phone:</strong> {item.phone || 'Not available'}</p>
-                      <p><strong className="text-slate-900 font-bold">Owner ID:</strong> <span className="font-mono text-[11px]">{item.ownerId}</span></p>
+                      <p className="break-all"><strong className="text-slate-900 font-bold">Owner ID:</strong> <span className="font-mono text-[11px]">{item.ownerId}</span></p>
                     </div>
                     <div className="grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
                       <p><strong className="text-slate-900 font-bold">Document:</strong> {item.documentType}</p>
