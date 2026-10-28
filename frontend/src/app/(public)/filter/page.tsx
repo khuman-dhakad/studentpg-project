@@ -176,11 +176,11 @@ export default function FilterPage() {
             <ArrowLeft className="h-6 w-6" />
           </Link>
           <Link href="/" aria-label="StudentPG home" className="absolute left-1/2 -translate-x-1/2">
-            <StudentPGLogo className="h-10 sm:h-11" />
+            <StudentPGLogo className="h-8 sm:h-10" showTagline={false} />
           </Link>
-          <Link href="/search" className="flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-bold text-[#16254d] hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600">
+          <Link href="/search" className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-xs sm:text-sm font-bold text-[#16254d] hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600" aria-label="City: Bhopal">
             <MapPin className="h-5 w-5" />
-            <span>Bhopal</span>
+            <span className="hidden min-[380px]:inline">Bhopal</span>
             <ChevronDown className="h-4 w-4" />
           </Link>
         </div>
@@ -269,12 +269,12 @@ export default function FilterPage() {
         {(error || selectedAmenities > 0) && <p role={error ? 'alert' : undefined} className={`mt-4 text-center text-xs ${error ? 'text-amber-700' : 'text-slate-500'}`}>{error || `${selectedAmenities} amenity filter${selectedAmenities === 1 ? '' : 's'} selected`}</p>}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-100 bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur sm:px-6">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-100 bg-white/95 px-3 min-[360px]:px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xl font-black text-[#079669] sm:text-2xl">{isLoading ? '...' : resultCount ?? 0} <span className="text-sm font-bold text-[#16254d] sm:text-base">PGs found</span></p>
           </div>
-          <button type="button" onClick={applyFilters} className="inline-flex h-12 shrink-0 items-center justify-center gap-3 rounded-xl bg-[#079669] px-6 text-sm font-extrabold text-white shadow-[0_8px_18px_rgba(7,150,105,0.24)] transition hover:bg-[#057f59] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-[0.98] sm:min-w-[214px]">
+          <button type="button" onClick={applyFilters} className="inline-flex h-11 sm:h-12 shrink-0 items-center justify-center gap-2 min-[360px]:gap-3 rounded-xl bg-[#079669] px-4 min-[360px]:px-6 text-xs min-[360px]:text-sm font-extrabold text-white shadow-[0_8px_18px_rgba(7,150,105,0.24)] transition hover:bg-[#057f59] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 active:scale-[0.98] sm:min-w-[214px]">
             Apply Filters
             <ChevronRight className="h-5 w-5" />
           </button>
