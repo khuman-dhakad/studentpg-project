@@ -1,5 +1,6 @@
 package com.studentpg.modules.pg.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Locale;
 
 public enum Gender {
@@ -8,6 +9,7 @@ public enum Gender {
     FEMALE,
     UNISEX;
 
+    @JsonCreator
     public static Gender parse(String value) {
         if (value == null || value.isBlank()) {
             return null;

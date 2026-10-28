@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/logout", "/api/auth/session").permitAll()
-                        .requestMatchers("/api/owners/register", "/api/owners/verify-registration", "/api/owners/forgot-password", "/api/owners/reset-password", "/api/owners/send-otp", "/api/owners/request-otp").permitAll()
+                        .requestMatchers("/api/owners/register", "/api/owners/verify-registration", "/api/owners/resend-registration-otp", "/api/owners/forgot-password", "/api/owners/reset-password", "/api/owners/send-otp", "/api/owners/request-otp").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/contact", "/api/report-issue").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/public/captcha").permitAll()
                         .requestMatchers("/api/public/**", "/api/student/**", "/api/search/**").permitAll()

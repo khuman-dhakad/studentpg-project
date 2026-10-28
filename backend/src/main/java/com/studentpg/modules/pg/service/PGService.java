@@ -26,12 +26,33 @@ import com.studentpg.modules.pg.entity.RoomType;
 
 import lombok.RequiredArgsConstructor;
 @Service
-@RequiredArgsConstructor
 public class PGService {
 
-private final PGRepository pgRepository;
-private final OwnerRepository ownerRepository;
-private final CloudinaryService cloudinaryService;
+    private final PGRepository pgRepository;
+    private final OwnerRepository ownerRepository;
+    private final CloudinaryService cloudinaryService;
+    private final com.studentpg.modules.pg.repository.UnassignedImageUploadRepository unassignedImageUploadRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public PGService(
+            PGRepository pgRepository,
+            OwnerRepository ownerRepository,
+            CloudinaryService cloudinaryService,
+            com.studentpg.modules.pg.repository.UnassignedImageUploadRepository unassignedImageUploadRepository
+    ) {
+        this.pgRepository = pgRepository;
+        this.ownerRepository = ownerRepository;
+        this.cloudinaryService = cloudinaryService;
+        this.unassignedImageUploadRepository = unassignedImageUploadRepository;
+    }
+
+    public PGService(
+            PGRepository pgRepository,
+            OwnerRepository ownerRepository,
+            CloudinaryService cloudinaryService
+    ) {
+        this(pgRepository, ownerRepository, cloudinaryService, null);
+    }
 
 
 
@@ -140,6 +161,14 @@ ApprovalStatus.PENDING
 
 
         pgRepository.save(pg);
+
+        if (unassignedImageUploadRepository != null && pg.getImages() != null) {
+            for (PGImage img : pg.getImages()) {
+                if (img != null && img.getPublicId() != null) {
+                    unassignedImageUploadRepository.deleteByPublicId(img.getPublicId());
+                }
+            }
+        }
 
         return "PG added successfully. Waiting for admin approval.";
     }
@@ -758,7 +787,42 @@ if (!owner.isActive()) {
         if (!com.studentpg.common.util.ImageValidator.isValidImage(image)) {
             throw new IllegalArgumentException("Invalid image file. Only valid JPEG, PNG, WebP, and GIF images up to 5MB are allowed.");
         }
-        return cloudinaryService.uploadImage(image);
+        PGImage uploaded = cloudinaryService.uploadImage(image);
+        if (unassignedImageUploadRepository != null && uploaded != null && uploaded.getPublicId() != null) {
+            unassignedImageUploadRepository.save(new com.studentpg.modules.pg.entity.UnassignedImageUpload(
+                    uploaded.getPublicId(), owner.getId(), Instant.now()));
+        }
+        return uploaded;
+    }
+
+    public String deleteUnassignedImage(String publicId) throws IOException {
+        Owner owner = getAuthenticatedOwner();
+        if (owner == null) {
+            throw new SecurityException("Authentication required.");
+        }
+        if (publicId == null || publicId.isBlank()) {
+            throw new IllegalArgumentException("Public ID is required.");
+        }
+        if (!publicId.startsWith("studentpg/") || publicId.startsWith("studentpg/owners/") || publicId.startsWith("studentpg/owner-verifications/")) {
+            throw new IllegalArgumentException("Invalid image public ID.");
+        }
+        if (pgRepository.existsByImagesPublicId(publicId)) {
+            throw new IllegalStateException("Cannot delete an image that is assigned to an existing PG listing.");
+        }
+
+        if (unassignedImageUploadRepository != null) {
+            com.studentpg.modules.pg.entity.UnassignedImageUpload uploadRecord =
+                    unassignedImageUploadRepository.findByPublicId(publicId).orElse(null);
+            if (uploadRecord != null && !owner.getId().equals(uploadRecord.getOwnerId())) {
+                throw new org.springframework.security.access.AccessDeniedException("You do not have permission to delete this unassigned image.");
+            }
+        }
+
+        cloudinaryService.deleteImage(publicId);
+        if (unassignedImageUploadRepository != null) {
+            unassignedImageUploadRepository.deleteByPublicId(publicId);
+        }
+        return "Image cleaned up successfully.";
     }
 
     /*

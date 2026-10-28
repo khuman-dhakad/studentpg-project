@@ -61,6 +61,14 @@ public class OwnerController {
         return ResponseEntity.ok(new MessageResponse(success, message));
     }
 
+    @PostMapping("/resend-registration-otp")
+    public ResponseEntity<MessageResponse> resendRegistrationOtp(
+            @Valid @RequestBody com.studentpg.modules.owner.dto.request.ResendRegistrationOtpRequest request
+    ) {
+        String message = ownerService.resendRegistrationOtp(request.getEmail());
+        return ResponseEntity.ok(new MessageResponse(true, message));
+    }
+
 
     @GetMapping("/profile")
     public OwnerProfileResponse getMyProfile() {

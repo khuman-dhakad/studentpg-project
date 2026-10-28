@@ -46,6 +46,7 @@ public class Owner {
     @JsonIgnore
     private String verificationDocumentNumber;
     @JsonIgnore
+    @org.springframework.data.annotation.Transient
     private byte[] verificationDocumentData;
     @JsonIgnore
     private String verificationDocumentContentType;
@@ -55,6 +56,10 @@ public class Owner {
     private String verificationDocumentUrl;
     @JsonIgnore
     private String verificationDocumentPublicId;
+    @JsonIgnore
+    private String verificationDocumentFormat;
+    @JsonIgnore
+    private String verificationDocumentResourceType;
     private java.time.Instant verificationSubmittedAt;
     private java.time.Instant verificationReviewedAt;
     private java.time.Instant verifiedAt;
@@ -373,6 +378,12 @@ public void setActive(boolean active) {
     public void setVerificationDocumentPublicId(String verificationDocumentPublicId) {
         this.verificationDocumentPublicId = verificationDocumentPublicId;
     }
+
+    public String getVerificationDocumentFormat() { return verificationDocumentFormat; }
+    public void setVerificationDocumentFormat(String verificationDocumentFormat) { this.verificationDocumentFormat = verificationDocumentFormat; }
+
+    public String getVerificationDocumentResourceType() { return verificationDocumentResourceType; }
+    public void setVerificationDocumentResourceType(String verificationDocumentResourceType) { this.verificationDocumentResourceType = verificationDocumentResourceType; }
 
     public java.time.Instant getVerificationSubmittedAt() {
         return verificationSubmittedAt;
