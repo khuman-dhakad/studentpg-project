@@ -218,6 +218,31 @@ export const authApi =
 
           }),
 
+        resendRegistrationOtp:
+
+          builder.mutation<
+
+            MessageResponse,
+
+            { email: string }
+
+          >({
+
+            query:
+              (data) => ({
+
+                url: BACKEND_ENDPOINTS.OWNERS.RESEND_REGISTRATION_OTP,
+
+                method:
+                  'POST',
+
+                body:
+                  data,
+
+              }),
+
+          }),
+
 
         /* ================================================
          * CURRENT SESSION
@@ -300,6 +325,7 @@ export const {
 
   useOwnerRegisterMutation,
   useVerifyOwnerRegistrationMutation,
+  useResendRegistrationOtpMutation,
 
   useSessionQuery,
 

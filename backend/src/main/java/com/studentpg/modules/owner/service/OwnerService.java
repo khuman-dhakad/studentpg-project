@@ -181,15 +181,70 @@ public class OwnerService {
 
     try {
         emailService.sendRegistrationOtpEmail(email, otp);
-    } catch (MailException ex) {
+    } catch (Exception ex) {
         logger.error("Registration OTP send failed for owner {}. Error: {}", email, ex.getMessage(), ex);
-        throw new IllegalStateException("Unable to send verification OTP email", ex);
+        throw new IllegalStateException("Unable to send verification OTP email. Please try again in a moment.", ex);
+    }
+
+    owner.setLastOtpSentAt(now);
+    if (owner.getOtpWindowStart() == null || now - owner.getOtpWindowStart() >= OTP_WINDOW_MILLIS) {
+        owner.setOtpWindowStart(now);
+        owner.setOtpRequestCount(1);
+    } else {
+        owner.setOtpRequestCount(owner.getOtpRequestCount() + 1);
     }
 
     ownerRepository.save(owner);
 
     return "Verification code sent to your email. Please verify before logging in.";
 }
+
+    public String resendRegistrationOtp(String rawEmail) {
+        if (rawEmail == null || rawEmail.isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        String email = normalizeEmail(rawEmail);
+        Owner owner = ownerRepository.findByEmail(email).orElse(null);
+        if (owner == null) {
+            return "If an unverified account exists with this email, a new verification code has been sent.";
+        }
+        if (owner.isEmailVerified()) {
+            throw new IllegalStateException("Email is already verified. Please log in.");
+        }
+
+        long now = System.currentTimeMillis();
+        if (owner.getLastOtpSentAt() != null && now - owner.getLastOtpSentAt() < OTP_COOLDOWN_MILLIS) {
+            long secondsLeft = (OTP_COOLDOWN_MILLIS - (now - owner.getLastOtpSentAt())) / 1000 + 1;
+            throw new IllegalStateException("Please wait " + secondsLeft + " second(s) before requesting another code.");
+        }
+
+        if (owner.getOtpWindowStart() == null || now - owner.getOtpWindowStart() >= OTP_WINDOW_MILLIS) {
+            owner.setOtpWindowStart(now);
+            owner.setOtpRequestCount(0);
+        }
+
+        if (owner.getOtpRequestCount() >= OTP_MAX_PER_HOUR) {
+            throw new IllegalStateException("Too many OTP requests. Please try again later.");
+        }
+
+        String otp = generateOtp();
+        String otpHash = hashOtp(otp);
+
+        try {
+            emailService.sendRegistrationOtpEmail(email, otp);
+        } catch (Exception ex) {
+            logger.error("Registration OTP resend failed for owner {}. Error: {}", email, ex.getMessage(), ex);
+            throw new IllegalStateException("Unable to send verification OTP email. Please try again in a moment.", ex);
+        }
+
+        owner.setRegistrationOtpHash(otpHash);
+        owner.setRegistrationOtpExpiry(now + OTP_VALID_MILLIS);
+        owner.setLastOtpSentAt(now);
+        owner.setOtpRequestCount(owner.getOtpRequestCount() + 1);
+        ownerRepository.save(owner);
+
+        return "A new verification code has been sent to your email.";
+    }
 
     public String verifyOwnerRegistration(OwnerRegisterVerifyRequest request) {
         String email = normalizeEmail(request.getEmail());
