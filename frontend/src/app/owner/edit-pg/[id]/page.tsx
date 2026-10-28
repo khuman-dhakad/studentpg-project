@@ -199,7 +199,7 @@ export default function EditPgPage() {
           pgName: pg.pgName || '',
           description: pg.description || '',
           gender: pg.gender || 'MALE',
-          roomType: pg.roomType || 'Single Sharing',
+          roomType: pg.roomType || 'SINGLE',
           category: pg.category || '',
 
           foodAvailable: pg.foodAvailable ?? false,
@@ -736,16 +736,20 @@ export default function EditPgPage() {
                           Select Category
                         </option>
 
-                        <option value="Standard">
-                          Standard Budget
+                        <option value="BOYS">
+                          Boys PG
                         </option>
 
-                        <option value="Premium">
-                          Premium
+                        <option value="GIRLS">
+                          Girls PG
                         </option>
 
-                        <option value="Luxury">
-                          Luxury Elite
+                        <option value="CO_LIVING">
+                          Co-Living
+                        </option>
+
+                        <option value="HOSTEL">
+                          Hostel
                         </option>
                       </select>
                     </div>
@@ -809,19 +813,19 @@ export default function EditPgPage() {
                         onChange={handleInputChange}
                         className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold"
                       >
-                        <option value="Single Sharing">
+                        <option value="SINGLE">
                           Single Sharing
                         </option>
 
-                        <option value="Double Sharing">
+                        <option value="DOUBLE">
                           Double Sharing
                         </option>
 
-                        <option value="Triple Sharing">
+                        <option value="TRIPLE">
                           Triple Sharing
                         </option>
 
-                        <option value="Four Sharing">
+                        <option value="FOUR_SHARING">
                           Four Sharing
                         </option>
                       </select>

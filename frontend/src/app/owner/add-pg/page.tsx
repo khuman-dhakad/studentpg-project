@@ -53,7 +53,7 @@ export default function AddPgPage() {
     pgName: '',
     description: '',
     gender: 'MALE',
-    roomType: 'Single Sharing',
+    roomType: 'SINGLE',
     category: '', 
     // Amenities
     foodAvailable: false,
@@ -169,8 +169,9 @@ export default function AddPgPage() {
     setLoading(true);
     setMessage('');
     
+    let uploadedImages: ImageObject[] = [];
     try {
-      const uploadedImages: ImageObject[] = await Promise.all(
+      uploadedImages = await Promise.all(
         selectedFiles.map(async (file) => {
           const res = await uploadImageToCloudinary(file);
           return { publicId: res.publicId, url: res.url };
@@ -203,6 +204,21 @@ export default function AddPgPage() {
       }, 2000);
       
     } catch (error: unknown) {
+      if (uploadedImages.length > 0) {
+        // Attempt cleanup of newly uploaded images that could not be associated with a PG
+        try {
+          await Promise.allSettled(
+            uploadedImages.map(img =>
+              fetch(`/api/owner/pgs/images/unassigned?publicId=${encodeURIComponent(img.publicId)}`, {
+                method: 'DELETE',
+                credentials: 'include'
+              })
+            )
+          );
+        } catch (cleanupErr) {
+          console.warn('Failed to clean up unassigned images:', cleanupErr);
+        }
+      }
       const message = error instanceof Error ? error.message : 'Could not create listing. Please try again.';
       setMessage(message);
     } finally {
@@ -319,9 +335,10 @@ export default function AddPgPage() {
                       <label className="text-xs font-black text-slate-800 tracking-wide">PG Category <span className="text-rose-500">*</span></label>
                       <select required name="category" value={form.category} onChange={handleInputChange} className="w-full text-xs font-semibold px-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all cursor-pointer">
                         <option value="">Select Category</option>
-                        <option value="Standard">Standard Budget</option>
-                        <option value="Premium">Premium</option>
-                        <option value="Luxury">Luxury Elite</option>
+                        <option value="BOYS">Boys PG</option>
+                        <option value="GIRLS">Girls PG</option>
+                        <option value="CO_LIVING">Co-Living</option>
+                        <option value="HOSTEL">Hostel</option>
                       </select>
                     </div>
                   </div>
@@ -359,10 +376,10 @@ export default function AddPgPage() {
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-black text-slate-800 tracking-wide">Room Type Configuration <span className="text-rose-500">*</span></label>
                       <select name="roomType" value={form.roomType} onChange={handleInputChange} className="w-full text-xs font-semibold px-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 outline-none transition-all">
-                        <option value="Single Sharing">Single Sharing</option>
-                        <option value="Double Sharing">Double Sharing</option>
-                        <option value="Triple Sharing">Triple Sharing</option>
-                        <option value="Four Sharing">Four Sharing</option>
+                        <option value="SINGLE">Single Sharing</option>
+                        <option value="DOUBLE">Double Sharing</option>
+                        <option value="TRIPLE">Triple Sharing</option>
+                        <option value="FOUR_SHARING">Four Sharing</option>
                       </select>
                     </div>
                   </div>
