@@ -36,10 +36,10 @@ export function SiteHeader() {
     session?.user?.role === 'OWNER';
 
   return (
-    <header className="">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md shadow-2xs transition-all">
 
       {/* ================= MAIN HEADER ================= */}
-      <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
 
         {/* ================= BRAND ================= */}
         <Link
@@ -74,12 +74,12 @@ export function SiteHeader() {
         </nav>
 
         {/* ================= RIGHT ACTION AREA ================= */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
 
           {/* Location Selector (matching Reference Design: ðŸ“ Bhopal â–¾) */}
           <Link
             href="/search"
-            className="flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-colors cursor-pointer"
+            className="flex items-center gap-1 rounded-xl px-2 py-1 min-[360px]:px-2.5 min-[360px]:py-1.5 text-[11px] min-[360px]:text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-colors cursor-pointer"
             aria-label="City: Bhopal"
           >
             <MapPin className="h-3.5 w-3.5 text-slate-500 shrink-0" />
@@ -123,7 +123,7 @@ export function SiteHeader() {
           <button
             type="button"
             suppressHydrationWarning
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 md:hidden cursor-pointer"
+            className="flex h-10 w-10 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 md:hidden cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle Menu"
           >
