@@ -567,3 +567,25 @@ Historical git commits (`24f8ba2`, `bcb6a26`, `ba082b2`, `1174af0`) contain expo
 | **SPG-QA-007** | High | `Owner.java`, `AdminService.java`, `OwnerKycMigrationService.java` | `OwnerVerificationSecurityRegressionTest` | **PASSED** |
 | **SPG-QA-008** | High | `CloudinaryService.java`, `OwnerService.java`, `AdminService.java` | `OwnerVerificationSecurityRegressionTest` | **PASSED** |
 | **SPG-QA-012** | High | `docs/qa/STUDENTPG_ALPHA_BETA_QA_AUDIT.md` (Rotation Playbook) | Tracked secret scan & git log audit | **DOCUMENTED** |
+
+
+---
+
+## 24. Release Scope Deprecation & QA Verification: Ratings, Reviews, and Feedback Removal
+
+### Feature Deprecation Scope
+For the current release milestone, all student ratings, reviews, and feedback components have been completely removed across the application to prioritize core PG discovery, listing management, and owner KYC verification:
+1. **PG Listing Cards (`PGCard.tsx`):** Removed static/mock rating badges (`Star 4.5 (120)`) and unused icon dependencies.
+2. **PG Details View (`PGDetailsView.tsx`):** Removed property header rating summary (`Star 4.5 (120 reviews)`) and review presentation anchors.
+3. **Admin Navigation (`AdminSidebar.tsx`):** Removed the `Reviews` navigation tab and removed `'reviews'` from `AdminActiveView` union type contract.
+4. **Admin Moderation Views (`admin/page.tsx`):** Removed obsolete `Student Reviews & Ratings Moderation` container.
+5. **Admin Activity Feed (`AdminDashboardView.tsx`, `AdminService.java`):** Replaced mock `REVIEW` activity (`"New review received"`) with `VERIFICATION` activity (`"Owner KYC submitted"`).
+
+### Regression Test Suite Verification
+- **Test Suite:** `frontend/tests/ui/ratingsRemovalRegression.test.tsx`
+- **Coverage:**
+  - Verified rendered `PGCard` markup renders essential listing details (name, location, rent) without rating scores or review count badges.
+  - Verified rendered `PGDetailsView` markup displays listing header, amenities, and pricing without rating summaries or review sections.
+  - Verified `AdminSidebar` renders core navigation items while excluding `Reviews` tab, and type contract strictly disallows `'reviews'`.
+  - Verified `AdminDashboardView` activity feed displays `Owner KYC submitted` (`VERIFICATION`) instead of `New review received` (`REVIEW`).
+- **Results:** 15/15 frontend tests passing, 0 ESLint errors, 0 TypeScript compiler errors.
