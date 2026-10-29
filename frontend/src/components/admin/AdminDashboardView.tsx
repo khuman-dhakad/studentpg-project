@@ -16,7 +16,6 @@ import {
   Check,
   User,
   Pencil,
-  Star,
   Loader2,
   CheckCircle2,
   AlertCircle,
@@ -190,10 +189,10 @@ export function AdminDashboardView({
           },
           {
             id: 'act-5',
-            type: 'REVIEW',
-            title: 'New review received',
+            type: 'VERIFICATION',
+            title: 'Owner KYC submitted',
             subtitle: 'Blossom Girls PG',
-            actor: 'Student',
+            actor: 'Owner',
             timestamp: new Date().toISOString(),
             relativeTime: '5 hours ago',
           },
@@ -226,11 +225,16 @@ export function AdminDashboardView({
             <Pencil className="h-3.5 w-3.5" />
           </div>
         );
-      case 'REVIEW':
+      case 'VERIFICATION':
+        return (
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+            <ShieldCheck className="h-3.5 w-3.5" />
+          </div>
+        );
       default:
         return (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-amber-600">
-            <Star className="h-3.5 w-3.5 fill-amber-500" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+            <Building2 className="h-3.5 w-3.5" />
           </div>
         );
     }
