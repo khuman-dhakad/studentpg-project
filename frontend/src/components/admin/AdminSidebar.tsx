@@ -9,7 +9,6 @@ import {
   GraduationCap,
   ShieldCheck,
   BarChart3,
-  Star,
   MessageSquare,
   UserCheck,
   Settings,
@@ -25,7 +24,6 @@ export type AdminActiveView =
   | 'students'
   | 'approvals'
   | 'reports'
-  | 'reviews'
   | 'enquiries'
   | 'users'
   | 'settings';
@@ -58,7 +56,6 @@ export function AdminSidebar({
       badgeColor: 'bg-rose-500 text-white',
     },
     { id: 'reports' as AdminActiveView, label: 'Reports', icon: BarChart3, badge: null },
-    { id: 'reviews' as AdminActiveView, label: 'Reviews', icon: Star, badge: null },
     { id: 'enquiries' as AdminActiveView, label: 'Enquiries', icon: MessageSquare, badge: null },
     { id: 'users' as AdminActiveView, label: 'Users', icon: UserCheck, badge: null },
     { id: 'settings' as AdminActiveView, label: 'Settings', icon: Settings, badge: null },
