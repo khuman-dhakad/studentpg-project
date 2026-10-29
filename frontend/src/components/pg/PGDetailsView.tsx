@@ -14,7 +14,6 @@ import {
   ArrowLeft,
   Heart,
   Share2,
-  Star,
   MapPin,
   ArrowRight,
   MessageCircle,
@@ -330,18 +329,11 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
             C. PROPERTY INFORMATION
         ========================================================== */}
         <section className="space-y-3 bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
-          {/* Name & Reviews Row */}
-          <div className="flex flex-wrap items-start justify-between gap-2">
+          {/* Property Name */}
+          <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
               {listing.pgName}
             </h1>
-
-            {/* Rating Display */}
-            <div className="flex items-center gap-1.5 shrink-0 text-sm font-bold text-slate-800">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-              <span>4.5</span>
-              <span className="text-slate-400 font-normal text-xs">(120 reviews)</span>
-            </div>
           </div>
 
           {/* Location & Map Link Row */}

@@ -832,7 +832,7 @@ public class AdminService {
         recentActivities.add(new RecentActivityItem("act-2", "APPROVAL", "PG approved", "Comfort Stay PG", "Administrator", Instant.now().minus(1, ChronoUnit.HOURS), "1 hour ago"));
         recentActivities.add(new RecentActivityItem("act-3", "OWNER_REGISTERED", "New owner registered", "Priya Verma", "Priya Verma", Instant.now().minus(2, ChronoUnit.HOURS), "2 hours ago"));
         recentActivities.add(new RecentActivityItem("act-4", "PG_UPDATED", "PG listing updated", "Shree Residency PG", "Administrator", Instant.now().minus(3, ChronoUnit.HOURS), "3 hours ago"));
-        recentActivities.add(new RecentActivityItem("act-5", "REVIEW", "New review received", "Blossom Girls PG", "Student", Instant.now().minus(5, ChronoUnit.HOURS), "5 hours ago"));
+        recentActivities.add(new RecentActivityItem("act-5", "VERIFICATION", "Owner KYC submitted", "Blossom Girls PG", "Owner", Instant.now().minus(5, ChronoUnit.HOURS), "5 hours ago"));
 
         return new AdminDashboardOverviewResponse(
                 totalPgs > 0 ? totalPgs : 248,

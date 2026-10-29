@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ROUTES } from '@/constants/routes';
-import { MapPin, Check, Heart, Star, Wifi, Utensils, Snowflake, Car, ChevronLeft, ChevronRight, X, MessageCircle } from 'lucide-react';
+import { MapPin, Check, Heart, Wifi, Utensils, Snowflake, Car, ChevronLeft, ChevronRight, X, MessageCircle } from 'lucide-react';
 import type { PG } from '@/types/pg.types';
 
 interface PGCardProps {
@@ -107,17 +107,9 @@ export function PGCard({ pg }: PGCardProps) {
                 </h3>
               </Link>
 
-              <div className="flex items-center justify-between gap-1 text-[11px] sm:text-xs">
-                <div className="flex min-w-0 items-center gap-1 text-slate-500">
-                  <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                  <span className="truncate">{locationLabel}</span>
-                </div>
-
-                <div className="flex items-center gap-1 shrink-0 font-bold text-slate-700">
-                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  <span>4.5</span>
-                  <span className="text-slate-400 font-normal">(120)</span>
-                </div>
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                <span className="truncate">{locationLabel}</span>
               </div>
 
               <div className="flex items-baseline gap-1">

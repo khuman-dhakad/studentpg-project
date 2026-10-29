@@ -15,7 +15,6 @@ import { useSessionQuery } from '@/features/auth/api/authApi';
 import {
   GraduationCap,
   BarChart3,
-  Star,
   MessageSquare,
   UserCheck,
   Settings,
@@ -205,29 +204,6 @@ export default function AdminDashboardPage() {
               </h2>
               <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
                 Detailed monthly revenue forecasts, occupancy rates, and locality breakdown reports for Bhopal accommodation market.
-              </p>
-              <button
-                type="button"
-                onClick={() => setActiveView('dashboard')}
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span>Return to Dashboard</span>
-              </button>
-            </div>
-          )}
-
-          {/* VIEW: REVIEWS */}
-          {activeView === 'reviews' && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center shadow-xs">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 mb-4">
-                <Star className="h-7 w-7 fill-amber-500" />
-              </div>
-              <h2 className="text-lg font-black text-slate-900">
-                Student Reviews &amp; Ratings Moderation
-              </h2>
-              <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-                Moderate student feedback, verify genuine stay ratings, and maintain authentic property reviews.
               </p>
               <button
                 type="button"

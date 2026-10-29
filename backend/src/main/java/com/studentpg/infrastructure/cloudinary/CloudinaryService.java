@@ -20,6 +20,7 @@ public class CloudinaryService {
     private RestTemplate restTemplate;
     private static final Logger logger = LoggerFactory.getLogger(CloudinaryService.class);
 
+    @Autowired
     public CloudinaryService(Cloudinary cloudinary, @Autowired(required = false) RestTemplate restTemplate) {
         this.cloudinary = cloudinary;
         this.restTemplate = (restTemplate != null) ? restTemplate : new RestTemplate();
