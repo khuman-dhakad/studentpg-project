@@ -139,6 +139,14 @@ public class AuthRateLimitingFilter extends OncePerRequestFilter {
                 return true;
             }
         }
+        try {
+            java.net.InetAddress addr = java.net.InetAddress.getByName(clean);
+            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress()) {
+                return true;
+            }
+        } catch (Exception ignored) {
+            // Unparseable IP format
+        }
         return false;
     }
 

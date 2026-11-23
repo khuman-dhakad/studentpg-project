@@ -139,4 +139,39 @@ class AuthRateLimitingFilterTest {
             assertEquals(429, blockedRes.getStatus(), "Expected 429 for " + endpoint);
         }
     }
+
+    @Test
+    @DisplayName("Two different client IPs through a trusted proxy have separate buckets")
+    void testTwoDifferentClientIpsThroughTrustedProxyHaveIndependentBuckets() throws ServletException, IOException {
+        FilterChain chain = mock(FilterChain.class);
+        String trustedProxyIp = "127.0.0.1";
+        String clientA = "203.0.113.10";
+        String clientB = "203.0.113.20";
+
+        // Client A makes 3 requests through trusted proxy (hits max-requests: 3)
+        for (int i = 0; i < 3; i++) {
+            MockHttpServletRequest reqA = new MockHttpServletRequest("POST", "/api/auth/login");
+            reqA.setRemoteAddr(trustedProxyIp);
+            reqA.addHeader("X-Forwarded-For", clientA);
+            MockHttpServletResponse resA = new MockHttpServletResponse();
+            filter.doFilterInternal(reqA, resA, chain);
+            assertEquals(200, resA.getStatus());
+        }
+
+        // Client A makes 4th request -> blocked with 429
+        MockHttpServletRequest reqA4 = new MockHttpServletRequest("POST", "/api/auth/login");
+        reqA4.setRemoteAddr(trustedProxyIp);
+        reqA4.addHeader("X-Forwarded-For", clientA);
+        MockHttpServletResponse resA4 = new MockHttpServletResponse();
+        filter.doFilterInternal(reqA4, resA4, chain);
+        assertEquals(429, resA4.getStatus());
+
+        // Client B makes request through the EXACT SAME trusted proxy -> should pass (200), not blocked!
+        MockHttpServletRequest reqB = new MockHttpServletRequest("POST", "/api/auth/login");
+        reqB.setRemoteAddr(trustedProxyIp);
+        reqB.addHeader("X-Forwarded-For", clientB);
+        MockHttpServletResponse resB = new MockHttpServletResponse();
+        filter.doFilterInternal(reqB, resB, chain);
+        assertEquals(200, resB.getStatus());
+    }
 }

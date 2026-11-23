@@ -211,6 +211,25 @@ export const backendClient = {
 
 
     /*
+     * Forward client IP headers from incoming request if running on server.
+     */
+    if (typeof window === 'undefined' && !headers.has('X-Forwarded-For')) {
+      try {
+        const { headers: getHeaders } = await import('next/headers');
+        const incomingHeaders = await getHeaders();
+        const forwardedFor = incomingHeaders.get('x-forwarded-for');
+        const realIp = incomingHeaders.get('x-real-ip');
+        if (forwardedFor) {
+          headers.set('X-Forwarded-For', forwardedFor);
+        } else if (realIp) {
+          headers.set('X-Forwarded-For', realIp);
+        }
+      } catch {
+        // Outside Next.js request context (e.g. during static build or unit test)
+      }
+    }
+
+    /*
      * Authentication
      */
 
