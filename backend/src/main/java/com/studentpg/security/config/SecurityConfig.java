@@ -1,5 +1,6 @@
 package com.studentpg.security.config;
 
+import com.studentpg.security.filter.AuthRateLimitingFilter;
 import com.studentpg.security.filter.JwtAuthenticationFilter;
 import com.studentpg.security.userdetails.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthRateLimitingFilter authRateLimitingFilter;
 
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001}")
     private String allowedOrigins;
@@ -68,6 +70,7 @@ public class SecurityConfig {
                     response.setHeader("X-Frame-Options", "DENY");
                     response.getWriter().write("{\"success\":false,\"status\":401,\"message\":\"Authentication required\"}");
                 }))
+                .addFilterBefore(authRateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

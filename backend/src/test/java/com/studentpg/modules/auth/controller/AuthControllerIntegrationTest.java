@@ -5,6 +5,7 @@ import com.studentpg.modules.admin.repository.AdminRepository;
 import com.studentpg.modules.auth.service.AuthService;
 import com.studentpg.modules.owner.entity.Owner;
 import com.studentpg.modules.owner.repository.OwnerRepository;
+import com.studentpg.security.filter.AuthRateLimitingFilter;
 import com.studentpg.security.filter.JwtAuthenticationFilter;
 import com.studentpg.security.jwt.JwtService;
 import com.studentpg.security.userdetails.CustomUserDetailsService;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AuthController.class)
 @Import({
         com.studentpg.security.config.SecurityConfig.class,
+        AuthRateLimitingFilter.class,
         JwtAuthenticationFilter.class,
         CustomUserDetailsService.class,
         JwtService.class,
