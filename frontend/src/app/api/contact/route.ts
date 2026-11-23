@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[character] ?? character));
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { name, email, subject, message } = await request.json();
@@ -14,6 +20,17 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: 'All fields are required and must not exceed length limits.',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Reject CR/LF characters in subject and email to prevent SMTP header injection
+    if (/[\r\n]/.test(subject) || /[\r\n]/.test(email)) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid characters detected in email or subject.',
         },
         { status: 400 }
       );
@@ -41,19 +58,19 @@ export async function POST(request: NextRequest) {
       to: process.env.MAIL_FROM,
 
       // When owner clicks Reply, reply goes to the user who submitted the form
-      replyTo: email,
+      replyTo: email.trim(),
 
-      subject: `[Contact Us] ${subject}`,
+      subject: `[Contact Us] ${subject.trim()}`,
 
       text: `
 New Support Inquiry - StudentPG
 
-Name: ${name}
-Email: ${email}
-Subject: ${subject}
+Name: ${name.trim()}
+Email: ${email.trim()}
+Subject: ${subject.trim()}
 
 Message:
-${message}
+${message.trim()}
       `,
 
       html: `
@@ -65,23 +82,23 @@ ${message}
 
           <p>
             <strong>Name:</strong>
-            ${name}
+            ${escapeHtml(name.trim())}
           </p>
 
           <p>
             <strong>Email:</strong>
-            ${email}
+            ${escapeHtml(email.trim())}
           </p>
 
           <p>
             <strong>Subject:</strong>
-            ${subject}
+            ${escapeHtml(subject.trim())}
           </p>
 
           <h3>Message:</h3>
 
           <p>
-            ${message}
+            ${escapeHtml(message.trim())}
           </p>
 
           <hr />

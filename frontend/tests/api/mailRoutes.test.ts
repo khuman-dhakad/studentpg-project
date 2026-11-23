@@ -44,15 +44,15 @@ describe('Mail Routes with upgraded Nodemailer transport', () => {
       expect(mockSendMail).not.toHaveBeenCalled();
     });
 
-    it('sends email and returns 200 on valid contact payload', async () => {
+    it('sends email and returns 200 on valid contact payload with HTML escaping', async () => {
       const req = new NextRequest('http://localhost/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Jane Doe',
+          name: '<script>alert("xss")</script>',
           email: 'jane@example.com',
-          subject: 'PG Inquiry',
-          message: 'Hello, I have a question about room amenities.',
+          subject: 'PG Inquiry & Details',
+          message: 'Hello, <b>bold</b> & nice.',
         }),
       });
 
@@ -66,6 +66,42 @@ describe('Mail Routes with upgraded Nodemailer transport', () => {
       const mailCall = mockSendMail.mock.calls[0][0];
       expect(mailCall.to).toBe('support@studentpg.com');
       expect(mailCall.replyTo).toBe('jane@example.com');
+      expect(mailCall.html).toContain('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
+      expect(mailCall.html).toContain('PG Inquiry &amp; Details');
+      expect(mailCall.html).toContain('&lt;b&gt;bold&lt;/b&gt; &amp; nice.');
+    });
+
+    it('rejects CR/LF injection in subject and email with 400 status', async () => {
+      const subjectInjectionReq = new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Attacker',
+          email: 'attacker@example.com',
+          subject: 'Inquiry\r\nBcc: victim@example.com',
+          message: 'Spam attack',
+        }),
+      });
+
+      const resSubject = await contactHandler(subjectInjectionReq);
+      expect(resSubject.status).toBe(400);
+      const dataSubject = await resSubject.json();
+      expect(dataSubject.message).toContain('Invalid characters');
+
+      const emailInjectionReq = new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Attacker',
+          email: 'attacker@example.com\nCc: victim@example.com',
+          subject: 'Normal Subject',
+          message: 'Spam attack',
+        }),
+      });
+
+      const resEmail = await contactHandler(emailInjectionReq);
+      expect(resEmail.status).toBe(400);
+      expect(mockSendMail).not.toHaveBeenCalled();
     });
   });
 
