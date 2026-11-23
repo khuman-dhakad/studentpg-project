@@ -43,13 +43,3 @@ export const BACKEND_API_URL =
  */
 export const SERVER_BACKEND_API_URL =
   process.env.BACKEND_INTERNAL_URL || BACKEND_API_URL;
-
-/**
- * Debug: Log current configuration (remove in production if needed)
- */
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  console.log('🔧 API Configuration:', {
-    BACKEND_API_URL,
-    NODE_ENV: process.env.NODE_ENV,
-  });
-}
