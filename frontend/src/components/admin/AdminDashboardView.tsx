@@ -77,126 +77,22 @@ export function AdminDashboardView({
     }
   };
 
-  // Fallback / default data matching reference image exactly
-  const totalPgs = overview?.totalPgs ?? 248;
-  const totalOwners = overview?.totalOwners ?? 156;
-  const totalStudents = overview?.totalStudents ?? 1243;
-  const pendingApprovals = overview?.pendingApprovals ?? 12;
+  // Real overview metrics (no fake fallback numbers)
+  const totalPgs = overview?.totalPgs ?? 0;
+  const totalOwners = overview?.totalOwners ?? 0;
+  const totalStudents = overview?.totalStudents ?? 0;
+  const pendingApprovals = overview?.pendingApprovals ?? 0;
 
-  const approvedPgs = overview?.approvedPgs ?? 180;
-  const rejectedPgs = overview?.rejectedPgs ?? 18;
-  const draftPgs = overview?.draftPgs ?? 38;
+  const approvedPgs = overview?.approvedPgs ?? 0;
+  const rejectedPgs = overview?.rejectedPgs ?? 0;
+  const draftPgs = overview?.draftPgs ?? 0;
 
   // Format student number with comma e.g. 1,243
   const formattedStudents = totalStudents.toLocaleString('en-IN');
 
-  const pendingList: PendingPGItem[] =
-    overview?.pendingListings && overview.pendingListings.length > 0
-      ? overview.pendingListings
-      : [
-          {
-            id: 'demo-1',
-            pgName: 'Green Valley PG',
-            ownerName: 'Amit Singh',
-            locality: 'MP Nagar',
-            city: 'Bhopal',
-            rent: '₹8,000 / month',
-            submittedAt: '2026-10-10T10:30:00Z',
-            thumbnailUrl: '/areas/mp-nagar.jpg',
-          },
-          {
-            id: 'demo-2',
-            pgName: 'Student Nest PG',
-            ownerName: 'Neha Patel',
-            locality: 'Kolar Road',
-            city: 'Bhopal',
-            rent: '₹6,500 / month',
-            submittedAt: '2026-10-09T16:15:00Z',
-            thumbnailUrl: '/areas/kolar-road.jpg',
-          },
-          {
-            id: 'demo-3',
-            pgName: 'Comfort Living PG',
-            ownerName: 'Suresh Kumar',
-            locality: 'Indrapuri',
-            city: 'Bhopal',
-            rent: '₹7,500 / month',
-            submittedAt: '2026-10-09T11:20:00Z',
-            thumbnailUrl: '/areas/indrapuri.jpg',
-          },
-          {
-            id: 'demo-4',
-            pgName: 'Apex PG',
-            ownerName: 'Pooja Gupta',
-            locality: 'Arera Colony',
-            city: 'Bhopal',
-            rent: '₹9,000 / month',
-            submittedAt: '2026-10-08T15:45:00Z',
-            thumbnailUrl: '/areas/arera-colony.jpg',
-          },
-        ];
-
-  const localities =
-    overview?.topLocalities && overview.topLocalities.length > 0
-      ? overview.topLocalities
-      : [
-          { rank: 1, locality: 'MP Nagar', count: 48, percentage: 85 },
-          { rank: 2, locality: 'Kolar Road', count: 36, percentage: 65 },
-          { rank: 3, locality: 'Indrapuri', count: 28, percentage: 50 },
-          { rank: 4, locality: 'Arera Colony', count: 24, percentage: 40 },
-          { rank: 5, locality: 'Hoshangabad Road', count: 18, percentage: 30 },
-        ];
-
-  const activities =
-    overview?.recentActivities && overview.recentActivities.length > 0
-      ? overview.recentActivities
-      : [
-          {
-            id: 'act-1',
-            type: 'SUBMISSION',
-            title: 'New PG listing submitted',
-            subtitle: 'by Rohit Sharma',
-            actor: 'Rohit Sharma',
-            timestamp: new Date().toISOString(),
-            relativeTime: '10 minutes ago',
-          },
-          {
-            id: 'act-2',
-            type: 'APPROVAL',
-            title: 'PG approved',
-            subtitle: 'Comfort Stay PG',
-            actor: 'Administrator',
-            timestamp: new Date().toISOString(),
-            relativeTime: '1 hour ago',
-          },
-          {
-            id: 'act-3',
-            type: 'OWNER_REGISTERED',
-            title: 'New owner registered',
-            subtitle: 'Priya Verma',
-            actor: 'Priya Verma',
-            timestamp: new Date().toISOString(),
-            relativeTime: '2 hours ago',
-          },
-          {
-            id: 'act-4',
-            type: 'PG_UPDATED',
-            title: 'PG listing updated',
-            subtitle: 'Shree Residency PG',
-            actor: 'Administrator',
-            timestamp: new Date().toISOString(),
-            relativeTime: '3 hours ago',
-          },
-          {
-            id: 'act-5',
-            type: 'VERIFICATION',
-            title: 'Owner KYC submitted',
-            subtitle: 'Blossom Girls PG',
-            actor: 'Owner',
-            timestamp: new Date().toISOString(),
-            relativeTime: '5 hours ago',
-          },
-        ];
+  const pendingList: PendingPGItem[] = overview?.pendingListings ?? [];
+  const localities = overview?.topLocalities ?? [];
+  const activities = overview?.recentActivities ?? [];
 
   // Helper for activity icon
   const renderActivityIcon = (type: string) => {
@@ -457,26 +353,32 @@ export function AdminDashboardView({
             )}
           </div>
 
-          <div className="divide-y divide-slate-100 flex-1 flex flex-col justify-around py-1">
-            {activities.map((act) => (
-              <div key={act.id} className="flex items-start gap-3 py-2.5">
-                <div className="shrink-0 pt-0.5">
-                  {renderActivityIcon(act.type)}
-                </div>
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-xs font-bold text-slate-900 leading-snug">
-                    {act.title}
+          {activities.length > 0 ? (
+            <div className="divide-y divide-slate-100 flex-1 flex flex-col justify-around py-1">
+              {activities.map((act) => (
+                <div key={act.id} className="flex items-start gap-3 py-2.5">
+                  <div className="shrink-0 pt-0.5">
+                    {renderActivityIcon(act.type)}
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="text-xs font-bold text-slate-900 leading-snug">
+                      {act.title}
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 truncate">
+                      {act.subtitle}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-medium text-slate-400 shrink-0 whitespace-nowrap pl-2">
+                    {act.relativeTime}
                   </span>
-                  <span className="text-[11px] font-medium text-slate-500 truncate">
-                    {act.subtitle}
-                  </span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400 shrink-0 whitespace-nowrap pl-2">
-                  {act.relativeTime}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center py-8 text-center text-xs text-slate-400 font-medium">
+              No recent activity recorded yet.
+            </div>
+          )}
         </div>
       </section>
 
@@ -513,87 +415,93 @@ export function AdminDashboardView({
           </div>
 
           {/* LIST OF PENDING ACCOMMODATIONS */}
-          <div className="divide-y divide-slate-100">
-            {pendingList.map((item) => {
-              const { datePart, timePart } = formatSubmittedDate(
-                item.submittedAt
-              );
-              const isItemApproving = approvingId === item.id;
+          {pendingList.length > 0 ? (
+            <div className="divide-y divide-slate-100">
+              {pendingList.map((item) => {
+                const { datePart, timePart } = formatSubmittedDate(
+                  item.submittedAt
+                );
+                const isItemApproving = approvingId === item.id;
 
-              return (
-                <div
-                  key={item.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3.5 transition-colors hover:bg-slate-50/50 rounded-xl px-1 sm:px-2"
-                >
-                  {/* Property Info */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative h-12 w-16 sm:h-14 sm:w-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
-                      <Image
-                        src={item.thumbnailUrl || '/areas/mp-nagar.jpg'}
-                        alt={item.pgName}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
+                return (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3.5 transition-colors hover:bg-slate-50/50 rounded-xl px-1 sm:px-2"
+                  >
+                    {/* Property Info */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative h-12 w-16 sm:h-14 sm:w-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
+                        <Image
+                          src={item.thumbnailUrl || '/areas/mp-nagar.jpg'}
+                          alt={item.pgName}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </div>
+
+                      <div className="flex flex-col min-w-0">
+                        <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                          {item.pgName}
+                        </h3>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 truncate mt-0.5">
+                          <span>By {item.ownerName}</span>
+                          <span className="text-slate-300">•</span>
+                          <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                          <span className="truncate">
+                            {item.locality}, {item.city}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex flex-col min-w-0">
-                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-                        {item.pgName}
-                      </h3>
-                      <div className="flex items-center gap-1 text-[11px] text-slate-500 truncate mt-0.5">
-                        <span>By {item.ownerName}</span>
-                        <span className="text-slate-300">•</span>
-                        <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
-                        <span className="truncate">
-                          {item.locality}, {item.city}
-                        </span>
+                    {/* Price, Date and Actions */}
+                    <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0 pl-19 sm:pl-0">
+                      <div className="text-left sm:text-right">
+                        <div className="text-xs sm:text-sm font-bold text-emerald-700">
+                          {item.rent}
+                        </div>
+                        <div className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                          <div>{datePart}</div>
+                          <div>{timePart}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={ROUTES.PG_DETAILS(item.id)}
+                          target="_blank"
+                          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+                        >
+                          View
+                        </Link>
+
+                        <button
+                          type="button"
+                          onClick={() => handleApprove(item.id, item.pgName)}
+                          disabled={isApproving}
+                          className="flex items-center gap-1.5 rounded-xl bg-emerald-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800 transition-colors shadow-xs active:scale-98 disabled:opacity-50 cursor-pointer"
+                        >
+                          {isItemApproving ? (
+                            <>
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              <span>Approving...</span>
+                            </>
+                          ) : (
+                            <span>Approve</span>
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  {/* Price, Date and Actions */}
-                  <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0 pl-19 sm:pl-0">
-                    <div className="text-left sm:text-right">
-                      <div className="text-xs sm:text-sm font-bold text-emerald-700">
-                        {item.rent}
-                      </div>
-                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        <div>{datePart}</div>
-                        <div>{timePart}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Link
-                        href={ROUTES.PG_DETAILS(item.id)}
-                        target="_blank"
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
-                      >
-                        View
-                      </Link>
-
-                      <button
-                        type="button"
-                        onClick={() => handleApprove(item.id, item.pgName)}
-                        disabled={isApproving}
-                        className="flex items-center gap-1.5 rounded-xl bg-emerald-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800 transition-colors shadow-xs active:scale-98 disabled:opacity-50 cursor-pointer"
-                      >
-                        {isItemApproving ? (
-                          <>
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                            <span>Approving...</span>
-                          </>
-                        ) : (
-                          <span>Approve</span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-xs text-slate-400 font-medium">
+              No pending listings awaiting review.
+            </div>
+          )}
         </div>
 
         {/* COL 2: TOP LOCALITIES RANKING (4.5 COLS) */}
@@ -620,33 +528,39 @@ export function AdminDashboardView({
             )}
           </div>
 
-          <div className="divide-y divide-slate-100">
-            {localities.map((loc) => (
-              <div key={loc.rank} className="py-3 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-black text-emerald-800">
-                      {loc.rank}
-                    </span>
-                    <span className="text-xs font-bold text-slate-800">
-                      {loc.locality}
+          {localities.length > 0 ? (
+            <div className="divide-y divide-slate-100">
+              {localities.map((loc) => (
+                <div key={loc.rank} className="py-3 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-black text-emerald-800">
+                        {loc.rank}
+                      </span>
+                      <span className="text-xs font-bold text-slate-800">
+                        {loc.locality}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-400">
+                      {loc.count} listings
                     </span>
                   </div>
-                  <span className="text-[11px] font-semibold text-slate-400">
-                    {loc.count} listings
-                  </span>
-                </div>
 
-                {/* Progress bar */}
-                <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-emerald-700 transition-all duration-500"
-                    style={{ width: `${Math.min(100, loc.percentage)}%` }}
-                  />
+                  {/* Progress bar */}
+                  <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-emerald-700 transition-all duration-500"
+                      style={{ width: `${Math.min(100, loc.percentage)}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-xs text-slate-400 font-medium">
+              No locality data available.
+            </div>
+          )}
         </div>
       </section>
     </div>
