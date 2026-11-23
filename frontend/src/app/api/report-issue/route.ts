@@ -15,14 +15,29 @@ export async function POST(req: Request) {
     const formData = await req.formData();
 
     const issueType = String(formData.get('issueType') ?? formData.get('title') ?? '').trim();
-    const pgListing = formData.get('pgListing') as string;
-    const location = formData.get('location') as string;
+    const pgListing = String(formData.get('pgListing') ?? '').trim();
+    const location = String(formData.get('location') ?? '').trim();
     const description = String(formData.get('description') ?? formData.get('detail') ?? '').trim();
-    const file = (formData.get('file') ?? formData.get('images')) as File | null;
+    const allFiles = [...formData.getAll('file'), ...formData.getAll('images')].filter(
+      (entry): entry is File => typeof entry === 'object' && entry !== null && 'size' in entry && (entry as File).size > 0
+    );
 
-    if (!issueType || issueType.length > 140 || !description || description.length > 4000) {
+    if (allFiles.length > 5) {
+      return NextResponse.json({ success: false, message: 'A maximum of 5 images can be attached.' }, { status: 400 });
+    }
+
+    if (
+      !issueType ||
+      issueType.length > 140 ||
+      !description ||
+      description.length > 4000 ||
+      pgListing.length > 200 ||
+      location.length > 200
+    ) {
       return NextResponse.json({ success: false, message: 'Please provide valid report details.' }, { status: 400 });
     }
+
+    const file = allFiles[0] || null;
 
     if (file && file.size > 0 && (!allowedImageTypes.has(file.type) || file.size > MAX_FILE_SIZE)) {
       return NextResponse.json({ success: false, message: 'Attachment must be a JPG, PNG, or WebP image up to 5 MB.' }, { status: 400 });

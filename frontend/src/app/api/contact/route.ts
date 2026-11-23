@@ -5,12 +5,15 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email, subject, message } = await request.json();
 
-    // Validate required fields
-    if (!name || !email || !subject || !message) {
+    // Validate required fields and length limits
+    if (!name || typeof name !== 'string' || name.trim().length > 100 ||
+        !email || typeof email !== 'string' || email.trim().length > 254 ||
+        !subject || typeof subject !== 'string' || subject.trim().length > 140 ||
+        !message || typeof message !== 'string' || message.trim().length > 5000) {
       return NextResponse.json(
         {
           success: false,
-          message: 'All fields are required.',
+          message: 'All fields are required and must not exceed length limits.',
         },
         { status: 400 }
       );

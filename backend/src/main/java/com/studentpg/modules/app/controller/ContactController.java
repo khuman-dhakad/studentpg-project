@@ -227,6 +227,10 @@ public class ContactController {
                     .body(new MessageResponse(false, "Too many requests. Please try again later."));
         }
 
+        if (req.getImages() != null && req.getImages().length > 5) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "A maximum of 5 images can be uploaded."));
+        }
+
         List<String> uploadedImageUrls = new ArrayList<>();
         if (req.getImages() != null) {
             for (MultipartFile img : req.getImages()) {

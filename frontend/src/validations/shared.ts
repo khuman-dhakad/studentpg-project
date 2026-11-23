@@ -30,6 +30,13 @@ export const phoneSchema = z
   );
 
 export const baseAuthValidation = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email format'),
-  password: z.string().min(8, 'Password must be at least 8 characters long'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .max(254, 'Email must not exceed 254 characters')
+    .email('Invalid email format'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters long')
+    .max(64, 'Password must not exceed 64 characters'),
 });
