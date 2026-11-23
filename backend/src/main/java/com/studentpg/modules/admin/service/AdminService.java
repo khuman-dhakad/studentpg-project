@@ -41,22 +41,6 @@ public class AdminService {
 
     /*
      * ============================================================
-     * APPROVAL STATUS CONSTANTS
-     * ============================================================
-     */
-
-//     private static final String STATUS_PENDING =
-//             "PENDING";
-
-//     private static final String STATUS_APPROVED =
-//             "APPROVED";
-
-//     private static final String STATUS_REJECTED =
-//             "REJECTED";
-
-
-    /*
-     * ============================================================
      * CONSTRUCTOR
      * ============================================================
      */

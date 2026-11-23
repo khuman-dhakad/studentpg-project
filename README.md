@@ -41,7 +41,7 @@ This is an active MVP (version 1). Right now the focus is on:
 The project is split into a frontend, a backend, and a database, and they talk to each other like this:
 
 ```
-Frontend (React/Vite) --- REST API (JSON over HTTP) ---> Backend (Spring Boot) ---> MongoDB Atlas
+Frontend (Next.js) --- REST API (JSON over HTTP) ---> Backend (Spring Boot) ---> MongoDB Atlas
 ```
 
 The backend itself is organized in layers:
