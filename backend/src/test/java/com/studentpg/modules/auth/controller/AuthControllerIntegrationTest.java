@@ -110,4 +110,22 @@ class AuthControllerIntegrationTest {
                         .content("{\"email\":\"owner@example.com\",\"password\":\"Secret123!\"}"))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void loginFailsWithInvalidPassword() throws Exception {
+        Admin admin = new Admin();
+        admin.setName("Admin");
+        admin.setEmail("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("Secret123!"));
+        admin.setRole("ADMIN");
+        admin.setActive(true);
+
+        when(adminRepository.findByEmailIgnoreCase("admin@example.com"))
+                .thenReturn(Optional.of(admin));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"admin@example.com\",\"password\":\"WrongPassword!\"}"))
+                .andExpect(status().isUnauthorized());
+    }
 }
