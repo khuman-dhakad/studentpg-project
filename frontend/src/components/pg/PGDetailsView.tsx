@@ -157,6 +157,16 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
   );
   const whatsAppLink = `https://wa.me/${formattedWhatsApp}?text=${whatsAppMessage}`;
 
+  const handleInquire = () => {
+    if (hasWhatsApp) {
+      window.open(whatsAppLink, '_blank', 'noopener,noreferrer');
+    } else if (hasPhone) {
+      window.location.href = `tel:${contactNumber}`;
+    } else {
+      showToast('Contact information is currently unavailable for this property.');
+    }
+  };
+
   // 6. Amenities Configuration
   const allAmenities = [
     {
@@ -486,7 +496,7 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
         ========================================================== */}
         <PGRoomPricing
           rooms={roomTypesData}
-          onInquire={() => {}}
+          onInquire={handleInquire}
           onViewAll={() => showToast('All available room options are displayed')}
           contactHref={hasWhatsApp ? whatsAppLink : hasPhone ? `tel:${contactNumber}` : '#'}
         />

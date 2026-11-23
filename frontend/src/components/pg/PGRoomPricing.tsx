@@ -19,6 +19,7 @@ interface PGRoomPricingProps {
 
 export function PGRoomPricing({
   rooms,
+  onInquire,
   onViewAll,
   contactHref,
 }: PGRoomPricingProps) {
@@ -71,6 +72,14 @@ export function PGRoomPricing({
 
               <a
                 href={contactHref}
+                target={contactHref.startsWith('https://wa.me') ? '_blank' : undefined}
+                rel={contactHref.startsWith('https://wa.me') ? 'noopener noreferrer' : undefined}
+                onClick={(e) => {
+                  if (contactHref === '#') {
+                    e.preventDefault();
+                  }
+                  onInquire();
+                }}
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 border border-slate-200 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer shrink-0"
                 aria-label={`Inquire about ${room.type}`}
               >
