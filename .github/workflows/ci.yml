@@ -22,6 +22,7 @@ jobs:
           --health-retries 5
     env:
       MONGO_URI: mongodb://localhost:27017/studentpg_ci
+      CAPTCHA_SECRET: ci-test-captcha-secret-2026
 
     steps:
       - name: Checkout Code
@@ -72,6 +73,14 @@ jobs:
       - name: Run TypeScript Type Check
         working-directory: frontend
         run: npx tsc --noEmit
+
+      - name: Run Frontend Unit & Regression Tests
+        working-directory: frontend
+        run: npm test
+
+      - name: Run Production Dependency Security Audit
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Build Next.js Production Bundle
         working-directory: frontend
