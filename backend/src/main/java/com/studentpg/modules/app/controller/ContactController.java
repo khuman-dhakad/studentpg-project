@@ -57,7 +57,7 @@ public class ContactController {
     private final CloudinaryService cloudinaryService;
     private final com.studentpg.infrastructure.email.EmailService emailService;
 
-    @Value("${app.captcha.secret:}")
+    @Value("${app.captcha.secret}")
     private String captchaSecret;
 
     @Value("${mail.from:studentpg.support@gmail.com}")
@@ -75,6 +75,10 @@ public class ContactController {
 
     @PostConstruct
     public void initializeTTLIndexes() {
+        if (captchaSecret == null || captchaSecret.trim().isEmpty()) {
+            throw new IllegalStateException("CAPTCHA_SECRET (app.captcha.secret) must be configured for application startup");
+        }
+
         if (mongoTemplate == null) {
             return;
         }
