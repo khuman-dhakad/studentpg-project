@@ -11,8 +11,6 @@ interface PGCardProps {
   pg: PG;
 }
 
-const fallbackImage = 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80';
-
 export function PGCard({ pg }: PGCardProps) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -20,8 +18,9 @@ export function PGCard({ pg }: PGCardProps) {
   const [isLiked, setIsLiked] = useState(false);
 
   const isVerified = pg.approvalStatus === 'APPROVED';
-  const images = pg.images && pg.images.length > 0 ? pg.images : [{ publicId: 'fallback-image', url: fallbackImage }];
-  const image = imageLoadFailed ? fallbackImage : images[0].url;
+  const images = pg.images?.filter((image) => image.url) ?? [];
+  const hasValidImage = images.length > 0 && !imageLoadFailed;
+  const image = hasValidImage ? images[0].url : null;
 
   const openGallery = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -59,14 +58,20 @@ export function PGCard({ pg }: PGCardProps) {
         <div className="flex items-stretch gap-2.5 p-2.5 sm:gap-3.5 sm:p-3">
           <div className="relative w-[105px] min-w-[105px] min-[380px]:w-[125px] min-[380px]:min-w-[125px] shrink-0 overflow-hidden rounded-[14px] bg-slate-100 sm:w-[210px] sm:min-w-[210px] sm:rounded-[18px]">
             <Link href={ROUTES.PG_DETAILS(pg.id)} className="block h-full w-full min-h-[160px] sm:min-h-[190px]">
-              <Image
-                src={image}
-                alt={pg.pgName}
-                fill
-                sizes="(max-width: 640px) 130px, 210px"
-                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                onError={() => setImageLoadFailed(true)}
-              />
+              {image ? (
+                <Image
+                  src={image}
+                  alt={pg.pgName}
+                  fill
+                  sizes="(max-width: 640px) 130px, 210px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  onError={() => setImageLoadFailed(true)}
+                />
+              ) : (
+                <div className="flex h-full min-h-[160px] items-center justify-center bg-slate-100 text-xs font-semibold text-slate-500 sm:min-h-[190px]">
+                  No photo available
+                </div>
+              )}
             </Link>
 
             {isVerified && (
@@ -188,7 +193,11 @@ export function PGCard({ pg }: PGCardProps) {
             </div>
 
             <div className="relative flex flex-1 items-center justify-center bg-black">
-              <Image src={images[activeImageIndex]?.url || fallbackImage} alt={`${pg.pgName} - Photo ${activeImageIndex + 1}`} fill sizes="100vw" className="object-contain" priority />
+              {images[activeImageIndex]?.url ? (
+                <Image src={images[activeImageIndex].url} alt={`${pg.pgName} - Photo ${activeImageIndex + 1}`} fill sizes="100vw" className="object-contain" priority />
+              ) : (
+                <p className="text-sm font-semibold text-white/80">No photo available</p>
+              )}
               {images.length > 1 && (
                 <>
                   <button type="button" onClick={previousImage} className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white hover:bg-black/80" aria-label="Previous photo">

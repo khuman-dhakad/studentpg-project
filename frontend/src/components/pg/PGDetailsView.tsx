@@ -38,22 +38,11 @@ interface PGDetailsViewProps {
   listing: PG;
 }
 
-const fallbackImages = [
-  'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80',
-];
-
 export function PGDetailsView({ listing }: PGDetailsViewProps) {
   const router = useRouter();
 
   // 1. Gallery State
-  const rawImages: PGImage[] = listing.images && listing.images.length > 0
-    ? listing.images
-    : fallbackImages.map((url, idx) => ({ id: `fallback-${idx}`, publicId: `fallback-${idx}`, url }));
+  const rawImages: PGImage[] = listing.images?.filter((image) => image.url) ?? [];
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
@@ -209,31 +198,33 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
   const displayedAmenities = allAmenities.filter((a) => a.available).slice(0, 5);
 
   // 7. Room Types & Pricing Logic
-  const baseRent = typeof listing.rent === 'number' ? listing.rent : 8000;
-  const roomTypesData = [
+  const baseRent = typeof listing.rent === 'number' ? listing.rent : null;
+  const roomTypesData = baseRent === null ? [] : [
     {
       type: 'Single Room',
       rent: Math.round(baseRent * 1.25),
-      image: rawImages[0]?.url || fallbackImages[0],
+      image: rawImages[0]?.url,
     },
     {
       type: listing.roomType ? `${listing.roomType} Sharing` : 'Double Sharing',
       rent: baseRent,
-      image: rawImages[1]?.url || fallbackImages[1],
+      image: rawImages[1]?.url,
     },
     {
       type: 'Triple Sharing',
       rent: Math.round(baseRent * 0.82),
-      image: rawImages[2]?.url || fallbackImages[2],
+      image: rawImages[2]?.url,
     },
   ];
 
   // Lightbox navigation
   const nextImage = useCallback(() => {
+    if (rawImages.length === 0) return;
     setActiveImageIndex((prev) => (prev + 1) % rawImages.length);
   }, [rawImages.length]);
 
   const prevImage = useCallback(() => {
+    if (rawImages.length === 0) return;
     setActiveImageIndex((prev) => (prev - 1 + rawImages.length) % rawImages.length);
   }, [rawImages.length]);
 
@@ -330,7 +321,9 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
           images={rawImages}
           pgName={listing.pgName}
           isVerified={isVerified}
-          onOpenModal={() => setIsGalleryModalOpen(true)}
+          onOpenModal={() => {
+            if (rawImages.length > 0) setIsGalleryModalOpen(true);
+          }}
           activeIndex={activeImageIndex}
           onSelectIndex={(idx) => setActiveImageIndex(idx)}
         />
@@ -515,7 +508,7 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
       {/* =========================================================
           FULLSCREEN GALLERY LIGHTBOX MODAL
       ========================================================== */}
-      {isGalleryModalOpen && (
+      {isGalleryModalOpen && rawImages.length > 0 && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in"
           onClick={() => setIsGalleryModalOpen(false)}
@@ -554,7 +547,7 @@ export function PGDetailsView({ listing }: PGDetailsViewProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={rawImages[activeImageIndex]?.url || fallbackImages[0]}
+              src={rawImages[activeImageIndex]?.url}
               alt={`${listing.pgName} large photo ${activeImageIndex + 1}`}
               fill
               className="object-contain"
