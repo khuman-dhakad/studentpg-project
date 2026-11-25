@@ -123,6 +123,24 @@ describe('Mail Routes with upgraded Nodemailer transport', () => {
       expect(mockSendMail).not.toHaveBeenCalled();
     });
 
+    it('rejects CR/LF injection in issueType', async () => {
+      const formData = new FormData();
+      formData.append('issueType', 'Pricing\r\nBcc: attacker@example.com');
+      formData.append('description', 'The listed price differs from actual rent.');
+
+      const req = new Request('http://localhost/api/report-issue', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const res = await reportIssueHandler(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(mockSendMail).not.toHaveBeenCalled();
+    });
+
     it('sends email and returns 200 on valid report-issue payload', async () => {
       const formData = new FormData();
       formData.append('issueType', 'Pricing Discrepancy');

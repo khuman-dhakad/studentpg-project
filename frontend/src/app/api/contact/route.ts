@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  }[character] ?? character));
-}
+import { createSupportTransporter, escapeHtml, getSupportMailAddress } from '@/lib/mail';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,25 +31,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Create SMTP transporter using existing environment variables
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT || 587),
-      secure: false,
-
-      auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD,
-      },
-    });
+    const transporter = createSupportTransporter();
+    const supportAddress = getSupportMailAddress();
 
     // Optional: verify SMTP connection before sending
     await transporter.verify();
 
     // Send email to StudentPG support/owner
     await transporter.sendMail({
-      from: `"StudentPG Contact Form" <${process.env.MAIL_FROM}>`,
+      from: `"StudentPG Contact Form" <${supportAddress}>`,
 
-      to: process.env.MAIL_FROM,
+      to: supportAddress,
 
       // When owner clicks Reply, reply goes to the user who submitted the form
       replyTo: email.trim(),
