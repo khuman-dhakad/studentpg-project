@@ -732,13 +732,6 @@ public class AdminService {
             }
         }
 
-        List<String> defaultBhopalLocalities = List.of(
-                "MP Nagar", "Kolar Road", "Indrapuri", "Arera Colony", "Hoshangabad Road"
-        );
-        for (String defLoc : defaultBhopalLocalities) {
-            localityCounts.putIfAbsent(defLoc, 0L);
-        }
-
         List<LocalityStatItem> topLocalities = new ArrayList<>();
         int rank = 1;
 
@@ -769,20 +762,22 @@ public class AdminService {
             }
             String thumb = (p.getImages() != null && !p.getImages().isEmpty())
                     ? p.getImages().get(0).getUrl()
-                    : "/areas/mp-nagar.jpg";
+                    : null;
             String locality = (p.getLandmark() != null && !p.getLandmark().isBlank())
                     ? p.getLandmark()
                     : (p.getAddress() != null ? p.getAddress().split(",")[0].trim() : "Bhopal");
-            String rentFormatted = "₹" + (p.getRent() != null ? p.getRent().toPlainString() : "8,000") + " / month";
+            String rentFormatted = p.getRent() != null
+                    ? "₹" + p.getRent().toPlainString() + " / month"
+                    : "Rent not specified";
 
             pendingListings.add(new PendingPGItem(
                     p.getId(),
-                    p.getPgName() != null ? p.getPgName() : "Student Accommodation",
+                    p.getPgName() != null ? p.getPgName() : "Unnamed Listing",
                     ownerName,
                     locality,
                     p.getCity() != null ? p.getCity() : "Bhopal",
                     rentFormatted,
-                    p.getSubmittedAt() != null ? p.getSubmittedAt() : Instant.now(),
+                    p.getSubmittedAt(),
                     thumb
             ));
         }

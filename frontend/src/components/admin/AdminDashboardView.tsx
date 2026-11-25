@@ -93,6 +93,11 @@ export function AdminDashboardView({
   const pendingList: PendingPGItem[] = overview?.pendingListings ?? [];
   const localities = overview?.topLocalities ?? [];
   const activities = overview?.recentActivities ?? [];
+  const trendRangeCount =
+    timeRange === 'Last 3 Months' ? 3 :
+    timeRange === 'Last 1 Year' ? 12 :
+    6;
+  const listingsTrend = (overview?.listingsTrend ?? []).slice(-trendRangeCount);
 
   // Helper for activity icon
   const renderActivityIcon = (type: string) => {
@@ -152,7 +157,7 @@ export function AdminDashboardView({
       });
       return { datePart, timePart };
     } catch {
-      return { datePart: 'Oct 10, 2026', timePart: '10:30 AM' };
+      return { datePart: 'Unknown date', timePart: '' };
     }
   };
 
@@ -305,7 +310,7 @@ export function AdminDashboardView({
           </div>
 
           <div className="pt-3 flex-1 flex items-center">
-            <PGListingsTrendChart data={overview?.listingsTrend} />
+            <PGListingsTrendChart data={listingsTrend} />
           </div>
         </div>
 
@@ -431,13 +436,19 @@ export function AdminDashboardView({
                     {/* Property Info */}
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative h-12 w-16 sm:h-14 sm:w-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
-                        <Image
-                          src={item.thumbnailUrl || '/areas/mp-nagar.jpg'}
-                          alt={item.pgName}
-                          fill
-                          className="object-cover"
-                          sizes="80px"
-                        />
+                        {item.thumbnailUrl ? (
+                          <Image
+                            src={item.thumbnailUrl}
+                            alt={item.pgName}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-[9px] font-bold text-slate-500">
+                            No photo
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-col min-w-0">

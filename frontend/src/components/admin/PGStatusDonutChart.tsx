@@ -11,13 +11,13 @@ interface PGStatusDonutChartProps {
 }
 
 export function PGStatusDonutChart({
-  approved = 180,
-  pending = 12,
-  rejected = 18,
-  draft = 38,
+  approved = 0,
+  pending = 0,
+  rejected = 0,
+  draft = 0,
   total,
 }: PGStatusDonutChartProps) {
-  const calculatedTotal = total ?? (approved + pending + rejected + draft || 248);
+  const calculatedTotal = total ?? (approved + pending + rejected + draft);
   const safeTotal = calculatedTotal > 0 ? calculatedTotal : 1;
 
   const appPct = Math.round((approved / safeTotal) * 100);
