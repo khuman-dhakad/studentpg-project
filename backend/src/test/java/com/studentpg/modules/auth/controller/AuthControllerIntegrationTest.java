@@ -5,6 +5,7 @@ import com.studentpg.modules.admin.repository.AdminRepository;
 import com.studentpg.modules.auth.service.AuthService;
 import com.studentpg.modules.owner.entity.Owner;
 import com.studentpg.modules.owner.repository.OwnerRepository;
+import com.studentpg.security.filter.AuthRateLimitingFilter;
 import com.studentpg.security.filter.JwtAuthenticationFilter;
 import com.studentpg.security.jwt.JwtService;
 import com.studentpg.security.userdetails.CustomUserDetailsService;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,8 +30,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@ActiveProfiles("test")
 @Import({
         com.studentpg.security.config.SecurityConfig.class,
+        AuthRateLimitingFilter.class,
         JwtAuthenticationFilter.class,
         CustomUserDetailsService.class,
         JwtService.class,
@@ -106,6 +110,24 @@ class AuthControllerIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"owner@example.com\",\"password\":\"Secret123!\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void loginFailsWithInvalidPassword() throws Exception {
+        Admin admin = new Admin();
+        admin.setName("Admin");
+        admin.setEmail("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("Secret123!"));
+        admin.setRole("ADMIN");
+        admin.setActive(true);
+
+        when(adminRepository.findByEmailIgnoreCase("admin@example.com"))
+                .thenReturn(Optional.of(admin));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"admin@example.com\",\"password\":\"WrongPassword!\"}"))
                 .andExpect(status().isUnauthorized());
     }
 }

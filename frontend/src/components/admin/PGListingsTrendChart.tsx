@@ -13,20 +13,7 @@ export function PGListingsTrendChart({
   data,
 }: PGListingsTrendChartProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-  // Default baseline data matching reference screenshot
-  const defaultItems: MonthlyTrendItem[] = [
-    { month: 'Jan', year: 2026, count: 42 },
-    { month: 'Feb', year: 2026, count: 80 },
-    { month: 'Mar', year: 2026, count: 56 },
-    { month: 'Apr', year: 2026, count: 92 },
-    { month: 'May', year: 2026, count: 81 },
-    { month: 'Jun', year: 2026, count: 120 },
-    { month: 'Jul', year: 2026, count: 134 },
-    { month: 'Aug', year: 2026, count: 180 },
-  ];
-
-  const items = data && data.length > 0 ? data : defaultItems;
+  const items = data ?? [];
 
   const width = 500;
   const height = 210;
@@ -37,7 +24,8 @@ export function PGListingsTrendChart({
 
   const chartW = width - padLeft - padRight;
   const chartH = height - padTop - padBottom;
-  const maxVal = 200;
+  const highestCount = items.reduce((maximum, item) => Math.max(maximum, item.count), 0);
+  const maxVal = Math.max(1, Math.ceil(highestCount / 50) * 50);
 
   const points = items.map((item, idx) => {
     const x = padLeft + (idx / Math.max(1, items.length - 1)) * chartW;
@@ -59,12 +47,20 @@ export function PGListingsTrendChart({
 
   const firstPt = points[0];
   const lastPt = points[points.length - 1];
-  const areaPath = `${linePath} L ${lastPt.x.toFixed(1)} ${(padTop + chartH).toFixed(1)} L ${firstPt.x.toFixed(1)} ${(padTop + chartH).toFixed(1)} Z`;
+  const areaPath = firstPt && lastPt
+    ? `${linePath} L ${lastPt.x.toFixed(1)} ${(padTop + chartH).toFixed(1)} L ${firstPt.x.toFixed(1)} ${(padTop + chartH).toFixed(1)} Z`
+    : '';
 
-  const yTicks = [200, 150, 100, 50, 0];
+  const yTicks = [maxVal, maxVal * 0.75, maxVal * 0.5, maxVal * 0.25, 0];
 
   return (
     <div className="w-full flex flex-col">
+      {items.length === 0 && (
+        <div className="flex min-h-[220px] items-center justify-center text-xs font-semibold text-slate-500">
+          No listing trend data available
+        </div>
+      )}
+      {items.length > 0 && (
       <div className="relative w-full aspect-[2.4/1] min-h-[220px]">
         <svg
           viewBox={`0 0 ${width} ${height}`}
@@ -167,6 +163,7 @@ export function PGListingsTrendChart({
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

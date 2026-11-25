@@ -20,11 +20,6 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/**",
-      },
     ],
   },
   async headers() {
@@ -63,7 +58,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: `default-src 'self'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com; connect-src 'self' ${apiOrigin}; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';`,
+            value: `default-src 'self'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://res.cloudinary.com; connect-src 'self' ${apiOrigin}; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';`,
           },
         ],
       },

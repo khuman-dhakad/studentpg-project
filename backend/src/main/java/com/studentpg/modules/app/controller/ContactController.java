@@ -57,7 +57,7 @@ public class ContactController {
     private final CloudinaryService cloudinaryService;
     private final com.studentpg.infrastructure.email.EmailService emailService;
 
-    @Value("${app.captcha.secret:}")
+    @Value("${app.captcha.secret}")
     private String captchaSecret;
 
     @Value("${mail.from:studentpg.support@gmail.com}")
@@ -75,6 +75,10 @@ public class ContactController {
 
     @PostConstruct
     public void initializeTTLIndexes() {
+        if (captchaSecret == null || captchaSecret.trim().isEmpty()) {
+            throw new IllegalStateException("CAPTCHA_SECRET (app.captcha.secret) must be configured for application startup");
+        }
+
         if (mongoTemplate == null) {
             return;
         }
@@ -225,6 +229,10 @@ public class ContactController {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .header("Retry-After", String.valueOf(RATE_LIMIT_WINDOW_SECONDS))
                     .body(new MessageResponse(false, "Too many requests. Please try again later."));
+        }
+
+        if (req.getImages() != null && req.getImages().length > 5) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(false, "A maximum of 5 images can be uploaded."));
         }
 
         List<String> uploadedImageUrls = new ArrayList<>();

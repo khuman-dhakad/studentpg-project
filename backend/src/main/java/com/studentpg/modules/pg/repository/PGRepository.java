@@ -1,6 +1,5 @@
 package com.studentpg.modules.pg.repository;
 
-// import com.studentpg.modules.pg.entity.ApprovalStatus;
 import com.studentpg.modules.pg.entity.PG;
 
 import org.springframework.data.domain.Page;
@@ -118,9 +117,6 @@ ApprovalStatus approvalStatus
      *
      */
 
-//     @Query(
-//             "{ 'pgName': { $regex: ?0, $options: 'i' } }"
-//     )
   List<PG> findTop8ByApprovalStatusAndPgNameContainingIgnoreCase(
         ApprovalStatus approvalStatus,
         String pgName

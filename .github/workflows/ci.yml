@@ -22,6 +22,7 @@ jobs:
           --health-retries 5
     env:
       MONGO_URI: mongodb://localhost:27017/studentpg_ci
+      CAPTCHA_SECRET: ci-test-captcha-secret-2026
 
     steps:
       - name: Checkout Code
@@ -32,19 +33,20 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven
+          cache: 'maven'
 
-      - name: Make Maven Wrapper Executable
-        working-directory: backend
-        run: chmod +x mvnw
+      - name: Confirm Maven and Java
+        run: |
+          java -version
+          mvn --version
 
       - name: Run Backend Tests
         working-directory: backend
-        run: ./mvnw test -B
+        run: mvn -B "-Dmaven.wagon.http.retryHandler.count=3" test
 
       - name: Package Backend Artifact
         working-directory: backend
-        run: ./mvnw clean package -DskipTests -B
+        run: mvn -B "-Dmaven.wagon.http.retryHandler.count=3" clean package -DskipTests
 
   frontend-ci:
     name: Frontend Lint, Typecheck & Build (Next.js 15)
@@ -72,6 +74,17 @@ jobs:
       - name: Run TypeScript Type Check
         working-directory: frontend
         run: npx tsc --noEmit
+
+      - name: Run Frontend Unit & Regression Tests
+        working-directory: frontend
+        run: npm test
+
+      # Audit level is set to critical. Two high advisories are accepted under current stack lock:
+      # 1. zod (<4.6.6): Fix requires breaking upgrade to zod@4; mitigated by server-side array bounds and payload length limits.
+      # 2. postcss (<=8.5.22, nested in next): Fix requires breaking upgrade to next@16; internal build dependency not exposed to runtime user CSS.
+      - name: Run Production Dependency Security Audit
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=critical
 
       - name: Build Next.js Production Bundle
         working-directory: frontend

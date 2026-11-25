@@ -79,9 +79,9 @@ class AdminDashboardTest {
         assertFalse(response.topLocalities().isEmpty());
 
         assertNotNull(response.recentActivities());
-        assertFalse(response.recentActivities().isEmpty());
+        assertTrue(response.recentActivities().isEmpty());
 
         assertNotNull(response.pendingListings());
-        assertFalse(response.pendingListings().isEmpty());
+        assertTrue(response.pendingListings().isEmpty());
     }
 }

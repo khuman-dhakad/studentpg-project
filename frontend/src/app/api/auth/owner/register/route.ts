@@ -10,6 +10,24 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ success: false, status: 400, message: 'Invalid payload.' }, { status: 400 });
+    }
+
+    const { name, email, password, phone, whatsappNumber } = body as Record<string, unknown>;
+    if (
+      typeof name !== 'string' || name.length > 50 ||
+      typeof email !== 'string' || email.length > 254 ||
+      typeof password !== 'string' || password.length > 64 ||
+      typeof phone !== 'string' || phone.length > 15 ||
+      (whatsappNumber !== undefined && whatsappNumber !== null && typeof whatsappNumber === 'string' && whatsappNumber.length > 15)
+    ) {
+      return NextResponse.json(
+        { success: false, status: 400, message: 'Registration fields exceed allowed length limits.' },
+        { status: 400 }
+      );
+    }
+
     const response = await backendClient.post<{ success?: boolean; message?: string }>(
       BACKEND_ENDPOINTS.OWNERS.REGISTER,
       body

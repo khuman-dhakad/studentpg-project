@@ -16,9 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.studentpg.security.jwt.JwtService;
 import com.studentpg.security.userdetails.CustomUserDetailsService;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 
 @WebMvcTest(PublicPGController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class PublicPGControllerTest {
 
     @Autowired

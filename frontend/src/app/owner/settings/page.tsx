@@ -18,7 +18,6 @@ import {
 
 // RTK Query Hooks
 import { useSessionQuery } from '@/features/auth/api/authApi';
-import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 import { OwnerVerificationModal } from '@/components/owner/OwnerVerificationModal';
 
 type TabType = 'Profile Settings' | 'Change Password' | 'Verification' | 'Account & Security';
@@ -71,7 +70,7 @@ export default function OwnerSettingsPage() {
     setStatusMessage(null);
 
     try {
-      const res = await fetch(BACKEND_ENDPOINTS.OWNERS.PROFILE, {
+      const res = await fetch('/api/owner/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone }),
@@ -80,7 +79,8 @@ export default function OwnerSettingsPage() {
       if (res.ok) {
         setStatusMessage({ type: 'success', text: 'Profile details updated successfully!' });
       } else {
-        setStatusMessage({ type: 'error', text: 'Failed to update profile.' });
+        const data = await res.json().catch(() => null);
+        setStatusMessage({ type: 'error', text: data?.message || 'Failed to update profile.' });
       }
     } catch {
       setStatusMessage({ type: 'error', text: 'Network connection failed.' });

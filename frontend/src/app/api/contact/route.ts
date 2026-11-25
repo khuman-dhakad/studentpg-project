@@ -1,56 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { createSupportTransporter, escapeHtml, getSupportMailAddress } from '@/lib/mail';
 
 export async function POST(request: NextRequest) {
   try {
     const { name, email, subject, message } = await request.json();
 
-    // Validate required fields
-    if (!name || !email || !subject || !message) {
+    // Validate required fields and length limits
+    if (!name || typeof name !== 'string' || name.trim().length > 100 ||
+        !email || typeof email !== 'string' || email.trim().length > 254 ||
+        !subject || typeof subject !== 'string' || subject.trim().length > 140 ||
+        !message || typeof message !== 'string' || message.trim().length > 5000) {
       return NextResponse.json(
         {
           success: false,
-          message: 'All fields are required.',
+          message: 'All fields are required and must not exceed length limits.',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Reject CR/LF characters in subject and email to prevent SMTP header injection
+    if (/[\r\n]/.test(subject) || /[\r\n]/.test(email)) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid characters detected in email or subject.',
         },
         { status: 400 }
       );
     }
 
     // Create SMTP transporter using existing environment variables
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT || 587),
-      secure: false,
-
-      auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD,
-      },
-    });
+    const transporter = createSupportTransporter();
+    const supportAddress = getSupportMailAddress();
 
     // Optional: verify SMTP connection before sending
     await transporter.verify();
 
     // Send email to StudentPG support/owner
     await transporter.sendMail({
-      from: `"StudentPG Contact Form" <${process.env.MAIL_FROM}>`,
+      from: `"StudentPG Contact Form" <${supportAddress}>`,
 
-      to: process.env.MAIL_FROM,
+      to: supportAddress,
 
       // When owner clicks Reply, reply goes to the user who submitted the form
-      replyTo: email,
+      replyTo: email.trim(),
 
-      subject: `[Contact Us] ${subject}`,
+      subject: `[Contact Us] ${subject.trim()}`,
 
       text: `
 New Support Inquiry - StudentPG
 
-Name: ${name}
-Email: ${email}
-Subject: ${subject}
+Name: ${name.trim()}
+Email: ${email.trim()}
+Subject: ${subject.trim()}
 
 Message:
-${message}
+${message.trim()}
       `,
 
       html: `
@@ -62,23 +68,23 @@ ${message}
 
           <p>
             <strong>Name:</strong>
-            ${name}
+            ${escapeHtml(name.trim())}
           </p>
 
           <p>
             <strong>Email:</strong>
-            ${email}
+            ${escapeHtml(email.trim())}
           </p>
 
           <p>
             <strong>Subject:</strong>
-            ${subject}
+            ${escapeHtml(subject.trim())}
           </p>
 
           <h3>Message:</h3>
 
           <p>
-            ${message}
+            ${escapeHtml(message.trim())}
           </p>
 
           <hr />

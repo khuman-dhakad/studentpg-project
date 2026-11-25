@@ -41,50 +41,22 @@ export function LiveFeaturedPGs({ listings }: LiveFeaturedPGsProps) {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
-            {/* Real placeholder cards based on actual Bhopal student hostels */}
-            {[
-              {
-                id: 'shree-residency',
-                pgName: 'Shree Residency PG',
-                city: 'MP Nagar',
-                state: 'Bhopal',
-                rent: 8000,
-                approvalStatus: 'APPROVED',
-                roomType: 'Double Sharing',
-                wifiAvailable: true,
-                foodAvailable: true,
-                acAvailable: true,
-                parkingAvailable: true,
-                images: [
-                  {
-                    publicId: 'shree-img',
-                    url: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
-                  },
-                ],
-              },
-              {
-                id: 'comfort-stay',
-                pgName: 'Comfort Stay PG',
-                city: 'Kolar Road',
-                state: 'Bhopal',
-                rent: 6500,
-                approvalStatus: 'APPROVED',
-                roomType: 'Triple Sharing',
-                wifiAvailable: true,
-                foodAvailable: true,
-                acAvailable: false,
-                parkingAvailable: true,
-                images: [
-                  {
-                    publicId: 'comfort-img',
-                    url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
-                  },
-                ],
-              },
-            ].map((mock) => (
-              <PGCard key={mock.id} pg={mock as unknown as PG} />
-            ))}
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-8 sm:p-12 text-center">
+            <p className="text-sm font-bold text-slate-800">
+              No featured accommodations currently available
+            </p>
+            <p className="mt-1 text-xs text-slate-500 font-medium max-w-sm mx-auto">
+              Check back soon or explore all listings across Bhopal using search and filters.
+            </p>
+            <div className="mt-4">
+              <Link
+                href={ROUTES.SEARCH}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-700 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800 transition-colors shadow-xs"
+              >
+                <span>Browse All Accommodations</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
         )}
 

@@ -31,17 +31,20 @@ This is an active MVP (version 1). Right now the focus is on:
 
 ## Tech stack
 
-- Frontend: Next.js, React, TypeScript, Tailwind CSS
-- Backend: Spring Boot, Spring Data MongoDB, REST APIs
+- Frontend: Next.js 15 App Router, React 19, TypeScript, Tailwind CSS, Redux Toolkit
+- Backend: Java 17+, Spring Boot 3.5, Spring Security, Spring Data MongoDB
+- Authentication: HTTP-only JWT cookies
 - Database: MongoDB Atlas
-- Tools: Git, GitHub, VS Code, Postman
+- Image storage: Cloudinary
+- Email: Brevo SMTP
+- Deployment: Docker Compose and Nginx
 
 ## Architecture
 
 The project is split into a frontend, a backend, and a database, and they talk to each other like this:
 
 ```
-Frontend (React/Vite) --- REST API (JSON over HTTP) ---> Backend (Spring Boot) ---> MongoDB Atlas
+Frontend (Next.js) --- REST API (JSON over HTTP) ---> Backend (Spring Boot) ---> MongoDB Atlas
 ```
 
 The backend itself is organized in layers:
@@ -58,14 +61,15 @@ Keeping these separate makes it easier to change one part (say, swap the databas
 ```
 studentpg-project
 ├── frontend
-│   ├── src
+│   ├── src/app
+│   ├── src/components
+│   ├── src/features
 │   ├── public
 │   └── tests
 ├── backend
-│   ├── controller
-│   ├── service
-│   ├── repository
-│   └── model
+│   ├── src/main/java
+│   ├── src/main/resources
+│   └── src/test/java
 ├── README.md
 ├── ROADMAP.md
 └── CONTRIBUTING.md

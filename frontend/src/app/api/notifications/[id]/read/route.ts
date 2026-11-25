@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthToken } from '@/auth/cookies';
 import { backendClient } from '@/api/backendClient';
+import { BACKEND_ENDPOINTS } from '@/api/endpoints';
 
 interface RouteContext {
   params: Promise<{
@@ -32,7 +33,7 @@ export async function PATCH(
     }
 
     await backendClient.request(
-      `/notifications/${encodeURIComponent(id)}/read`,
+      BACKEND_ENDPOINTS.NOTIFICATIONS.MARK_READ(id),
       {
         method: 'PATCH',
         token,

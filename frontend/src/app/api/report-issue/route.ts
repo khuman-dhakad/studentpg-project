@@ -1,41 +1,51 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { createSupportTransporter, escapeHtml, getSupportMailAddress } from '@/lib/mail';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const allowedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
-
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  }[character] ?? character));
-}
 
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
 
     const issueType = String(formData.get('issueType') ?? formData.get('title') ?? '').trim();
-    const pgListing = formData.get('pgListing') as string;
-    const location = formData.get('location') as string;
+    const pgListing = String(formData.get('pgListing') ?? '').trim();
+    const location = String(formData.get('location') ?? '').trim();
     const description = String(formData.get('description') ?? formData.get('detail') ?? '').trim();
-    const file = (formData.get('file') ?? formData.get('images')) as File | null;
+    const allFiles = [...formData.getAll('file'), ...formData.getAll('images')].filter(
+      (entry): entry is File => typeof entry === 'object' && entry !== null && 'size' in entry && (entry as File).size > 0
+    );
 
-    if (!issueType || issueType.length > 140 || !description || description.length > 4000) {
+    if (allFiles.length > 5) {
+      return NextResponse.json({ success: false, message: 'A maximum of 5 images can be attached.' }, { status: 400 });
+    }
+
+    if (
+      !issueType ||
+      issueType.length > 140 ||
+      !description ||
+      description.length > 4000 ||
+      pgListing.length > 200 ||
+      location.length > 200
+    ) {
       return NextResponse.json({ success: false, message: 'Please provide valid report details.' }, { status: 400 });
     }
+
+    if (/[\r\n]/.test(issueType)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid characters detected in issue category.' },
+        { status: 400 }
+      );
+    }
+
+    const file = allFiles[0] || null;
 
     if (file && file.size > 0 && (!allowedImageTypes.has(file.type) || file.size > MAX_FILE_SIZE)) {
       return NextResponse.json({ success: false, message: 'Attachment must be a JPG, PNG, or WebP image up to 5 MB.' }, { status: 400 });
     }
 
-    // Nodemailer Transporter Setup (Use your App Password from Google)
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // e.g. studentpg.support@gmail.com
-        pass: process.env.EMAIL_PASS, // Google App Password
-      },
-    });
+    const transporter = createSupportTransporter();
+    const supportAddress = getSupportMailAddress();
 
     // Attachment setup if file is uploaded
     const attachments = [];
@@ -50,8 +60,8 @@ export async function POST(req: Request) {
 
     // HTML Email Template to received in your Inbox
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: 'studentpg.support@gmail.com',
+      from: supportAddress,
+      to: supportAddress,
       subject: `New issue reported: ${issueType}`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px;">

@@ -4,12 +4,10 @@ import com.studentpg.infrastructure.cloudinary.CloudinaryService;
 import com.studentpg.infrastructure.email.EmailService;
 import com.studentpg.modules.owner.dto.request.ChangePasswordRequest;
 import com.studentpg.modules.owner.dto.request.ForgotPasswordRequest;
-// import com.studentpg.modules.owner.dto.request.OwnerLoginRequest;
 import com.studentpg.modules.owner.dto.request.OwnerRegisterRequest;
 import com.studentpg.modules.owner.dto.request.OwnerRegisterVerifyRequest;
 import com.studentpg.modules.owner.dto.request.ResetPasswordRequest;
 import com.studentpg.modules.owner.dto.request.UpdateOwnerProfileRequest;
-// import com.studentpg.modules.owner.dto.response.LoginResponse;
 import com.studentpg.modules.owner.dto.response.OwnerProfileResponse;
 import com.studentpg.modules.owner.entity.Owner;
 import com.studentpg.modules.admin.repository.AdminRepository;
@@ -279,103 +277,6 @@ public class OwnerService {
 
         return "Email verified successfully. You can now log in.";
     }
-
-//         if (owner == null) {
-
-//             return new LoginResponse(
-//                     "Invalid credentials",
-//                     null,
-//                     null,
-//                     null,
-//                     null
-//             );
-//         }
-
-//         long now =
-//                 System.currentTimeMillis();
-
-//         // Account lock check
-//         if (owner.getLockedUntil() != null
-//                 && now < owner.getLockedUntil()) {
-
-//             long minutesLeft =
-//                     (owner.getLockedUntil() - now)
-//                             / 60000
-//                             + 1;
-
-//             return new LoginResponse(
-//                     "Account temporarily locked. Try again in "
-//                             + minutesLeft
-//                             + " minute(s).",
-//                     null,
-//                     null,
-//                     null,
-//                     null
-//             );
-//         }
-
-//         // Password check
-//         if (!passwordEncoder.matches(
-//                 request.getPassword(),
-//                 owner.getPassword()
-//         )) {
-
-//             int failedAttempts =
-//                     owner.getFailedLoginAttempts() + 1;
-
-//             owner.setFailedLoginAttempts(
-//                     failedAttempts
-//             );
-
-//             if (failedAttempts >= MAX_LOGIN_ATTEMPTS) {
-
-//                 owner.setLockedUntil(
-//                         now + LOGIN_LOCK_MILLIS
-//                 );
-
-//                 owner.setFailedLoginAttempts(0);
-
-//                 ownerRepository.save(owner);
-
-//                 return new LoginResponse(
-//                         "Too many failed attempts. Account temporarily locked.",
-//                         null,
-//                         null,
-//                         null,
-//                         null
-//                 );
-//             }
-
-//             ownerRepository.save(owner);
-
-//             return new LoginResponse(
-//                     "Invalid credentials",
-//                     null,
-//                     null,
-//                     null,
-//                     null
-//             );
-//         }
-
-//         // Successful login
-//         owner.setFailedLoginAttempts(0);
-//         owner.setLockedUntil(null);
-
-//         ownerRepository.save(owner);
-
-//         String token =
-//                 jwtService.generateToken(
-//                         owner.getEmail()
-//                 );
-
-//         return new LoginResponse(
-//                 "Login successful",
-//                 token,
-//                 "Bearer",
-//                 owner.getEmail(),
-//                 owner.getRole()
-//         );
-//     }
 
     // =========================================================
     // GET PROFILE

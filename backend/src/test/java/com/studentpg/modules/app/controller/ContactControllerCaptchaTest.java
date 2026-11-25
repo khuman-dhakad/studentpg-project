@@ -16,6 +16,9 @@ import com.studentpg.infrastructure.email.EmailService;
 import com.studentpg.infrastructure.cloudinary.CloudinaryService;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -27,7 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ContactController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@org.springframework.test.context.TestPropertySource(properties = "app.captcha.secret=test-secret")
+@ActiveProfiles("test")
+@TestPropertySource(properties = "app.captcha.secret=test-secret")
 class ContactControllerCaptchaTest {
 
     @Autowired

@@ -7,7 +7,7 @@ import { ArrowRight, ChevronRight } from 'lucide-react';
 interface RoomTypeItem {
   type: string;
   rent: number;
-  image: string;
+  image?: string;
 }
 
 interface PGRoomPricingProps {
@@ -19,6 +19,7 @@ interface PGRoomPricingProps {
 
 export function PGRoomPricing({
   rooms,
+  onInquire,
   onViewAll,
   contactHref,
 }: PGRoomPricingProps) {
@@ -45,13 +46,19 @@ export function PGRoomPricing({
             className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between gap-3"
           >
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-100">
-              <Image
-                src={room.image}
-                alt={room.type}
-                fill
-                sizes="(max-width: 640px) 100vw, 280px"
-                className="object-cover"
-              />
+              {room.image ? (
+                <Image
+                  src={room.image}
+                  alt={room.type}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 280px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs font-semibold text-slate-500">
+                  No photo
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between gap-2">
@@ -71,6 +78,14 @@ export function PGRoomPricing({
 
               <a
                 href={contactHref}
+                target={contactHref.startsWith('https://wa.me') ? '_blank' : undefined}
+                rel={contactHref.startsWith('https://wa.me') ? 'noopener noreferrer' : undefined}
+                onClick={(e) => {
+                  if (contactHref === '#') {
+                    e.preventDefault();
+                  }
+                  onInquire();
+                }}
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 border border-slate-200 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer shrink-0"
                 aria-label={`Inquire about ${room.type}`}
               >

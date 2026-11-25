@@ -41,22 +41,6 @@ public class AdminService {
 
     /*
      * ============================================================
-     * APPROVAL STATUS CONSTANTS
-     * ============================================================
-     */
-
-//     private static final String STATUS_PENDING =
-//             "PENDING";
-
-//     private static final String STATUS_APPROVED =
-//             "APPROVED";
-
-//     private static final String STATUS_REJECTED =
-//             "REJECTED";
-
-
-    /*
-     * ============================================================
      * CONSTRUCTOR
      * ============================================================
      */
@@ -695,11 +679,11 @@ public class AdminService {
         long rejectedPgs = pgRepository.countByApprovalStatus(ApprovalStatus.REJECTED);
         long draftPgs = Math.max(0, totalPgs - (approvedPgs + pendingApprovals + rejectedPgs));
         long totalOwners = ownerRepository.count();
-        long totalStudents = 1243;
+        long totalStudents = 0L;
 
-        double pgsGrowth = 12.0;
-        double ownersGrowth = 8.0;
-        double studentsGrowth = 15.0;
+        double pgsGrowth = 0.0;
+        double ownersGrowth = 0.0;
+        double studentsGrowth = 0.0;
 
         Instant startOfToday = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"))
                 .truncatedTo(ChronoUnit.DAYS)
@@ -711,17 +695,11 @@ public class AdminService {
                 .filter(p -> p.getApprovalStatus() == ApprovalStatus.PENDING)
                 .filter(p -> p.getSubmittedAt() != null && p.getSubmittedAt().isAfter(startOfToday))
                 .count();
-        if (newApprovalsToday == 0 && pendingApprovals > 0) {
-            newApprovalsToday = Math.min(5, pendingApprovals);
-        } else if (newApprovalsToday == 0) {
-            newApprovalsToday = 5;
-        }
 
         // Monthly trends over last 8 months
         List<MonthlyTrendItem> listingsTrend = new ArrayList<>();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
         String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        long[] baselineDistribution = {42, 80, 56, 92, 81, 120, 134, 180};
 
         for (int i = 7; i >= 0; i--) {
             ZonedDateTime mTime = now.minusMonths(i);
@@ -737,11 +715,6 @@ public class AdminService {
                         return pTime.getYear() == mYear && pTime.getMonthValue() == mMonthValue;
                     })
                     .count();
-
-            if (count == 0) {
-                int idx = 7 - i;
-                count = baselineDistribution[idx];
-            }
 
             listingsTrend.add(new MonthlyTrendItem(mName, mYear, count));
         }
@@ -759,16 +732,8 @@ public class AdminService {
             }
         }
 
-        List<String> defaultBhopalLocalities = List.of(
-                "MP Nagar", "Kolar Road", "Indrapuri", "Arera Colony", "Hoshangabad Road"
-        );
-        for (String defLoc : defaultBhopalLocalities) {
-            localityCounts.putIfAbsent(defLoc, 0L);
-        }
-
         List<LocalityStatItem> topLocalities = new ArrayList<>();
         int rank = 1;
-        long[] referenceCounts = {48, 36, 28, 24, 18};
 
         List<Map.Entry<String, Long>> sortedLocalities = localityCounts.entrySet().stream()
                 .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
@@ -777,10 +742,7 @@ public class AdminService {
 
         for (Map.Entry<String, Long> entry : sortedLocalities) {
             long c = entry.getValue();
-            if (c == 0 && rank <= 5) {
-                c = referenceCounts[rank - 1];
-            }
-            double pct = Math.min(100.0, Math.round((c * 100.0 / 55.0) * 10.0) / 10.0);
+            double pct = totalPgs > 0 ? Math.min(100.0, Math.round((c * 100.0 / totalPgs) * 10.0) / 10.0) : 0.0;
             topLocalities.add(new LocalityStatItem(rank++, entry.getKey(), c, pct));
         }
 
@@ -800,48 +762,37 @@ public class AdminService {
             }
             String thumb = (p.getImages() != null && !p.getImages().isEmpty())
                     ? p.getImages().get(0).getUrl()
-                    : "/areas/mp-nagar.jpg";
+                    : null;
             String locality = (p.getLandmark() != null && !p.getLandmark().isBlank())
                     ? p.getLandmark()
                     : (p.getAddress() != null ? p.getAddress().split(",")[0].trim() : "Bhopal");
-            String rentFormatted = "₹" + (p.getRent() != null ? p.getRent().toPlainString() : "8,000") + " / month";
+            String rentFormatted = p.getRent() != null
+                    ? "₹" + p.getRent().toPlainString() + " / month"
+                    : "Rent not specified";
 
             pendingListings.add(new PendingPGItem(
                     p.getId(),
-                    p.getPgName() != null ? p.getPgName() : "Student Accommodation",
+                    p.getPgName() != null ? p.getPgName() : "Unnamed Listing",
                     ownerName,
                     locality,
                     p.getCity() != null ? p.getCity() : "Bhopal",
                     rentFormatted,
-                    p.getSubmittedAt() != null ? p.getSubmittedAt() : Instant.now(),
+                    p.getSubmittedAt(),
                     thumb
             ));
         }
 
-        // If pending listings from DB is empty, provide the 4 reference listings
-        if (pendingListings.isEmpty()) {
-            pendingListings.add(new PendingPGItem("pending-1", "Green Valley PG", "Amit Singh", "MP Nagar", "Bhopal", "₹8,000 / month", Instant.now().minus(2, ChronoUnit.DAYS), "/areas/mp-nagar.jpg"));
-            pendingListings.add(new PendingPGItem("pending-2", "Student Nest PG", "Neha Patel", "Kolar Road", "Bhopal", "₹6,500 / month", Instant.now().minus(3, ChronoUnit.DAYS), "/areas/kolar-road.jpg"));
-            pendingListings.add(new PendingPGItem("pending-3", "Comfort Living PG", "Suresh Kumar", "Indrapuri", "Bhopal", "₹7,500 / month", Instant.now().minus(3, ChronoUnit.DAYS), "/areas/indrapuri.jpg"));
-            pendingListings.add(new PendingPGItem("pending-4", "Apex PG", "Pooja Gupta", "Arera Colony", "Bhopal", "₹9,000 / month", Instant.now().minus(4, ChronoUnit.DAYS), "/areas/arera-colony.jpg"));
-        }
-
         // Recent Activity Feed
         List<RecentActivityItem> recentActivities = new ArrayList<>();
-        recentActivities.add(new RecentActivityItem("act-1", "SUBMISSION", "New PG listing submitted", "by Rohit Sharma", "Rohit Sharma", Instant.now().minus(10, ChronoUnit.MINUTES), "10 minutes ago"));
-        recentActivities.add(new RecentActivityItem("act-2", "APPROVAL", "PG approved", "Comfort Stay PG", "Administrator", Instant.now().minus(1, ChronoUnit.HOURS), "1 hour ago"));
-        recentActivities.add(new RecentActivityItem("act-3", "OWNER_REGISTERED", "New owner registered", "Priya Verma", "Priya Verma", Instant.now().minus(2, ChronoUnit.HOURS), "2 hours ago"));
-        recentActivities.add(new RecentActivityItem("act-4", "PG_UPDATED", "PG listing updated", "Shree Residency PG", "Administrator", Instant.now().minus(3, ChronoUnit.HOURS), "3 hours ago"));
-        recentActivities.add(new RecentActivityItem("act-5", "VERIFICATION", "Owner KYC submitted", "Blossom Girls PG", "Owner", Instant.now().minus(5, ChronoUnit.HOURS), "5 hours ago"));
 
         return new AdminDashboardOverviewResponse(
-                totalPgs > 0 ? totalPgs : 248,
-                totalOwners > 0 ? totalOwners : 156,
+                totalPgs,
+                totalOwners,
                 totalStudents,
-                pendingApprovals > 0 ? pendingApprovals : 12,
-                approvedPgs > 0 ? approvedPgs : 180,
-                rejectedPgs > 0 ? rejectedPgs : 18,
-                draftPgs > 0 ? draftPgs : 38,
+                pendingApprovals,
+                approvedPgs,
+                rejectedPgs,
+                draftPgs,
                 pgsGrowth,
                 ownersGrowth,
                 studentsGrowth,
