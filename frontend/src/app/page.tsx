@@ -9,6 +9,8 @@ import { LocalityIconGrid } from '@/components/home/LocalityIconGrid';
 import { LiveFeaturedPGs } from '@/components/home/LiveFeaturedPGs';
 import { OwnerPromoBanner } from '@/components/home/OwnerPromoBanner';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'StudentPG — Find Verified PGs, Hostels & Student Rooms in Bhopal',
   description:
@@ -29,8 +31,7 @@ export const metadata: Metadata = {
 async function getFeaturedPgs(): Promise<PG[]> {
   try {
     const response = await backendClient.get<PagedResponse<PG>>(
-      `${BACKEND_ENDPOINTS.STUDENT.PGS}?page=0&size=6&sortBy=rent&direction=asc`,
-      { next: { revalidate: 60 } }
+      `${BACKEND_ENDPOINTS.STUDENT.PGS}?page=0&size=6&sortBy=rent&direction=asc`
     );
     return response.content ?? [];
   } catch (error) {
