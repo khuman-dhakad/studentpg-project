@@ -35,7 +35,9 @@ public class ContactControllerAtomicityTest {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    private static final String RATE_LIMIT_COLLECTION = "request_rate_limits_test";
+    private ContactController contactController;
+
+    private static final String RATE_LIMIT_COLLECTION = "request_rate_limits";
     private static final String CAPTCHA_COLLECTION = "captcha_tokens_test";
     private static final int RATE_LIMIT_WINDOW_SECONDS = 10 * 60;
     private static final int MAX_REQUESTS_PER_WINDOW = 20;
@@ -44,6 +46,7 @@ public class ContactControllerAtomicityTest {
     public void setup() {
         mongoTemplate.dropCollection(RATE_LIMIT_COLLECTION);
         mongoTemplate.dropCollection(CAPTCHA_COLLECTION);
+        contactController = new ContactController(mongoTemplate, null, null);
     }
 
     /**
@@ -53,7 +56,9 @@ public class ContactControllerAtomicityTest {
      */
     @Test
     public void testConcurrentRateLimitingIsAtomic() throws InterruptedException {
-        String bucketKey = "/api/contact:192.168.1.1:" + (Instant.now().getEpochSecond() / RATE_LIMIT_WINDOW_SECONDS);
+        String clientIp = "192.168.1.1";
+        String endpoint = "/api/contact";
+        String bucketKey = endpoint + ":" + clientIp + ":" + (Instant.now().getEpochSecond() / RATE_LIMIT_WINDOW_SECONDS);
         int concurrentRequests = 50;
         ExecutorService executor = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(concurrentRequests);
@@ -62,26 +67,8 @@ public class ContactControllerAtomicityTest {
         for (int i = 0; i < concurrentRequests; i++) {
             executor.submit(() -> {
                 try {
-                    // Simulate atomic rate-limit check
-                    Query query = new Query(Criteria.where("key").is(bucketKey));
-                    org.springframework.data.mongodb.core.query.Update update = new org.springframework.data.mongodb.core.query.Update()
-                            .inc("count", 1)
-                            .set("updatedAt", Date.from(Instant.now()))
-                            .setOnInsert("createdAt", Date.from(Instant.now()));
-
-                    Document result = mongoTemplate.findAndModify(
-                            query,
-                            update,
-                            new org.springframework.data.mongodb.core.FindAndModifyOptions().upsert(true).returnNew(true),
-                            Document.class,
-                            RATE_LIMIT_COLLECTION
-                    );
-
-                    if (result != null) {
-                        int count = result.getInteger("count", 0);
-                        if (count <= MAX_REQUESTS_PER_WINDOW) {
-                            allowedCount.incrementAndGet();
-                        }
+                    if (contactController.allowRequest(clientIp, endpoint)) {
+                        allowedCount.incrementAndGet();
                     }
                 } finally {
                     latch.countDown();
@@ -98,13 +85,16 @@ public class ContactControllerAtomicityTest {
 
         // Verify: The final count in Mongo should match
         Document finalRecord = mongoTemplate.findOne(
-                new Query(Criteria.where("key").is(bucketKey)),
+                new Query(Criteria.where("_id").is(bucketKey)),
                 Document.class,
                 RATE_LIMIT_COLLECTION
         );
         assertNotNull(finalRecord, "Rate limit record should exist");
         assertEquals(concurrentRequests, finalRecord.getInteger("count", 0),
                 "Final count should equal total concurrent requests (no lost updates)");
+        assertEquals(1, mongoTemplate.getCollection(RATE_LIMIT_COLLECTION)
+                        .countDocuments(new Document("_id", bucketKey)),
+                "Only one rate-limit record should exist for the bucket");
     }
 
     /**

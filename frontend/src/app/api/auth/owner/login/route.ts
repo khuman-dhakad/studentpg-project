@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { backendClient } from '@/api/backendClient';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
+import { readJsonObject } from '@/api/readJsonObject';
 import { setAuthCookie } from '@/auth/cookies';
 import { BaseLoginResponse } from '@/types/api.types';
 
@@ -29,7 +30,13 @@ function parseAccessTokenFromCookieHeader(setCookieHeader: string | null) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await readJsonObject(request);
+    if (!body) {
+      return NextResponse.json(
+        { status: 400, message: 'Invalid request body.' },
+        { status: 400 }
+      );
+    }
 
     const { data: responseData, setCookie: setCookieHeader } = await backendClient.postWithSetCookie<BaseLoginResponse>(
       BACKEND_ENDPOINTS.AUTH.LOGIN,
