@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { backendClient } from '@/api/backendClient';
 import { BACKEND_ENDPOINTS } from '@/api/endpoints';
+import { readJsonObject } from '@/api/readJsonObject';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await readJsonObject(request);
+    if (!body) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
 
-    const email = body?.email?.trim()?.toLowerCase();
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
 
     if (!email) {
       return NextResponse.json(
