@@ -74,7 +74,7 @@ export async function POST(req: Request) {
           <blockquote style="background: #f8fafc; padding: 12px; border-left: 4px solid #6366f1;">
             ${escapeHtml(description)}
           </blockquote>
-          ${file ? `<p><strong>Attachment:</strong> Attached with this email (${file.name})</p>` : ''}
+          ${file ? `<p><strong>Attachment:</strong> Attached with this email (${escapeHtml(file.name)})</p>` : ''}
           <hr style="border: none; border-top: 1px solid #eee;" />
           <p style="font-size: 11px; color: #64748b;">This issue was reported via StudentPG Report Portal.</p>
         </div>
