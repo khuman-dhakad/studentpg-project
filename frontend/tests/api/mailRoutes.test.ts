@@ -71,6 +71,21 @@ describe('Mail Routes with upgraded Nodemailer transport', () => {
       expect(mailCall.html).toContain('&lt;b&gt;bold&lt;/b&gt; &amp; nice.');
     });
 
+    it.each(['{invalid json', 'null', '[]'])('returns 400 for an invalid JSON object body: %s', async (body) => {
+      const req = new NextRequest('http://localhost/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+
+      const res = await contactHandler(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(mockSendMail).not.toHaveBeenCalled();
+    });
+
     it('rejects CR/LF injection in subject and email with 400 status', async () => {
       const subjectInjectionReq = new NextRequest('http://localhost/api/contact', {
         method: 'POST',
@@ -161,6 +176,24 @@ describe('Mail Routes with upgraded Nodemailer transport', () => {
       expect(mockSendMail).toHaveBeenCalledTimes(1);
       const mailCall = mockSendMail.mock.calls[0][0];
       expect(mailCall.subject).toContain('Pricing Discrepancy');
+    });
+
+    it('escapes user-controlled attachment filenames in the email HTML', async () => {
+      const formData = new FormData();
+      formData.append('issueType', 'Pricing Discrepancy');
+      formData.append('description', 'The listed price differs from actual rent.');
+      formData.append('file', new Blob(['image'], { type: 'image/png' }), '<img src=x onerror=alert(1)>.png');
+
+      const req = new Request('http://localhost/api/report-issue', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const res = await reportIssueHandler(req);
+      expect(res.status).toBe(200);
+      const mailCall = mockSendMail.mock.calls[0][0];
+      expect(mailCall.html).toContain('&lt;img src=x onerror=alert(1)&gt;.png');
+      expect(mailCall.html).not.toContain('<img src=x onerror=alert(1)>.png');
     });
   });
 });

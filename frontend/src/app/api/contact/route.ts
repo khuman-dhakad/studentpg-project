@@ -1,9 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupportTransporter, escapeHtml, getSupportMailAddress } from '@/lib/mail';
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, subject, message } = await request.json();
+    let payload: unknown;
+    try {
+      payload = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, message: 'Invalid JSON request body.' },
+        { status: 400 }
+      );
+    }
+
+    if (!isRecord(payload)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid JSON request body.' },
+        { status: 400 }
+      );
+    }
+
+    const { name, email, subject, message } = payload;
 
     // Validate required fields and length limits
     if (!name || typeof name !== 'string' || name.trim().length > 100 ||
