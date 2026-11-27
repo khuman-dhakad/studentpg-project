@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -292,7 +293,7 @@ public class ContactController {
         return ResponseEntity.ok(new MessageResponse(true, "Report received. Thank you."));
     }
 
-    private boolean allowRequest(String ip, String endpoint) {
+    boolean allowRequest(String ip, String endpoint) {
         if (ip == null || ip.isBlank()) {
             return false;
         }
@@ -303,21 +304,31 @@ public class ContactController {
             }
 
             String bucketKey = endpoint + ":" + ip + ":" + (Instant.now().getEpochSecond() / RATE_LIMIT_WINDOW_SECONDS);
-            Query query = new Query(Criteria.where("key").is(bucketKey));
+            Query query = new Query(Criteria.where("_id").is(bucketKey));
 
-            // ATOMIC: Upsert with increment in a single operation (no race condition)
             Update update = new Update()
                     .inc("count", 1)
                     .set("updatedAt", Date.from(Instant.now()))
                     .setOnInsert("createdAt", Date.from(Instant.now()));
 
-            Document result = mongoTemplate.findAndModify(
-                    query,
-                    update,
-                    new FindAndModifyOptions().upsert(true).returnNew(true),
-                    Document.class,
-                    RATE_LIMIT_COLLECTION
-            );
+            Document result;
+            int duplicateKeyRetries = 0;
+            while (true) {
+                try {
+                    result = mongoTemplate.findAndModify(
+                            query,
+                            update,
+                            new FindAndModifyOptions().upsert(true).returnNew(true),
+                            Document.class,
+                            RATE_LIMIT_COLLECTION
+                    );
+                    break;
+                } catch (DuplicateKeyException ex) {
+                    if (++duplicateKeyRetries >= 3) {
+                        throw ex;
+                    }
+                }
+            }
 
             if (result == null) {
                 return false;
